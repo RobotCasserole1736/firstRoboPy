@@ -15,7 +15,7 @@ Before developing code on a new computer, perform the following:
     python -m pip install --upgrade pip
     python -m pip install pylint
     python -m pip install coverage
-    python -m pip install --upgrade pip
+    python -m pip install robotpy
     python -m pip install -U robotpy[all]
 ```
 
