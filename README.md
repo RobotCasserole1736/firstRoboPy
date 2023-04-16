@@ -1,6 +1,8 @@
 # firstRoboPy
 A very simple first attempt at robot written in python
 
+![Workflow Status](https://github.com/RobotCasserole1736/firstRoboPy/actions/workflows/ci.yml/badge.svg)
+
 ## Installation
 
 Before developing code on a new computer, perform the following:
@@ -41,7 +43,7 @@ Run the `Simulate` configuration in the debugger in vsCode.
 
 ## Continuous Integration
 
-Github has the ability to run our code on its servers on every commit to ensure our code stays high quality. This is called "Continuous Integration".
+Github runs our code on its servers on every commit to ensure our code stays high quality. This is called "Continuous Integration".
 
 `.github/workflows/ci.yml` contains configuration for all the commands that our continuous integration environment.
 
