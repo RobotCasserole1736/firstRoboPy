@@ -1,1 +1,2 @@
-python robot.py sim
+pylint --rcfile=.pylintrc **.py
+pause

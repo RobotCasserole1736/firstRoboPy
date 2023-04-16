@@ -1,1 +1,2 @@
-python robot.py sim
+python robot.py test
+pause 
