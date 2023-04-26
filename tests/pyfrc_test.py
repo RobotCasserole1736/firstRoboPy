@@ -3,4 +3,4 @@
     to test basic functionality of just about any robot.
 '''
 
-from pyfrc.tests import *
+from pyfrc.tests import * # pylint: disable=W0401,W0614 

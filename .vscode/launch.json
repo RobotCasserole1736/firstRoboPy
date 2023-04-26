@@ -6,13 +6,22 @@
     "configurations": [
 
         {
-            "name": "Debug Simulation",
+            "name": "Simulate",
             "type": "python",
             "request": "launch",
             "program": "robot.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": ["sim"]
+        },
+        {
+            "name": "Test",
+            "type": "python",
+            "request": "launch",
+            "program": "robot.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": ["test"]
         }
     ]
 }
