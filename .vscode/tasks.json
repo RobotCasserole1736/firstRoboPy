@@ -6,36 +6,73 @@
         {
             "label": "PyFRC: _Deploy",
             "type": "shell",
-            "command": "",
             "windows": {
-                "command": "Start-Process powershell {$host.ui.RawUI.WindowTitle = 'FRCwindow';py '${workspaceFolder}\\robot.py' deploy --nc --skip-tests --no-version-check;  Write-Host 'All done - Press Enter to Close' -ForegroundColor Green -BackgroundColor Black; Read-Host -Prompt ' '}"
+                "command": "python ${workspaceFolder}\\robot.py deploy --skip-tests"
             },
             "linux": {
-                "command": "python robot.py deploy --skip-tests"
+                "command": "python ${workspaceFolder}/robot.py deploy --skip-tests"
             },
-            "group": "none",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "presentation": {
-                "reveal": "never",
-                "panel": "dedicated"
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true,
+                "focus": true,
+                "showReuseMessage": false
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "icon": {
+                "id": "cloud-upload"
+            }
         },
         {
             "label": "PyFRC: _Run Lint Check",
             "type": "shell",
-            "command": "",
             "windows": {
-                "command": "Start-Process powershell {$host.ui.RawUI.WindowTitle = 'FRCwindow';pylint --rcfile=${workspaceFolder}\\.pylintrc ${workspaceFolder}\\**\\*.py;  Write-Host 'All done - Press Enter to Close' -ForegroundColor Green -BackgroundColor Black; Read-Host -Prompt ' '}"
+                "command": "pylint --rcfile=${workspaceFolder}\\.pylintrc ${workspaceFolder}\\**\\*.py"
             },
             "linux": {
-                "command": "pylint --rcfile=.pylintrc $(git ls-files '*.py')"
+                "command": "pylint --rcfile=${workspaceFolder}/.pylintrc $(git ls-files '${workspaceFolder}/*.py')"
             },
-            "group": "none",
             "presentation": {
-                "reveal": "never",
-                "panel": "dedicated"
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true,
+                "focus": true,
+                "showReuseMessage": false
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "icon": {
+                "id": "microscope"
+            }
         },
+        {
+            "label": "PyFRC: _Run Test Suite",
+            "type": "shell",
+            "windows": {
+                "command": "python ${workspaceFolder}\\robot.py test"
+            },
+            "linux": {
+                "command": "python ${workspaceFolder}/robot.py test"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true,
+                "focus": true,
+                "showReuseMessage": false
+            },
+            "problemMatcher": [],
+            "icon": {
+                "id": "check-all"
+            }
+        }
     ]
 }
