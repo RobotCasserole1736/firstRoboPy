@@ -73,6 +73,30 @@
             "icon": {
                 "id": "check-all"
             }
+        },
+        {
+            "label": "PyFRC: _Run Simulation",
+            "type": "shell",
+            "windows": {
+                "command": "python ${workspaceFolder}\\robot.py sim"
+            },
+            "linux": {
+                "command": "python ${workspaceFolder}/robot.py sim"
+            },
+            "group": {
+                "kind": "test",
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true,
+                "focus": true,
+                "showReuseMessage": false
+            },
+            "problemMatcher": [],
+            "icon": {
+                "id": "check-all"
+            }
         }
     ]
 }

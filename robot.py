@@ -1,5 +1,5 @@
 import wpilib
-import utils.signalLogging as sl
+from  utils.signalLogging import log, publish
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -10,16 +10,16 @@ class MyRobot(wpilib.TimedRobot):
         pass
         
     def teleopPeriodic(self):
-        sl.log("test", 42)
+        log("test", 42)
     
     def autonomousInit(self):
         pass
         
     def autonomousPeriodic(self):
-        sl.log("test", 23)
+        log("test", 23)
         
     def robotPeriodic(self):
-        sl.publish()
+        publish()
         
         
 if __name__ == '__main__':
