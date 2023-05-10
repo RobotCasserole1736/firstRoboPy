@@ -1,7 +1,7 @@
 import os
 import wpilib
 import ntcore as nt
-import wpiutil._wpiutil.log as wpilog
+import wpiutil._wpiutil.log as wpilog # pylint: disable=import-error,no-name-in-module
 
 # Wrangler for coordinating the set of all signals
 class _SignalWrangler:
@@ -77,5 +77,5 @@ def log(name, value):
     _mainInst.addSampleForThisLoop(name, value)
 
 # Call once per robot periodic loop
-def publish():
+def publishSignals():
     _mainInst.publishPeriodic()
