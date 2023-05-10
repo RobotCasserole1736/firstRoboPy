@@ -45,12 +45,12 @@ class Calibration():
         # Set up nt 
         table = nt.NetworkTableInstance.getDefault().getTable("Calibrations")
         
-        curValTopic = table.getDoubleTopic(name + "_cur")
+        curValTopic = table.getDoubleTopic(name + "/curValue")
         self.curValuePublisher = curValTopic.publish(nt.PubSubOptions(
                                     sendAll=False, keepDuplicates=False))
         self.curValuePublisher.setDefault(self._default)
         
-        desValueTopic = table.getDoubleTopic(name + "_des")
+        desValueTopic = table.getDoubleTopic(name + "/desValue")
         self.desValueSubscriber = desValueTopic.subscribe(self._default)
         
         _wranglerInst.register(self)

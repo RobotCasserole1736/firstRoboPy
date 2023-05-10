@@ -2,6 +2,7 @@ import wpilib
 from utils.functionGenerator import FunctionGenerator
 from  utils.signalLogging import log, publishSignals
 from utils.calibration import updateCalibrations
+from webserver.webserver import Webserver
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -11,7 +12,8 @@ class MyRobot(wpilib.TimedRobot):
         # to ignore these instantiations in a method.
         # pylint: disable=attribute-defined-outside-init
         print("It's Init Time")
-        self.fgTest = FunctionGenerator("test")  
+        self.fgTest = FunctionGenerator("test")
+        self.webserver = Webserver()
     
     def teleopInit(self):
         pass
