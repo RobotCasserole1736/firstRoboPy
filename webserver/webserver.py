@@ -13,7 +13,7 @@ class Webserver():
     
     def __init__(self):
         
-        Handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory="deploy/www/")
+        Handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory="webserver/www/")
 
         hostname=socket.gethostname()   
         IPAddr=socket.gethostbyname(hostname)   

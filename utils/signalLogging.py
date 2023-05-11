@@ -10,7 +10,7 @@ class _SignalWrangler:
     # Picks approprate logging directory based on our current target
     def __init__(self):
         # Default to publishing things under Shuffleboard, which makes things more avaialble
-        self.table = nt.NetworkTableInstance.getDefault().getTable("Shuffleboard")
+        self.table = nt.NetworkTableInstance.getDefault().getTable("SmartDashboard")
         self.publishedSigDict = {}
         self.sampleList = []
 

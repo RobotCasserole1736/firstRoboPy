@@ -11,7 +11,6 @@ class MyRobot(wpilib.TimedRobot):
         # Since we're defining a bunch of new things here, tell pylint 
         # to ignore these instantiations in a method.
         # pylint: disable=attribute-defined-outside-init
-        print("It's Init Time")
         self.fgTest = FunctionGenerator("test")
         self.webserver = Webserver()
     
