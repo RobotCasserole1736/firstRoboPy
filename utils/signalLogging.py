@@ -1,3 +1,4 @@
+import json
 import os
 import wpilib
 import ntcore as nt
@@ -12,6 +13,7 @@ class _SignalWrangler:
         # Default to publishing things under Shuffleboard, which makes things more avaialble
         self.table = nt.NetworkTableInstance.getDefault().getTable("SmartDashboard")
         self.publishedSigDict = {}
+        self.sigUnitsDict = {}
         self.sampleList = []
 
         if wpilib.RobotBase.isSimulation():
@@ -45,6 +47,10 @@ class _SignalWrangler:
                 sigPub = sigTopic.publish(nt.PubSubOptions(
                     sendAll=True, keepDuplicates=True))
                 sigPub.setDefault(0)
+                
+                if(name in self.sigUnitsDict):
+                    unitsStr = self.sigUnitsDict[name]
+                    sigTopic.setProperty("units", str(unitsStr))
 
                 # Set up log file publishing
                 sigLog = wpilog.DoubleLogEntry(log=self.log, name=name)
@@ -73,8 +79,10 @@ _mainInst = _SignalWrangler()
 ###########################################
 
 # Log a new named value
-def log(name, value):
+def log(name, value, units=None):
     _mainInst.addSampleForThisLoop(name, value)
+    if(units is not None):
+        _mainInst.sigUnitsDict[name] = units
 
 # Call once per robot periodic loop
 def publishSignals():

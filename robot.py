@@ -13,6 +13,8 @@ class MyRobot(wpilib.TimedRobot):
         # pylint: disable=attribute-defined-outside-init
         self.fgTest = FunctionGenerator("test")
         self.webserver = Webserver()
+        log("test", -1, "rpm")
+
     
     def teleopInit(self):
         pass
