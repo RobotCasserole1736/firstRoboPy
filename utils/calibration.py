@@ -69,7 +69,7 @@ class Calibration():
     # Provides a new value to the calibration. This value will be returned on the next
     # call to `get()`. The `isChanged()` flag will return True until `get()` is called.
     def set(self, newVal):
-        if(newVal >= self.min and newVal <= self.max):
+        if self.max >= newVal >= self.min:
             self._changed = True
             self._desValue = newVal
         else:

@@ -41,9 +41,9 @@ class FunctionGenerator():
                     
             return self.offsetCal.get() + self.ampCal.get() * baseOutput
                 
-        else:
-            # inactive, no output
-            return 0
+
+        # Otherwise, inactive, no output
+        return 0
   
     # indicates whether the function generator is currently active or not.
     def isActive(self):

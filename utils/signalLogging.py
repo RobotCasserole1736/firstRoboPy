@@ -1,4 +1,3 @@
-import json
 import os
 import wpilib
 import ntcore as nt
@@ -48,7 +47,7 @@ class _SignalWrangler:
                     sendAll=True, keepDuplicates=True))
                 sigPub.setDefault(0)
                 
-                if(name in self.sigUnitsDict):
+                if name in self.sigUnitsDict:
                     unitsStr = self.sigUnitsDict[name]
                     sigTopic.setProperty("units", str(unitsStr))
 
@@ -81,7 +80,7 @@ _mainInst = _SignalWrangler()
 # Log a new named value
 def log(name, value, units=None):
     _mainInst.addSampleForThisLoop(name, value)
-    if(units is not None):
+    if units is not None :
         _mainInst.sigUnitsDict[name] = units
 
 # Call once per robot periodic loop
