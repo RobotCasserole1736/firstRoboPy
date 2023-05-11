@@ -50,6 +50,11 @@ class Calibration():
                                     sendAll=False, keepDuplicates=False))
         self.curValuePublisher.setDefault(self._default)
         
+        curValTopic.setProperty("units", str(self.units))
+        curValTopic.setProperty("min_cal", str(self.min))
+        curValTopic.setProperty("max_cal", str(self.max))
+        curValTopic.setProperty("default_val", str(self._default))
+        
         desValueTopic = table.getDoubleTopic(name + "/desValue")
         self.desValueSubscriber = desValueTopic.subscribe(self._default)
         

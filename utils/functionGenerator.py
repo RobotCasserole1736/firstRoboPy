@@ -9,8 +9,8 @@ class FunctionGenerator():
         
         self.activeCal = Calibration(name="fg_"+uniqueName+"_active",default=0)
         self.typeCal = Calibration(name="fg_"+uniqueName+"_type", units="0=sine,1=square")
-        self.freqCal = Calibration(name="fg_"+uniqueName+"_freq",units="Hz")
-        self.ampCal = Calibration(name="fg_"+uniqueName+"_amp")
+        self.freqCal = Calibration(name="fg_"+uniqueName+"_freq",units="Hz", default=2.0)
+        self.ampCal = Calibration(name="fg_"+uniqueName+"_amp",default=1.0)
         self.offsetCal = Calibration(name="fg_"+uniqueName+"_offset")
         
         self.startTime = wpilib.Timer.getFPGATimestamp()
