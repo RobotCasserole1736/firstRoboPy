@@ -45,15 +45,16 @@ class Calibration():
         # Set up nt 
         table = nt.NetworkTableInstance.getDefault().getTable("Calibrations")
         
-        curValTopic = table.getDoubleTopic(name + "/curValue")
-        self.curValuePublisher = curValTopic.publish(nt.PubSubOptions(
+        self.curValTopic = table.getDoubleTopic(name + "/curValue")
+        self.curValuePublisher = self.curValTopic.publish(nt.PubSubOptions(
                                     sendAll=False, keepDuplicates=False))
         self.curValuePublisher.setDefault(self._default)
         
-        curValTopic.setProperty("units", str(self.units))
-        curValTopic.setProperty("min_cal", float(self.min))
-        curValTopic.setProperty("max_cal", float(self.max))
-        curValTopic.setProperty("default_val", float(self._default))
+        self.curValTopic.setProperty("units", str(self.units))
+        self.curValTopic.setProperty("min_cal", float(self.min))
+        self.curValTopic.setProperty("max_cal", float(self.max))
+        self.curValTopic.setProperty("default_val", float(self._default))
+        self.curValTopic.setProperty("pending", False)
         
         desValueTopic = table.getDoubleTopic(name + "/desValue")
         self.desValueSubscriber = desValueTopic.subscribe(self._default)
@@ -83,6 +84,7 @@ class Calibration():
             self.set(val.value)
             self._lastUpdateTime = val.time
         self.curValuePublisher.set(self._curValue)
+        self.curValTopic.setProperty("pending", self._changed)
         
     # Returns True if the value is different than the last time `get()` was called. False otherwise.
     def isChanged(self):
