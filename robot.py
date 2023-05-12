@@ -16,7 +16,7 @@ class MyRobot(wpilib.TimedRobot):
         self.webserver = Webserver()
         log("test", -1, "rpm")
         
-        self.webserver.addDashboardWidget(CircularGauge("/SmartDashboard/test", -10,10,-5,5))
+        self.webserver.addDashboardWidget(CircularGauge(10, 10, "/SmartDashboard/test", -10,10,-5,5))
 
     
     def teleopInit(self):

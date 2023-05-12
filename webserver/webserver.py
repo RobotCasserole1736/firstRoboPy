@@ -15,35 +15,88 @@ with open("webserver/www/dashboard/dashboard.js_tmplt", "r") as infile:
     jsTmpltTxt = infile.read()
 
 class TemplatingRequestHandler(SimpleHTTPRequestHandler):
+
+    # from https://gist.github.com/HaiyangXu/ec88cbdce3cdbac7b8d5
+    extensions_map = {
+        '': 'application/octet-stream',
+        '.manifest': 'text/cache-manifest',
+        '.html': 'text/html',
+        '.png': 'image/png',
+        '.jpg': 'image/jpg',
+        '.svg':	'image/svg+xml',
+        '.css':	'text/css',
+        '.js':'application/x-javascript',
+        '.wasm': 'application/wasm',
+        '.json': 'application/json',
+        '.xml': 'application/xml',
+    }
     
     def do_GET(self):
 
         if self.path == "/dashboard/dashboard.html":
 
-            retText = ""
+            filledOut = ""
 
-            repTxt = ""
+            htmlText = ""
             for widget in _dashboardWidgetList:
-                repTxt += widget.getHTML()
-                repTxt += "\n"
+                htmlText += widget.getHTML()
+                htmlText += "\n"
                 
-            retText = htmlTmpltTxt.replace("${WIDGETS_HTML}", repTxt)
+            filledOut = htmlTmpltTxt.replace("${WIDGETS_HTML}", htmlText)
                      
             self.send_response(200)
             self.send_header("Content-Type", "text/html")
             self.end_headers()                
 
-            self.wfile.write(retText.encode())
+            self.wfile.write(filledOut.encode())
 
             return SimpleHTTPRequestHandler
         
         elif self.path == "/dashboard/dashboard.js":
 
+            jsInstantiate = ""
+            jsUpdate = ""
+            jsCallback = ""
+            jsSetData = ""
+            jsSetNoData = ""
+            subscribeLine = "nt4Client.subscribePeriodic(["
+
+            for w in _dashboardWidgetList:
+                jsInstantiate += w.getJSDeclaration()
+                jsInstantiate += "\n"
+
+                jsUpdate += w.getJSUpdate()
+                jsUpdate += "\n"
+
+                jsSetData += w.getJSSetData()
+                jsSetData += "\n"
+
+                jsSetNoData += w.getJSSetNoData()
+                jsSetNoData += "\n"
+
+                jsCallback += w.getJSCallback()
+                jsCallback += "\n"
+
+                subscribeLine +=  w.getTopicSubscriptionStrings()
+
+            # Remove the trailing comma and close out the line
+            subscribeLine = subscribeLine[:-1]
+            subscribeLine += "], 0.05);" # 50ms sample rate
+            subscribeLine += "\n"
+
+            filledOut = jsTmpltTxt
+            filledOut = filledOut.replace("${WIDGETS_INSTANTIATE}", jsInstantiate)
+            filledOut = filledOut.replace("${WIDGETS_NT4_SUBSCRIBE}", subscribeLine)
+            filledOut = filledOut.replace("${WIDGETS_UPDATE}", jsUpdate)
+            filledOut = filledOut.replace("${WIDGETS_SET_VALUE}", jsSetData)
+            filledOut = filledOut.replace("${WIDGETS_SET_NO_DATA}", jsSetNoData)
+            filledOut = filledOut.replace("${WIDGETS_CALLBACK}", jsCallback)
+
             self.send_response(200)
-            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Type", "application/x-javascript")
             self.end_headers()
 
-            self.wfile.write("hello this is also dog".encode())
+            self.wfile.write(filledOut.encode())
 
             return SimpleHTTPRequestHandler
         

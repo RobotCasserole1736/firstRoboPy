@@ -29,10 +29,10 @@ def updateCalibrations():
     _wranglerInst.update()
 
 class Calibration():
-    def __init__(self, name, default=0, units="", minVal=float('-inf'), maxVal=float('inf')):
+    def __init__(self, name, default=0, units="", minVal=float('-99999999'), maxVal=float('99999999')):
         self.name = name
         self.units = units
-        self._default = default
+        self._default = float(default)
         self._lastUpdateTime = 0
         self.min = minVal
         self.max = maxVal
@@ -51,9 +51,9 @@ class Calibration():
         self.curValuePublisher.setDefault(self._default)
         
         curValTopic.setProperty("units", str(self.units))
-        curValTopic.setProperty("min_cal", str(self.min))
-        curValTopic.setProperty("max_cal", str(self.max))
-        curValTopic.setProperty("default_val", str(self._default))
+        curValTopic.setProperty("min_cal", float(self.min))
+        curValTopic.setProperty("max_cal", float(self.max))
+        curValTopic.setProperty("default_val", float(self._default))
         
         desValueTopic = table.getDoubleTopic(name + "/desValue")
         self.desValueSubscriber = desValueTopic.subscribe(self._default)
