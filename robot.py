@@ -23,15 +23,16 @@ class MyRobot(wpilib.TimedRobot):
         pass
         
     def teleopPeriodic(self):
-        log("test", self.fgTest.get())
+        pass
     
     def autonomousInit(self):
         pass
         
     def autonomousPeriodic(self):
-        log("test", 23)
+        pass
         
     def robotPeriodic(self):
+        log("test", self.fgTest.get())
         publishSignals()
         updateCalibrations()
         
