@@ -29,7 +29,7 @@ def updateCalibrations():
     _wranglerInst.update()
 
 class Calibration():
-    def __init__(self, name, default=0, units="", minVal=float('-99999999'), maxVal=float('99999999')):
+    def __init__(self, name, default=0, units="", minVal=float('-Inf'), maxVal=float('Inf')):
         self.name = name
         self.units = units
         self._default = float(default)

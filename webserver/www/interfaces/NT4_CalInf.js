@@ -62,6 +62,14 @@ export class NT4_CalInf {
                 newCal.min = topic.properties.min_cal;
                 newCal.max = topic.properties.max_cal;
                 newCal.default =  topic.properties.default_val;
+
+                if(newCal.min == null){
+                    newCal.min = -Infinity;
+                }
+
+                if(newCal.max == null){
+                    newCal.max = Infinity;
+                }
                 
                 //Publish a desVal topic for every curVal topic
                 var desValTopic = this.nt4Client.publishNewTopic(this.calNameToTopic(calName, "desValue"), topic.type);
