@@ -4,8 +4,14 @@ import socket
 import threading
 import functools
 
+import wpilib
+
 _dashboardWidgetList = []
 
+indexTmpltTxt = ""
+with open("webserver/www/index.html_tmplt", "r") as infile:
+    indexTmpltTxt = infile.read()
+    
 htmlTmpltTxt = ""
 with open("webserver/www/dashboard/dashboard.html_tmplt", "r") as infile:
     htmlTmpltTxt = infile.read()
@@ -33,7 +39,28 @@ class TemplatingRequestHandler(SimpleHTTPRequestHandler):
     
     def do_GET(self):
 
-        if self.path == "/dashboard/dashboard.html":
+        if self.path == "/index.html" or self.path == "/":
+            
+            if(wpilib.RobotBase.isSimulation()):
+                deployText = "Simulation \n"
+            else:
+                deployText = str(wpilib.deployinfo.getDeployData()) + "\n"
+                deployText += f"RIO FPGA Sw: v{wpilib.RobotController.getFPGAVersion()} r{wpilib.RobotController.getFPGARevision()} \n"
+                deployText += f"RIO Serial Number:{wpilib.RobotController.getSerialNumber()} \n"
+                deployText += f"{wpilib.RobotController.getComments()} \n"
+
+
+            filledOut = indexTmpltTxt.replace("${BUILD_INFO}", deployText)
+                     
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.end_headers()                
+
+            self.wfile.write(filledOut.encode())
+
+            return SimpleHTTPRequestHandler
+
+        elif self.path == "/dashboard/dashboard.html":
 
             filledOut = ""
 

@@ -25,7 +25,9 @@
         </linksBox>
 
         <robotStatusBox  class="outlined">
-            <iframe src="buildinfo.html" title="Build Info" class="robotStatusIframe" > </iframe>
+            <div class="buildInfoTextDiv">
+${BUILD_INFO}
+            </div>
         </robotStatusBox>
 
     </topLevelContainer>

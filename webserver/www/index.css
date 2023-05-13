@@ -10,9 +10,9 @@ robotStatusBox {
     flex-grow: 2;
 }
 
-.robotStatusIframe {
-    width:100%;
-    height:100%;
+.buildInfoTextDiv {
+    margin:10px;
+    white-space: pre-wrap;
 }
 
 linksBox {
