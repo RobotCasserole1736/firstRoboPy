@@ -1,6 +1,8 @@
 from http.server import SimpleHTTPRequestHandler
+import platform
 import socketserver
 import socket
+import sys
 import threading
 import functools
 
@@ -48,6 +50,9 @@ class TemplatingRequestHandler(SimpleHTTPRequestHandler):
                 deployText += f"RIO FPGA Sw: v{wpilib.RobotController.getFPGAVersion()} r{wpilib.RobotController.getFPGARevision()} \n"
                 deployText += f"RIO Serial Number:{wpilib.RobotController.getSerialNumber()} \n"
                 deployText += f"{wpilib.RobotController.getComments()} \n"
+                
+            deployText += f"Python {platform.python_version()} \n"
+            deployText += f"{sys.executable}\n"
 
 
             filledOut = indexTmpltTxt.replace("${BUILD_INFO}", deployText)
