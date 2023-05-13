@@ -1,13 +1,13 @@
 
 # Base class for any dashboard widget and its configuration
 class WidgetConfig:
-    def __init__(self, nt4Topic_in):
+    def __init__(self, nt4Topic_in, xPos, yPos):
         self.name = ""
         self.idx = 0
         self.nt4TopicCurVal = nt4Topic_in
         self.isVisible = False
-        self.xPos = 0.0
-        self.yPos = 0.0
+        self.xPos = xPos
+        self.yPos = yPos
         self.sizeScaleFactor = 1.0
         self.nominalWidth  = 0.0
         self.nominalHeight = 0.0

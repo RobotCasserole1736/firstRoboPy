@@ -1,5 +1,7 @@
 import wpilib
 from dashboardWidgets.circularGauge import CircularGauge
+from dashboardWidgets.lineGauge import LineGauge
+from dashboardWidgets.text import Text
 from utils.functionGenerator import FunctionGenerator
 from  utils.signalLogging import log, publishSignals
 from utils.calibration import updateCalibrations
@@ -17,6 +19,8 @@ class MyRobot(wpilib.TimedRobot):
         log("test", -1, "rpm")
         
         self.webserver.addDashboardWidget(CircularGauge(15, 15, "/SmartDashboard/test", -10,10,-5,5))
+        self.webserver.addDashboardWidget(LineGauge(15, 50, "/SmartDashboard/test", -10,10,-5,5))
+        self.webserver.addDashboardWidget(Text(30, 75, "/SmartDashboard/test"))
 
     
     def teleopInit(self):
