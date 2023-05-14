@@ -3,3 +3,4 @@ simgui*.json
 networktables.json
 .coverage
 simulationLogs
+.ipynb_checkpoints

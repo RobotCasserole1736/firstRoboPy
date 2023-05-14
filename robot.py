@@ -7,7 +7,6 @@ from  utils.signalLogging import log, publishSignals
 from utils.calibration import updateCalibrations
 from webserver.webserver import Webserver
 
-
 class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self): 
@@ -37,6 +36,7 @@ class MyRobot(wpilib.TimedRobot):
         
     def robotPeriodic(self):
         log("test", self.fgTest.get())
+        echokernel.kernelPeriodic()
         publishSignals()
         updateCalibrations()
         
