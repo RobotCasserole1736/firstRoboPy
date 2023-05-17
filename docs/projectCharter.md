@@ -64,14 +64,14 @@ Reduces summer work overhead, at the cost of reduced software delivery capiabili
   * Proven in this repo - including CI
 * Consistent, "on-size-fits-most" architecture to teach to new students
   * Similar to how we use singletons now
-* `@Signal` replacement
+* ~~`@Signal` replacement~~
   * Minimal-overhead way to mark a variable or classmember as "important" and make sure it shows up in Network Tables & log file
   * Proposal - a `log(name, units, value)` method which buffers a value for a paritcular signal. Then, a singleton class which has an `update()` function to pump the value into log files and into NT and log files, all with the same timestamp
 * Swerve drive simulation
-* Web based dashboard
+* ~~Web based dashboard~~
   * No current substitute within WPILib offerings
-* Single-step debugger for all targets
-* Replacement for `Calibration` and its workflow
+* ~~Single-step debugger for all targets~~
+* ~~Replacement for `Calibration` and its workflow~~
 * Faults/ Fix-Me light support
 * Replacement for Autonomous sequencer (our own library? re-write? move to command-based?)
   * See [AutoSequencerV2.md](./AutoSequencerV2.md)
@@ -79,7 +79,7 @@ Reduces summer work overhead, at the cost of reduced software delivery capiabili
   * Get around unique on-field situations without physically having a development PC hooked up.
   * See https://stackoverflow.com/questions/6598053/python-global-exception-handling for a global exception handler which could write to file?
 * Runtime periodic execution duration/frequency metrics
-* Closed-loop tuning function generator
+* ~~Closed-loop tuning function generator~~
 * Interpolating 2d lookup table class
 * PathPlanner integration
   * https://robotpy.readthedocs.io/projects/pathplannerlib/en/stable/api.html - already done
