@@ -1,4 +1,5 @@
 import wpilib
+from dashboardWidgets.camera import Camera, getRIOStreamURL
 from dashboardWidgets.circularGauge import CircularGauge
 from dashboardWidgets.lineGauge import LineGauge
 from dashboardWidgets.swerveState import SwerveState
@@ -25,10 +26,13 @@ class MyRobot(wpilib.TimedRobot):
         
         self.dt = Drivetrain()
         
+        wpilib.CameraServer.launch()
+        
         self.webserver.addDashboardWidget(CircularGauge(15, 15, "/SmartDashboard/test", -10,10,-5,5))
         self.webserver.addDashboardWidget(LineGauge(15, 50, "/SmartDashboard/test", -10,10,-5,5))
         self.webserver.addDashboardWidget(Text(30, 75, "/SmartDashboard/test"))
         self.webserver.addDashboardWidget(SwerveState(75, 15))
+        self.webserver.addDashboardWidget(Camera(75, 50, getRIOStreamURL(1181)))
 
     def robotPeriodic(self):
         self.dt.update()
