@@ -3,6 +3,9 @@ import wpilib
 import ntcore as nt
 import wpiutil._wpiutil.log as wpilog # pylint: disable=import-error,no-name-in-module
 
+
+BASE_TABLE = "SmartDashboard"
+
 # Wrangler for coordinating the set of all signals
 class _SignalWrangler:
 
@@ -10,7 +13,7 @@ class _SignalWrangler:
     # Picks approprate logging directory based on our current target
     def __init__(self):
         # Default to publishing things under Shuffleboard, which makes things more avaialble
-        self.table = nt.NetworkTableInstance.getDefault().getTable("SmartDashboard")
+        self.table = nt.NetworkTableInstance.getDefault().getTable(BASE_TABLE)
         self.publishedSigDict = {}
         self.sigUnitsDict = {}
         self.sampleList = []
@@ -86,3 +89,6 @@ def log(name, value, units=None):
 # Call once per robot periodic loop
 def publishSignals():
     _mainInst.publishPeriodic()
+
+def sigNameToNT4TopicName(name):
+    return f"/{BASE_TABLE}/{name}"
