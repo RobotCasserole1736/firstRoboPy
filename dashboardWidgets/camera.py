@@ -13,8 +13,8 @@ def getRIOStreamURL(port):
 class Camera(WidgetConfig):
     def __init__(self, xPos, yPos, streamURL):
         WidgetConfig.__init__(self, "", xPos, yPos)
-        self.nominalHeight = 30
-        self.nominalWidth = 40
+        self.nominalHeight = 25
+        self.nominalWidth = 30
         self.isVisible = True
         self.streamURL = streamURL
 

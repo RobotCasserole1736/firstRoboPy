@@ -3,17 +3,17 @@
 from dashboardWidgets.widgetConfig import WidgetConfig
 
 class AutoChooser(WidgetConfig):
-    def __init__(self, xPos, yPos, nt4Topic_in):
-        WidgetConfig.__init__(self, nt4Topic_in, xPos, yPos)
+    def __init__(self, xPos, yPos, nt4Topic_in, modeList):
+        WidgetConfig.__init__(self, nt4Topic_in + "_cur", xPos, yPos)
         self.nominalHeight = 5
         self.nominalWidth = 40
         self.isVisible = True
-        self.modeNameList = []
-        self.nt4TopicDesVal = ""
+        self.modeNameList = modeList
+        self.nt4TopicDesVal = nt4Topic_in + "_des"
 
     def _getJsModeNameListString(self):
         retVal = "["
-        retVal += ",".join(self.modeNameList)
+        retVal += ",".join([f"\"{x}\"" for x in self.modeNameList])
         retVal += "]"
         return retVal
         
