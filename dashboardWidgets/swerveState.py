@@ -1,14 +1,28 @@
 from dashboardWidgets.widgetConfig import WidgetConfig
 from utils.signalLogging import sigNameToNT4TopicName
 
-# Describes a set of topics associated with one module
-class SwerveStateTopicSet:
+# Utility signal name calculation functions
+def getAzmthDesTopicName(modName):
+    return f"DtModule_{modName}_azmthDes"
+
+def getAzmthActTopicName(modName):
+    return f"DtModule_{modName}_azmthAct"
+
+def getSpeedDesTopicName(modName):
+    return f"DtModule_{modName}_speedDes"
+
+def getSpeedActTopicName(modName):
+    return f"DtModule_{modName}_speedAct"
+
+
+# Private helper class: Describes a set of topics associated with one module
+class _ModuleTopicSet:
 
      def __init__(self, modName, modIdx_in):
-        self.azmthDesTopic = sigNameToNT4TopicName(f"DtModule_{modName}_azmthDes")
-        self.azmthActTopic = sigNameToNT4TopicName(f"DtModule_{modName}_azmthAct")
-        self.speedDesTopic = sigNameToNT4TopicName(f"DtModule_{modName}_speedDes")
-        self.speedActTopic = sigNameToNT4TopicName(f"DtModule_{modName}_speedAct")
+        self.azmthDesTopic = sigNameToNT4TopicName(getAzmthDesTopicName(modName))
+        self.azmthActTopic = sigNameToNT4TopicName(getAzmthActTopicName(modName))
+        self.speedDesTopic = sigNameToNT4TopicName(getSpeedDesTopicName(modName))
+        self.speedActTopic = sigNameToNT4TopicName(getSpeedActTopicName(modName))
         self.modIdx = modIdx_in
     
 
@@ -36,17 +50,18 @@ class SwerveStateTopicSet:
         retStr += f"}}\n"
         return retStr
 
-
-class SwerveStateConfig(WidgetConfig):
+# Public class to describe a swerve state widget for the swerve drive module states
+class SwerveState(WidgetConfig):
 
     def __init__(self, xPos, yPos):
         WidgetConfig.__init__(self, None, xPos, yPos)
-        self.nominalHeight = 30
-        self.nominalWidth = 30
-        self.FLTopics = SwerveStateTopicSet("FL", 0)
-        self.FRTopics = SwerveStateTopicSet("FR", 1)
-        self.BLTopics = SwerveStateTopicSet("BL", 2)
-        self.BRTopics = SwerveStateTopicSet("BR", 3)
+        self.nominalHeight = 20
+        self.nominalWidth = 20
+        self.isVisible = True
+        self.FLTopics = _ModuleTopicSet("FL", 0)
+        self.FRTopics = _ModuleTopicSet("FR", 1)
+        self.BLTopics = _ModuleTopicSet("BL", 2)
+        self.BRTopics = _ModuleTopicSet("BR", 3)
 
 
     def  getJSDeclaration(self):
@@ -62,10 +77,10 @@ class SwerveStateConfig(WidgetConfig):
 
     def  getJSSetData(self):
         retStr = ""
-        retStr += self.FLTopics.getJSSetData(0)
-        retStr += self.FRTopics.getJSSetData(1)
-        retStr += self.BLTopics.getJSSetData(2)
-        retStr += self.BRTopics.getJSSetData(3)
+        retStr += self.FLTopics.getJSSetData(self.idx)
+        retStr += self.FRTopics.getJSSetData(self.idx)
+        retStr += self.BLTopics.getJSSetData(self.idx)
+        retStr += self.BRTopics.getJSSetData(self.idx)
         return retStr
     
     def  getJSUpdate(self) :
