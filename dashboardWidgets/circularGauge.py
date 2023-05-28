@@ -11,10 +11,10 @@ class CircularGauge(WidgetConfig):
         WidgetConfig.__init__(self, nt4Topic_in, xPos, yPos)
         self.nominalHeight = 20
         self.nominalWidth = 20
-        self.minRange = minRange
-        self.maxRange = maxRange
         self.minAcceptable = minAcceptable
         self.maxAcceptable = maxAcceptable
+        self.minRange = minRange
+        self.maxRange = maxRange
         self.isVisible = True
 
     def getJSDeclaration(self):
