@@ -8,6 +8,7 @@ from dashboardWidgets.text import Text
 from drivetrain.drivetrain import DriveTrain
 from sim.robotSim import RobotSim
 from utils.functionGenerator import FunctionGenerator
+from utils.segmentTimeTracker import SegmentTimeTracker
 from  utils.signalLogging import log, publishSignals
 from utils.calibration import updateCalibrations
 from webserver.webserver import Webserver
@@ -24,6 +25,8 @@ class MyRobot(wpilib.TimedRobot):
         self.fgTest = FunctionGenerator("test")
         self.webserver = Webserver()
         log("test", -1, "rpm")
+        
+        self.stt = SegmentTimeTracker()
         
         self.driveTrain = DriveTrain()
         
@@ -44,10 +47,12 @@ class MyRobot(wpilib.TimedRobot):
                         ["spam", "eggs", "one", "two", "five"]))
 
     def robotPeriodic(self):
+        self.stt.start()
         self.driveTrain.update()
         log("test", self.fgTest.get())
         publishSignals()
         updateCalibrations()
+        self.stt.end()
         
     #########################################################
     ## Autonomous-Specific init and update
