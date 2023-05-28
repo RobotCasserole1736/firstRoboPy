@@ -9,21 +9,5 @@ class Text(WidgetConfig):
         self.nominalWidth = 40
         self.isVisible = True
 
-            
-        
-    def  getJSDeclaration(self):
+    def getJSDeclaration(self):
         return f"var widget{self.idx} = new Text('widget{self.idx}', '{self.name}')\n"    
-    
-    def  getJSSetData(self):
-        retStr = ""
-        retStr += f"if(name == \"" + self.nt4TopicCurVal + "\"){ "
-        retStr += f"    widget{self.idx}.setVal(value)"
-        retStr += "}"
-        return retStr
-    
-    def  getJSUpdate(self) :
-        return f"    widget{self.idx}.render()"
-    
-    def  getJSSetNoData(self):
-        return f"    widget{self.idx}.reportNoData()"
-    

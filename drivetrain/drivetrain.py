@@ -1,11 +1,12 @@
 
 
 # Class which implements control logic for a 4-module swerve drive
-from dashboardWidgets.swerveState import getAzmthDesTopicName, getAzmthActTopicName, getSpeedDesTopicName, getSpeedActTopicName
+from dashboardWidgets.swerveState import getAzmthDesTopicName, getAzmthActTopicName
+from dashboardWidgets.swerveState import getSpeedDesTopicName, getSpeedActTopicName
 from utils.signalLogging import log
 
 
-class Drivetrain:
+class DriveTrain:
     def __init__(self):
         pass
         

@@ -8,7 +8,8 @@ class FunctionGenerator():
     def __init__(self, uniqueName):
         
         self.activeCal = Calibration(name="fg_"+uniqueName+"_active",default=0)
-        self.typeCal = Calibration(name="fg_"+uniqueName+"_type", units="0=sine,1=square", minVal=0, maxVal=1)
+        self.typeCal = Calibration(name="fg_"+uniqueName+"_type", 
+                                   units="0=sine,1=square", minVal=0, maxVal=1)
         self.freqCal = Calibration(name="fg_"+uniqueName+"_freq",units="Hz", default=2.0)
         self.ampCal = Calibration(name="fg_"+uniqueName+"_amp",default=1.0)
         self.offsetCal = Calibration(name="fg_"+uniqueName+"_offset")
@@ -41,10 +42,10 @@ class FunctionGenerator():
                     
             return self.offsetCal.get() + self.ampCal.get() * baseOutput
                 
-
-        # Otherwise, inactive, no output
-        return 0
-  
+        else:
+            # Otherwise, inactive, no output
+            return 0
+    
     # indicates whether the function generator is currently active or not.
     def isActive(self):
         return  self.activeCal.get()

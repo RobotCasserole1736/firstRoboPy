@@ -5,7 +5,7 @@ from dashboardWidgets.circularGauge import CircularGauge
 from dashboardWidgets.lineGauge import LineGauge
 from dashboardWidgets.swerveState import SwerveState
 from dashboardWidgets.text import Text
-from drivetrain.drivetrain import Drivetrain
+from drivetrain.drivetrain import DriveTrain
 from sim.robotSim import RobotSim
 from utils.functionGenerator import FunctionGenerator
 from  utils.signalLogging import log, publishSignals
@@ -25,19 +25,26 @@ class MyRobot(wpilib.TimedRobot):
         self.webserver = Webserver()
         log("test", -1, "rpm")
         
-        self.dt = Drivetrain()
+        self.driveTrain = DriveTrain()
         
         wpilib.CameraServer.launch()
         
-        self.webserver.addDashboardWidget(CircularGauge(15, 15, "/SmartDashboard/test", -10,10,-5,5))
-        self.webserver.addDashboardWidget(LineGauge(15, 50, "/SmartDashboard/test", -10,10,-5,5))
-        self.webserver.addDashboardWidget(Text(30, 75, "/SmartDashboard/test"))
-        self.webserver.addDashboardWidget(SwerveState(85, 15))
-        self.webserver.addDashboardWidget(Camera(75, 60, getRIOStreamURL(1181)))
-        self.webserver.addDashboardWidget(AutoChooser(50, 10, "/SmartDashboard/autoMode", ["spam", "eggs", "one", "two", "five"]))
+        self.webserver.addDashboardWidget(
+            CircularGauge(15, 15, "/SmartDashboard/test", -10,10,-5,5))
+        self.webserver.addDashboardWidget(
+            LineGauge(15, 50, "/SmartDashboard/test", -10,10,-5,5))
+        self.webserver.addDashboardWidget(
+            Text(30, 75, "/SmartDashboard/test"))
+        self.webserver.addDashboardWidget(
+            SwerveState(85, 15))
+        self.webserver.addDashboardWidget(
+            Camera(75, 60, getRIOStreamURL(1181)))
+        self.webserver.addDashboardWidget(
+            AutoChooser(50, 10, "/SmartDashboard/autoMode", 
+                        ["spam", "eggs", "one", "two", "five"]))
 
     def robotPeriodic(self):
-        self.dt.update()
+        self.driveTrain.update()
         log("test", self.fgTest.get())
         publishSignals()
         updateCalibrations()

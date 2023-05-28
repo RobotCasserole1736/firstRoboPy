@@ -3,6 +3,10 @@
 from dashboardWidgets.widgetConfig import WidgetConfig
 
 class Icon(WidgetConfig):
+    # This code-generation class has some long lines 
+    # that I don't know of a good way to get rid of.
+    # pylint: disable=line-too-long
+    
     # Mirror the state definitions from JS
     kOFF = 0
     kON = 1
@@ -17,12 +21,12 @@ class Icon(WidgetConfig):
         self.symbolPath = symbolPath
         self.isVisible = True
 
-    def  getJSDeclaration(self):
+    def getJSDeclaration(self):
         return f"var widget{self.idx} = new Icon('widget{self.idx}', '{self.name}',{self.colorOn},{self.symbolPath})\n"    
 
-    def  getJSSetData(self):
+    def getJSSetData(self):
         retStr = ""
-        retStr += "if(name == \"" + self.nt4TopicCurVal + "\"){ \n"
+        retStr += "if(name == \"" + self.ntTopicCurVal + "\"){ \n"
         retStr += "    if(value == 1){ \n"
         retStr += f"        widget{self.idx}.setVal(Icon.kON);\n"
         retStr += "    } else if(value == 2) {\n"
@@ -35,9 +39,8 @@ class Icon(WidgetConfig):
         retStr += "}"
         return retStr
     
-    def  getJSUpdate(self) :
+    def getJSUpdate(self) :
         return f"    widget{self.idx}.render()"
     
-    def  getJSSetNoData(self):
+    def getJSSetNoData(self):
         return f"    widget{self.idx}.reportNoData()"
-    

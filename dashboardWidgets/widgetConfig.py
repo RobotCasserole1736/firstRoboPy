@@ -1,10 +1,14 @@
 
 # Base class for any dashboard widget and its configuration
 class WidgetConfig:
-    def __init__(self, nt4Topic_in, xPos, yPos):
+    # This code-generation class has some long lines 
+    # that I don't know of a good way to get rid of.
+    # pylint: disable=line-too-long
+    
+    def __init__(self, ntTopic, xPos, yPos):
         self.name = ""
         self.idx = 0
-        self.nt4TopicCurVal = nt4Topic_in
+        self.ntTopicCurVal = ntTopic
         self.isVisible = False
         self.xPos = xPos
         self.yPos = yPos
@@ -13,10 +17,10 @@ class WidgetConfig:
         self.nominalHeight = 0.0
 
     def getTopicSubscriptionStrings(self):
-        return "\"" + self.nt4TopicCurVal + "\","
+        return "\"" + self.ntTopicCurVal + "\","
     
     def getHTML(self):
-        if(self.isVisible):
+        if self.isVisible :
             height = self.nominalHeight * self.sizeScaleFactor
             width = self.nominalWidth * self.sizeScaleFactor
             retstr =  "<div class=\"widgetBase\" style=\"top:" + str(self.yPos-height/2) 
@@ -30,15 +34,18 @@ class WidgetConfig:
     def getJSDeclaration(self):
         return ""
 
-    def getJSUpdate(self):
-        return ""
-
-    def getJSSetData(self):
-        return ""
-
-    def getJSSetNoData(self):
-        return ""
-    
     def getJSCallback(self):
         return ""
     
+    def getJSSetData(self):
+        retStr = ""
+        retStr += "if(name == \"" + self.ntTopicCurVal + "\"){ "
+        retStr += f"    widget{self.idx}.setVal(value)"
+        retStr += "}"
+        return retStr
+    
+    def getJSUpdate(self) :
+        return f"    widget{self.idx}.render()"
+    
+    def getJSSetNoData(self):
+        return f"    widget{self.idx}.reportNoData()"

@@ -6,7 +6,7 @@ from sim.drivetrainSim import DrivetrainSim
 class RobotSim():
     
     def __init__(self):
-        self.dt = DrivetrainSim()
+        self.drivetrain = DrivetrainSim()
         
     def update(self):
-        self.dt.update()
+        self.drivetrain.update()
