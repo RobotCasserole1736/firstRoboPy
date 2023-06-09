@@ -1,23 +1,28 @@
 
 from http.server import SimpleHTTPRequestHandler
+import os
 import platform
-import sys
+import sys, pathlib
 import wpilib
 
 # Global list of all widgets on the dashboard. 
 dashboardWidgetList = []
 
+# Where we expect to find our template files at 
+WEB_ROOT = pathlib.Path(__file__).parent / "www"
+DASHBOARD_ROOT = WEB_ROOT / "dashboard"
+
 # One-time, read in all the template files we'll fill out
 INDEX_TMPLT_TXT = ""
-with open("webserver/www/index.html_tmplt", "r", encoding="utf-8") as infile: 
+with open(WEB_ROOT / "index.html_tmplt", "r", encoding="utf-8") as infile: 
     INDEX_TMPLT_TXT = infile.read()
     
 HTML_TMPLT_TXT = ""
-with open("webserver/www/dashboard/dashboard.html_tmplt", "r", encoding="utf-8") as infile:
+with open(DASHBOARD_ROOT / "dashboard.html_tmplt", "r", encoding="utf-8") as infile:
     HTML_TMPLT_TXT = infile.read()
     
 JS_TMPLT_TXT = ""
-with open("webserver/www/dashboard/dashboard.js_tmplt", "r", encoding="utf-8") as infile:
+with open(DASHBOARD_ROOT / "dashboard.js_tmplt", "r", encoding="utf-8") as infile:
     JS_TMPLT_TXT = infile.read()
 
 # A TemplatingRequestsHandler responds to web queries just like
@@ -51,13 +56,19 @@ class TemplatingRequestHandler(SimpleHTTPRequestHandler):
         if wpilib.RobotBase.isSimulation() :
             deployText = "Simulation \n"
         else:
-            deployText = str(wpilib.deployinfo.getDeployData()) + "\n"
+            data = wpilib.deployinfo.getDeployData()
+            deployText =  f"Deployed From: { data['deploy-host'] } \n"
+            deployText +=  f"Deployed By: { data['deploy-user'] } \n"
+            deployText +=  f"Deployed On: { data['deploy-date'] } \n"
+            deployText +=  f"Source Project: { data['code-path'] } \n"
+            deployText +=  f"Git Commit: { data['git-desc'] } \n"
+            deployText +=  f"Git Branch: { data['git-branch'] } \n"
             deployText += f"RIO FPGA Sw: v{wpilib.RobotController.getFPGAVersion()} r{wpilib.RobotController.getFPGARevision()} \n"
             deployText += f"RIO Serial Number:{wpilib.RobotController.getSerialNumber()} \n"
             deployText += f"{wpilib.RobotController.getComments()} \n"
             
-        deployText += f"Python {platform.python_version()} \n"
-        deployText += f"{sys.executable}\n"
+        deployText += f"Python {platform.python_version()} - {sys.executable} \n"
+        deployText += f"Working Dir: {os.getcwd()}\n"
 
 
         filledOut = INDEX_TMPLT_TXT.replace("${BUILD_INFO}", deployText)
@@ -145,7 +156,7 @@ class TemplatingRequestHandler(SimpleHTTPRequestHandler):
         elif self.path == "/dashboard/dashboard.html":
             return self.handleDashboardHtml()
         elif self.path == "/dashboard/dashboard.js":
-            return self.handleDashboardJs
+            return self.handleDashboardJs()
         else:
             # Fallback on serving like a normal HTTP request handler
             return SimpleHTTPRequestHandler.do_GET(self)

@@ -3,7 +3,7 @@ import socket
 import threading
 import functools
 
-from webserver.templatingRequestHandler import TemplatingRequestHandler, dashboardWidgetList
+from webserver.templatingRequestHandler import TemplatingRequestHandler, dashboardWidgetList, WEB_ROOT
 
 # A threaded TCP server starts up new python threads for each client request, which allows
 # complex requests to be handled in the background and not bog down robot code
@@ -18,7 +18,7 @@ class Webserver():
         # Serve all contents of the webserver/www folder, with special
         # logic to handle filling out template html files
         handler = functools.partial(TemplatingRequestHandler, 
-                                     directory="webserver/www/")
+                                     directory=WEB_ROOT)
 
         hostname=socket.gethostname()   
         ipAddr=socket.gethostbyname(hostname)   

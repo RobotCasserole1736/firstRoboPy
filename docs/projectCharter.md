@@ -78,9 +78,9 @@ Reduces summer work overhead, at the cost of reduced software delivery capiabili
 * Ability to record runtime errors to disk for offboard debugging
   * Get around unique on-field situations without physically having a development PC hooked up.
   * See https://stackoverflow.com/questions/6598053/python-global-exception-handling for a global exception handler which could write to file?
-* Runtime periodic execution duration/frequency metrics
+* ~~Runtime periodic execution duration/frequency metrics~~
 * ~~Closed-loop tuning function generator~~
-* Interpolating 2d lookup table class
+* ~~Interpolating 2d lookup table class~~
 * PathPlanner integration
   * https://robotpy.readthedocs.io/projects/pathplannerlib/en/stable/api.html - already done
 

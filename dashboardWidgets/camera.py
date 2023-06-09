@@ -24,3 +24,12 @@ class Camera(WidgetConfig):
 
     def getJSDeclaration(self):
         return f"var widget{self.idx} = new Camera('widget{self.idx}', '{self.name}', '{self.streamURL}')\n"    
+    
+    def getJSSetData(self):
+        return ""
+    
+    def getJSUpdate(self) :
+        return ""
+    
+    def getJSSetNoData(self):
+        return ""
