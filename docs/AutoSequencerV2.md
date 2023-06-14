@@ -23,6 +23,7 @@ Requirements for `Command`
   * `initialize` - called once right before the first call to `execute`
   * `execute` - Called at a rate as long as the command is active
   * `end(boolean interrupted)` - called once right after the final call to `execute`. `interrupted` indicates whether the end was due to this command finishing "naturally" or because somethign else stopped it prematurely
+  * `isDone()` - return true if we're done, false otherwise
 * Commands also implement convienence "composition" methods:
   * `withTimeout` - returns a `raceWith()` a `WaitCommand`
   * `raceWith()` - returns a race group with this command the input commands
@@ -44,3 +45,4 @@ Existing requirements for `AutoSequencer`:
 * Registration of multiple auto `Modes`, including publishing the available list to NT
 * NT-based selection of the current auto event
 * Ticks the `Mode`'s `CommandSequentialGroup` forward
+
