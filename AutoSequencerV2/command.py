@@ -31,3 +31,6 @@ class Command():
         cmds = [self,other]
         return CommandParallelGroup(cmds)
     
+    def getName(self):
+        return self.__qualname__
+    
