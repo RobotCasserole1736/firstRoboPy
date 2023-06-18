@@ -23,7 +23,7 @@ class AutoSequencer():
     # Call this once during autonmous init to init the current command sequence
     def initSequencer(self):
         # TODO set self.curCmdSequence based on current mode(s)
-        self.curCmdSequence.initalize()
+        self.curCmdSequence.initialize()
     
     def update(self):
         self.curCmdSequence.execute()
