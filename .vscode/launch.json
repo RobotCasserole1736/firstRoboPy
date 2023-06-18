@@ -4,7 +4,14 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "name": "Python: Attach",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "port": 5678
+            }
+        },
         {
             "name": "Simulate",
             "type": "python",
@@ -12,7 +19,9 @@
             "program": "robot.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["sim"]
+            "args": [
+                "sim"
+            ]
         },
         {
             "name": "Test",
@@ -21,7 +30,9 @@
             "program": "robot.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["test"]
+            "args": [
+                "test"
+            ]
         }
     ]
 }
