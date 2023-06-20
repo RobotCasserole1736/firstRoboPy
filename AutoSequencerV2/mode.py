@@ -9,7 +9,7 @@ class Mode():
         pass
     
     def getCmds(self):
-        return Command()
+        return [Command()]
     
     def getInitialDrivetrainPose(self):
         return Pose2d(0,0,0)

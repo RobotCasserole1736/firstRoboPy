@@ -1,12 +1,12 @@
+from abc import ABC, abstractmethod
 
+# TODO - make a new abstract simple class defining the compoisiont operators
 
-from AutoSequencerV2.commandParallelGroup import CommandParallelGroup
-from AutoSequencerV2.commandRaceGroup import CommandRaceGroup
-from AutoSequencerV2.commandSequentialGroup import CommandSequentialGroup
+# TODO - implement the composition operators here for commands composed with groups
 
-
-class Command():
+class Command(ABC):
     
+        
     def execute(self):
         pass
     
@@ -19,18 +19,17 @@ class Command():
     def isDone(self):
         return False
     
-    def andThen(self, other):
-        cmds = [self, other]
-        return CommandSequentialGroup(cmds)
-    
-    def raceWith(self, other):
-        cmds = [self, other]
-        return CommandRaceGroup(cmds)
-    
-    def alongWith(self, other):
-        cmds = [self,other]
-        return CommandParallelGroup(cmds)
-    
     def getName(self):
         return self.__qualname__
+          
+    @abstractmethod
+    def andThen(self, other):
+        pass
     
+    @abstractmethod
+    def raceWith(self, other):
+        pass
+    
+    @abstractmethod
+    def alongWith(self, other):
+        pass
