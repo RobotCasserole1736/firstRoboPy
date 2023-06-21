@@ -2,7 +2,6 @@
 
 
 from AutoSequencerV2.commandSequentialGroup import CommandSequentialGroup
-from AutoSequencerV2.commandBase import Command
 from AutoSequencerV2.autoSequencer import AutoSequencer
 
 

@@ -1,9 +1,6 @@
 
 
 from AutoSequencerV2.commandGroup import CommandGroup
-from AutoSequencerV2.commandRaceGroup import CommandRaceGroup
-from AutoSequencerV2.commandSequentialGroup import CommandSequentialGroup
-
 
 class CommandParallelGroup(CommandGroup):
     def __init__(self, cmdList):
@@ -42,13 +39,4 @@ class CommandParallelGroup(CommandGroup):
             return CommandParallelGroup(mergedCmdList)
         else:
             return super().alongWith(other)
-        
-    def andThen(self, other):
-        cmds = [self, other]
-        return CommandSequentialGroup(cmds)
-    
-    def raceWith(self, other):
-        cmds = [self, other]
-        return CommandRaceGroup(cmds)
-    
     

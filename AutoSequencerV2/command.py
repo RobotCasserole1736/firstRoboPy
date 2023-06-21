@@ -1,35 +1,26 @@
-from abc import ABC, abstractmethod
 
 # TODO - make a new abstract simple class defining the compoisiont operators
 
 # TODO - implement the composition operators here for commands composed with groups
 
-class Command(ABC):
+from AutoSequencerV2.commandParallelGroup import CommandParallelGroup
+from AutoSequencerV2.commandRaceGroup import CommandRaceGroup
+from AutoSequencerV2.commandSequentialGroup import CommandSequentialGroup
+from AutoSequencerV2.composer import Composer
+from AutoSequencerV2.runnable import Runnable
+
+
+class Command(Runnable, Composer):
     
-        
-    def execute(self):
-        pass
-    
-    def initialize(self):
-        pass
-    
-    def end(self, interrupted):
-        pass
-    
-    def isDone(self):
-        return False
-    
-    def getName(self):
-        return self.__qualname__
-          
-    @abstractmethod
     def andThen(self, other):
-        pass
+        cmds = [self, other]
+        return CommandSequentialGroup(cmds)
     
-    @abstractmethod
     def raceWith(self, other):
-        pass
-    
-    @abstractmethod
+        cmds = [self, other]
+        return CommandRaceGroup(cmds)
+
     def alongWith(self, other):
-        pass
+        cmds = [self,other]
+        return CommandParallelGroup(cmds)
+    
