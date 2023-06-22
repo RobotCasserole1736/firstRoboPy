@@ -9,7 +9,7 @@ from drivetrain.drivetrain import DriveTrain
 from sim.robotSim import RobotSim
 from utils.functionGenerator import FunctionGenerator
 from utils.segmentTimeTracker import SegmentTimeTracker
-from  utils.signalLogging import log, publishSignals
+from utils.signalLogging import log, publishSignals
 from utils.calibration import updateCalibrations
 from webserver.webserver import Webserver
 from AutoSequencerV2.autoSequencer import as_getInstance

@@ -8,6 +8,8 @@ It is intentionally modeled after WPILib's command-based paradigms, but without 
 
 The autosequencer is a singleton- there is only ever one sequencer. One sequencer may have multiple mode lists. The selection from each mode list should be concatenated together with an `andThen()` composition.
 
+See [the AutoSequencerV2 requirements](..\requirements\AutoSequencerV2Requirements.md) for more info.
+
 ## Usage - Code
 
 ### Main Robot Integration
