@@ -8,12 +8,12 @@ class AutoChooser(WidgetConfig):
     # pylint: disable=line-too-long
 
     def __init__(self, xPos, yPos, nt4Topic_in, modeList):
-        WidgetConfig.__init__(self, nt4Topic_in + "_cur", xPos, yPos)
+        WidgetConfig.__init__(self, nt4Topic_in + "/cur", xPos, yPos)
         self.nominalHeight = 5
         self.nominalWidth = 40
         self.isVisible = True
         self.modeNameList = modeList
-        self.ntTopicDesVal = nt4Topic_in + "_des"
+        self.ntTopicDesVal = nt4Topic_in + "/des"
 
     def _getJsModeNameListString(self):
         retVal = "["

@@ -12,7 +12,7 @@ from utils.segmentTimeTracker import SegmentTimeTracker
 from  utils.signalLogging import log, publishSignals
 from utils.calibration import updateCalibrations
 from webserver.webserver import Webserver
-
+from AutoSequencerV2.autoSequencer import *
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -25,7 +25,7 @@ class MyRobot(wpilib.TimedRobot):
         self.fgTest = FunctionGenerator("test")
         self.webserver = Webserver()
         log("test", -1, "rpm")
-        
+                
         self.stt = SegmentTimeTracker()
         
         self.driveTrain = DriveTrain()
@@ -43,8 +43,8 @@ class MyRobot(wpilib.TimedRobot):
         self.webserver.addDashboardWidget(
             Camera(75, 60, getRIOStreamURL(1181)))
         self.webserver.addDashboardWidget(
-            AutoChooser(50, 10, "/SmartDashboard/autoMode", 
-                        ["spam", "eggs", "one", "two", "five"]))
+            AutoChooser(50, 10, autosequener_getInstance().getDelayModeNTTableName(), 
+                        autosequener_getInstance().getDelayModeList()))
 
     def robotPeriodic(self):
         self.stt.start()
@@ -57,10 +57,14 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Autonomous-Specific init and update
     def autonomousInit(self):
-        pass
+        autosequener_getInstance().initiaize()
         
     def autonomousPeriodic(self):
-        pass
+        autosequener_getInstance().update()
+
+    def autonomousExit(self):
+        autosequener_getInstance().end()
+
         
     
     #########################################################
@@ -70,8 +74,12 @@ class MyRobot(wpilib.TimedRobot):
         
     def teleopPeriodic(self):
         pass
-
-
+    
+    
+    #########################################################
+    ## Disabled-Specific init and update
+    def disabledPeriodic(self):
+        autosequener_getInstance().updateMode()
         
     #########################################################
     ## Robot Simulation Support

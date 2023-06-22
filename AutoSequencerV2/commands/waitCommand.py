@@ -11,7 +11,7 @@ class WaitCommand(Command):
         self.waitDur = waitDur
         self.endTime = 0
     
-    def initalize(self):
+    def initialize(self):
         self.endTime = wpilib.Timer.getFPGATimestamp() + self.waitDur
         
     def isDone(self):

@@ -3,120 +3,134 @@ from AutoSequencerV2.runnable import Runnable
 from enum import Enum
 
 
-# class syntax
+# Defines the style of execution a group should have. 
 class GroupType(Enum):
     SEQUENTIAL = 1
     PARALLEL = 2
     RACE = 3
 
-
+    """Command Group - implements all types of command groups.
+    CMG Note: This feels very not-pythonic. However, because commands need to know about commandGroups to do composition,
+    but commandGroups need to know about commands to run them, you tend to get circular imports which python hates.
+    I'm not sure there's a better way around this
+    """
 class CommandGroup(Runnable, Composer):
-    def __init__(self, cmdList, groupType):
+    def __init__(self, cmdList=[], groupType=GroupType.SEQUENTIAL):
         self.groupType = groupType
         self.cmdList = cmdList
-        self.curCmdIdx = 0
-        self.cmdFinishedDict = {}
-        self.finishedFirstIdx = None # Set to the index of the command which finished first, or None if all are running
+        self._curCmdIdx = 0
+        self._cmdFinishedDict = {}
+        self._finishedFirstIdx = None # Set to the index of the command which finished first, or None if all are running
 
     ##################################################
     ## Race group operation
 
     def _initRace(self):
-        self.finishedFirstIdx = None
+        self._finishedFirstIdx = None
 
         # Init all the cmds
         for cmd in self.cmdList:
+            print(f"[Auto] Start {cmd.getName()}")
             cmd.initialize()
 
     def _executeRace(self):
-        if(self.finishedFirstIdx != None):
-            if(not self.isDone()):
-                for idx, cmd in enumerate(self.cmdList):
-                    # Run each command in this group, checking for finish as we go.
-                    cmd.execute()
-                    if(cmd.isDone()):
-                        # If we're finished, stop updating
-                        self.finishedFirstIdx = idx
-                        break
+        if(not self.isDone()):
+            for idx, cmd in enumerate(self.cmdList):
+                # Run each command in this group, checking for finish as we go.
+                cmd.execute()
+                if(cmd.isDone()):
+                    # If we're finished, stop updating
+                    print(f"[Auto] {cmd.getName()} finished first")
+                    self._finishedFirstIdx = idx
+                    break
 
     def _endRace(self, interrupted):
         # Finish each child command
         for idx, cmd in enumerate(self.cmdList):
-            isInterrupted = False if idx == self.finishedFirstIdx else True or interrupted
-            cmd.end(self, isInterrupted)
+            isInterrupted = False if idx == self._finishedFirstIdx else True or interrupted
+            print(f"[Auto] Ending {cmd.getName()}")
+            cmd.end(isInterrupted)
 
     def _isDoneRace(self):
         #We're done when one command has finished
-        return (self.finishedFirstIdx != None)
+        return (self._finishedFirstIdx != None)
 
 
     ##################################################
     ## Parallel group operation
     def _initParallel(self):
         # Set up the dictionary of commands to "finished" booleans
-        self.cmdFinishedDict.clear()
+        self._cmdFinishedDict.clear()
         for cmd in self.cmdList:
-            self.cmdFinishedDict[cmd] = False
+            self._cmdFinishedDict[cmd] = False
         
         for cmd in self.cmdList:
+            print(f"[Auto] Start {cmd.getName()}")
             cmd.initialize()
 
     def _executeParallel(self):
         for cmd in self.cmdList:
-            if(not self.cmdFinishedDict[cmd]):
+            if(not self._cmdFinishedDict[cmd]):
                 # Run each unfinished command in this group, checking for finish as we go.
                 cmd.execute()
                 if(cmd.isDone()):
                     #Naturally end the command when it is done.
+                    print(f"[Auto] {cmd.getName()} finished")
                     cmd.end(False)
-                    self.cmdFinishedDict[cmd] = True
+                    self._cmdFinishedDict[cmd] = True
 
     def _endParallel(self, interrupted):
         for cmd in self.cmdList:
-            if(not self.cmdFinishedDict[cmd]):
+            if(not self._cmdFinishedDict[cmd]):
                 # End all unfinished commands
+                print(f"[Auto] Ending {cmd.getName()}")
                 cmd.end(interrupted)
 
     def _isDoneParallel(self):
         # We're done when every command has finished
-        return all(self.cmdFinishedDict.values())
+        return all(self._cmdFinishedDict.values())
     
     ##################################################
     ## Sequential group operation
 
     def _initSequential(self):
-        self.curCmdIdx = 0
-        if(self.curCmdIdx < len(self.cmdList)):
+        self._curCmdIdx = 0
+        if(self._curCmdIdx < len(self.cmdList)):
             # Init the first command
-            curCmd = self.cmdList[self.curCmdIdx]
+            curCmd = self.cmdList[self._curCmdIdx]
+            print(f"[Auto] Init {curCmd.getName()}")
             curCmd.initialize()
 
     def _executeSequential(self):
-        if(self.curCmdIdx < len(self.cmdList)):
+        if(self._curCmdIdx < len(self.cmdList)):
             # If we've got a valid command, execute it
-            curCmd = self.cmdList[self.curCmdIdx]
+            curCmd = self.cmdList[self._curCmdIdx]
             curCmd.execute()
             
             if(curCmd.isDone()):
                 # Time to move on to the next command
                 # First, Naturally end the current command
+                print(f"[Auto] Ending {curCmd.getName()}")
                 curCmd.end(False)
                 # Move onto the next command
-                self.curCmdIdx += 1
+                self._curCmdIdx += 1
                 # Init it if it exists
-                if(self.curCmdIdx < len(self.cmdList)):
-                    curCmd = self.cmdList[self.curCmdIdx]
+                if(self._curCmdIdx < len(self.cmdList)):
+                    curCmd = self.cmdList[self._curCmdIdx]
+                    print(f"[Auto] Init {curCmd.getName()}")
                     curCmd.initialize()
                     # That's it, next loop we'll execute it.
 
     def _endSequential(self, interrupted):
         # Only need to end the current command
-        curCmd = self.cmdList[self.curCmdIdx]
-        curCmd.end(interrupted)
+        if(self._curCmdIdx < len(self.cmdList)):
+            curCmd = self.cmdList[self._curCmdIdx]
+            print(f"[Auto] Ending {curCmd.getName()}")
+            curCmd.end(interrupted)
 
     def _isDoneSequential(self):
         # We're done when we hit the end of the list
-        return self.curCmdIdx >= len(self.cmdList)
+        return self._curCmdIdx >= len(self.cmdList)
 
     ##################################################
     ## common method switchyard

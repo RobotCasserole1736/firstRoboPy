@@ -1,18 +1,24 @@
 
 
 from wpimath.geometry import Pose2d
-from AutoSequencerV2.command import Command
+from AutoSequencerV2.commandGroup import CommandGroup, GroupType
 
-
+# An auto mode is something our robot might do during autonomous
+# THe drive team selects the mode before the match
+# The robot executes the mode during autonomous
+# Modes must have a human-readable name, return a group of commands, and an initial drivetrain pose (IE, where is it expected the drive team placed the robot for this autonomous routine?)
 class Mode():
-    def __init__(self):
-        pass
-    
-    def getCmds(self):
-        return [Command()]
+    def __init__(self, name=None):
+        if(name):
+            self._name = name
+        else:
+            self._name = self.__qualname__
+
+    def getCmdGroup(self):
+        return CommandGroup([],GroupType.SEQUENTIAL)
     
     def getInitialDrivetrainPose(self):
         return Pose2d(0,0,0)
     
     def getName(self):
-        return self.__qualname__
+        return self._name

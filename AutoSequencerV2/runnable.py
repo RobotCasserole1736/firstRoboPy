@@ -1,4 +1,6 @@
         
+# Base class defining the methods that any command or command group which can be executed must support
+
 class Runnable():
     
     def execute(self):
@@ -12,6 +14,3 @@ class Runnable():
     
     def isDone(self):
         return False
-    
-    def getName(self):
-        return self.__qualname__
