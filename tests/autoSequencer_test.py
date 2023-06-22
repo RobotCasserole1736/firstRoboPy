@@ -1,8 +1,9 @@
 
 
 
-from AutoSequencerV2.commandSequentialGroup import CommandSequentialGroup
 from AutoSequencerV2.autoSequencer import AutoSequencer
+from AutoSequencerV2.command import Command
+from AutoSequencerV2.commandGroup import CommandGroup
 
 
 class TestCommand(Command):
@@ -19,6 +20,6 @@ def test_topLevel():
 def test_sequential():
     dut = TestCommand().andThen(TestCommand().andThen(TestCommand()))
     
-    assert(isinstance(dut, CommandSequentialGroup))
+    assert(isinstance(dut, CommandGroup))
     assert(len(dut.cmdList) == 3)
 

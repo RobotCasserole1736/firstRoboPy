@@ -1,11 +1,4 @@
-
-# TODO - make a new abstract simple class defining the compoisiont operators
-
-# TODO - implement the composition operators here for commands composed with groups
-
-from AutoSequencerV2.commandParallelGroup import CommandParallelGroup
-from AutoSequencerV2.commandRaceGroup import CommandRaceGroup
-from AutoSequencerV2.commandSequentialGroup import CommandSequentialGroup
+from AutoSequencerV2.commandGroup import CommandGroup, GroupType
 from AutoSequencerV2.composer import Composer
 from AutoSequencerV2.runnable import Runnable
 
@@ -13,14 +6,19 @@ from AutoSequencerV2.runnable import Runnable
 class Command(Runnable, Composer):
     
     def andThen(self, other):
-        cmds = [self, other]
-        return CommandSequentialGroup(cmds)
+        return self._composeWith(other, GroupType.SEQUENTIAL)
     
     def raceWith(self, other):
-        cmds = [self, other]
-        return CommandRaceGroup(cmds)
+        return self._composeWith(other, GroupType.RACE)
 
     def alongWith(self, other):
-        cmds = [self,other]
-        return CommandParallelGroup(cmds)
+        return self._composeWith(other, GroupType.PARALLEL)
+
+    def _composeWith(self, other, outputGroupType):
+        if(isinstance(other, CommandGroup) and other.groupType == outputGroupType):
+            cmds = [self]
+            cmds.extend(other.cmdList)
+        else:
+            cmds = [self, other]
+        return CommandGroup(cmds, outputGroupType)
     
