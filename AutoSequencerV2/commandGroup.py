@@ -30,7 +30,7 @@ class CommandGroup(Runnable, Composer):
 
         # Init all the cmds
         for cmd in self.cmdList:
-            print(f"[Auto] Start {cmd.getName()}")
+            print(f"[Auto] Starting {cmd.getName()}")
             cmd.initialize()
 
     def _executeRace(self):
@@ -65,7 +65,7 @@ class CommandGroup(Runnable, Composer):
             self._cmdFinishedDict[cmd] = False
         
         for cmd in self.cmdList:
-            print(f"[Auto] Start {cmd.getName()}")
+            print(f"[Auto] Starting {cmd.getName()}")
             cmd.initialize()
 
     def _executeParallel(self):
@@ -98,7 +98,7 @@ class CommandGroup(Runnable, Composer):
         if(self._curCmdIdx < len(self.cmdList)):
             # Init the first command
             curCmd = self.cmdList[self._curCmdIdx]
-            print(f"[Auto] Init {curCmd.getName()}")
+            print(f"[Auto] Starting {curCmd.getName()}")
             curCmd.initialize()
 
     def _executeSequential(self):
@@ -117,7 +117,7 @@ class CommandGroup(Runnable, Composer):
                 # Init it if it exists
                 if(self._curCmdIdx < len(self.cmdList)):
                     curCmd = self.cmdList[self._curCmdIdx]
-                    print(f"[Auto] Init {curCmd.getName()}")
+                    print(f"[Auto] Starting {curCmd.getName()}")
                     curCmd.initialize()
                     # That's it, next loop we'll execute it.
 

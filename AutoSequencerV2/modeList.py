@@ -17,14 +17,17 @@ class ModeList():
         
         desModeIdxTopic = inst.getIntegerTopic(self.getDesModeTopicName())
         self.desModeIdxPublisher = desModeIdxTopic.subscribe(self.curModeIdx)
-    
+        
     def addMode(self, modeIn):
         self.modes.append(modeIn)        
         
-    def updateMode(self):
+    def updateMode(self, force=False):
         prevModeIdx = self.curModeIdx
-        self.curModeIdx = self.desModeIdxPublisher.get()
-        self.curModeIdxPublisher.set(self.curModeIdx)
+        tmp = self.desModeIdxPublisher.getAtomic()
+        if(tmp.time > 0 or force):
+            self.curModeIdx = tmp.value
+            self.curModeIdxPublisher.set(self.curModeIdx)
+            
         return prevModeIdx != self.curModeIdx # Return true if the selection has changed
         
     def getCurMode(self):

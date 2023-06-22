@@ -19,13 +19,15 @@ class _AutoSequencer():
         
         self.topLevelCmdGroup = CommandGroup()
         
+        self.updateMode(force=True) # Ensure we load the auto sequener at least once.
+        
         
     # Call this periodically while disabled to keep the dashboard updated
     # and, when things change, re-init modes
-    def updateMode(self):
+    def updateMode(self, force=False):
         mainChanged = self.mainModeList.updateMode()
         delayChanged = self.delayModeList.updateMode()
-        if(mainChanged or delayChanged):
+        if(mainChanged or delayChanged or force):
             mainMode = self.mainModeList.getCurMode()
             delayMode = self.delayModeList.getCurMode()
             self.topLevelCmdGroup = delayMode.getCmdGroup().andThen(mainMode.getCmdGroup())
@@ -42,7 +44,7 @@ class _AutoSequencer():
 
     def end(self):
         self.topLevelCmdGroup.end(True)
-        print("[Auto] Sequener Stopped")
+        print("[Auto] Sequencer Stopped")
         
     def getMainModeList(self):
         return self.mainModeList.getNames()
