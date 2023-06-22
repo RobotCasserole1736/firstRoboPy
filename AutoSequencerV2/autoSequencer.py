@@ -63,5 +63,5 @@ _autoSequencerInst = _AutoSequencer()
 
 ###########################################
 ## Public API
-def autosequener_getInstance():
+def as_getInstance():
     return _autoSequencerInst
