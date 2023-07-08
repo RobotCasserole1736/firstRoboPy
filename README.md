@@ -19,6 +19,10 @@ Before developing code on a new computer, perform the following:
     python -m pip install -U robotpy[all]
 ```
 
+## Docs
+
+[Click here to see documentation for common libraries](docs/UserAPI).
+
 ## Deploying to the Robot
 
 `deploy.bat` will deploy all code to the robot. Be sure to be on the same network as the robot.
