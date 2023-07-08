@@ -14,7 +14,7 @@ class Mode():
         if(name):
             self._name = name
         else:
-            self._name = self.__qualname__
+            self._name = self.__class__.__qualname__
 
     def getCmdGroup(self):
         return CommandGroup([],GroupType.SEQUENTIAL)
