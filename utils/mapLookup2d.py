@@ -1,6 +1,6 @@
 from operator import itemgetter
 
-
+# pylint: disable=too-few-public-methods
 class MapLookup2D():
     # points should be a list of two-element tuples, with (x,y) pairs described by each tuple.
     def __init__(self, points:list[tuple[float,float]]):
@@ -31,7 +31,7 @@ class MapLookup2D():
                 # Iterate over the xAxis array to find the interval that req_x_val falls within
                 # Note this only works because xAxis is sorted.
                 for indexIter in range(0,len(self.points)-1):
-                    if self._x(indexIter+1) >= xval and self._x(indexIter) <= xval:
+                    if self._x(indexIter) <= xval <= self._x(indexIter+1):
                         lowerIndex = indexIter
                         break
                     
@@ -43,8 +43,10 @@ class MapLookup2D():
             
         return yval
     
+    # pylint: disable=invalid-name
     def _x(self, idx):
         return self.points[idx][0]
     
+    # pylint: disable=invalid-name
     def _y(self, idx):
         return self.points[idx][1]

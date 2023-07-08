@@ -6,7 +6,9 @@ from AutoSequencerV2.commandGroup import CommandGroup, GroupType
 # An auto mode is something our robot might do during autonomous
 # THe drive team selects the mode before the match
 # The robot executes the mode during autonomous
-# Modes must have a human-readable name, return a group of commands, and an initial drivetrain pose (IE, where is it expected the drive team placed the robot for this autonomous routine?)
+# Modes must have a human-readable name, return a group of commands, and an 
+# initial drivetrain pose (IE, where is it expected the drive team placed the 
+# robot for this autonomous routine?)
 class Mode():
     def __init__(self, name=None):
         if(name):

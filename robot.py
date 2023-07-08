@@ -12,7 +12,7 @@ from utils.segmentTimeTracker import SegmentTimeTracker
 from utils.signalLogging import log, publishSignals
 from utils.calibration import updateCalibrations
 from webserver.webserver import Webserver
-from AutoSequencerV2.autoSequencer import as_getInstance
+from AutoSequencerV2.autoSequencer import autoSequencerGetInstance
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -43,8 +43,8 @@ class MyRobot(wpilib.TimedRobot):
         self.webserver.addDashboardWidget(
             Camera(75, 60, getRIOStreamURL(1181)))
         self.webserver.addDashboardWidget(
-            AutoChooser(50, 10, as_getInstance().getDelayModeNTTableName(), 
-                        as_getInstance().getDelayModeList()))
+            AutoChooser(50, 10, autoSequencerGetInstance().getDelayModeNTTableName(), 
+                        autoSequencerGetInstance().getDelayModeList()))
 
     def robotPeriodic(self):
         self.stt.start()
@@ -57,13 +57,13 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Autonomous-Specific init and update
     def autonomousInit(self):
-        as_getInstance().initiaize()
+        autoSequencerGetInstance().initiaize()
         
     def autonomousPeriodic(self):
-        as_getInstance().update()
+        autoSequencerGetInstance().update()
 
     def autonomousExit(self):
-        as_getInstance().end()
+        autoSequencerGetInstance().end()
 
         
     
@@ -79,7 +79,7 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Disabled-Specific init and update
     def disabledPeriodic(self):
-        as_getInstance().updateMode()
+        autoSequencerGetInstance().updateMode()
         
     #########################################################
     ## Robot Simulation Support

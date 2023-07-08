@@ -1,3 +1,4 @@
+# pylint: disable-all
 
 
 from AutoSequencerV2.autoSequencer import *
@@ -17,10 +18,10 @@ class TestCommand(Command):
 
 
 def test_topLevel():
-    autosequener_updateMode()
-    autosequener_initiaize()
-    autosequener_update()
-    autosequener_end()
+    autoSequencerGetInstance().updateMode()
+    autoSequencerGetInstance().initiaize()
+    autoSequencerGetInstance().update()
+    autoSequencerGetInstance().end()
 
 
 
@@ -98,7 +99,7 @@ def test_race():
     
     for cmd in dut.cmdList:
         assert isinstance(cmd, Command)
-        assert cmd.execCount == 0
+        assert cmd.execCount == 0 # type: ignore
 
     dut.execute()
     

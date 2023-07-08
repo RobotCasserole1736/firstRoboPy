@@ -99,7 +99,7 @@ suggestion-mode=yes
 
 # Allow loading of arbitrary C extensions. Extensions are imported into the
 # active Python interpreter and may run arbitrary code.
-unsafe-load-any-extension=no
+unsafe-load-any-extension=yes
 
 # In verbose mode, extra non-checker-related info will be displayed.
 #verbose=
@@ -184,7 +184,8 @@ good-names=i,
            k,
            ex,
            Run,
-           _
+           _,
+           kP,kI,kD,i,j,k,kF,kS,kV
 
 # Good variable names regexes, separated by a comma. If names match any regex,
 # they will always be accepted
@@ -331,7 +332,7 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=100
+max-line-length=120
 
 # Maximum number of lines in a module.
 max-module-lines=1000
@@ -349,6 +350,7 @@ single-line-if-stmt=no
 # C0304= file-ending whitespace 
 # C0114, C0115, C0116 = docstrings
 disable=C0303,C0304,C0114,C0115,C0116
+
 
 
 [IMPORTS]
@@ -434,7 +436,8 @@ disable=raw-checker-failed,
         too-many-instance-attributes,
         too-many-arguments,
         f-string-without-interpolation,
-        no-else-return
+        no-else-return,
+        superfluous-parens
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

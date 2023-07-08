@@ -2,7 +2,8 @@
 from http.server import SimpleHTTPRequestHandler
 import os
 import platform
-import sys, pathlib
+import sys
+import pathlib
 import wpilib
 
 # Global list of all widgets on the dashboard. 
@@ -53,16 +54,18 @@ class TemplatingRequestHandler(SimpleHTTPRequestHandler):
     # This is the main landing page of the robot and includes robopy-provided
     # deploy information
     def handleIndexPage(self):
+        deployText = ""
         if wpilib.RobotBase.isSimulation() :
-            deployText = "Simulation \n"
+            deployText += "Simulation \n"
         else:
             data = wpilib.deployinfo.getDeployData()
-            deployText =  f"Deployed From: { data['deploy-host'] } \n"
-            deployText +=  f"Deployed By: { data['deploy-user'] } \n"
-            deployText +=  f"Deployed On: { data['deploy-date'] } \n"
-            deployText +=  f"Source Project: { data['code-path'] } \n"
-            deployText +=  f"Git Commit: { data['git-desc'] } \n"
-            deployText +=  f"Git Branch: { data['git-branch'] } \n"
+            if(data is not None):
+                deployText +=  f"Deployed From: { data['deploy-host'] } \n"
+                deployText +=  f"Deployed By: { data['deploy-user'] } \n"
+                deployText +=  f"Deployed On: { data['deploy-date'] } \n"
+                deployText +=  f"Source Project: { data['code-path'] } \n"
+                deployText +=  f"Git Commit: { data['git-desc'] } \n"
+                deployText +=  f"Git Branch: { data['git-branch'] } \n"
             deployText += f"RIO FPGA Sw: v{wpilib.RobotController.getFPGAVersion()} r{wpilib.RobotController.getFPGARevision()} \n"
             deployText += f"RIO Serial Number:{wpilib.RobotController.getSerialNumber()} \n"
             deployText += f"{wpilib.RobotController.getComments()} \n"

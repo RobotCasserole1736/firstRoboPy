@@ -17,20 +17,20 @@ See [the AutoSequencerV2 requirements](..\requirements\AutoSequencerV2Requiremen
 First, import the webserver class.
 
 ```py
-from AutoSequencerV2.autoSequencer import as_getInstance
+from AutoSequencerV2.autoSequencer import autoSequencerGetInstance
 ```
 
 Then, call the auto sequencer methods from the three Autonomous methods:
 
 ```py
 def autonomousInit(self):
-    as_getInstance().initiaize()
+    autoSequencerGetInstance().initiaize()
     
 def autonomousPeriodic(self):
-    as_getInstance().update()
+    autoSequencerGetInstance().update()
 
 def autonomousExit(self):
-    as_getInstance().end()
+    autoSequencerGetInstance().end()
 ```
 
 These methods must always be called in the order of initialize -> update -> end
@@ -39,12 +39,12 @@ To allow users to select the mode(s), add an approprate widget.
 
 ```py
 self.webserver.addDashboardWidget(
-    AutoChooser(50, 10, as_getInstance().getDelayModeNTTableName(), 
-                as_getInstance().getDelayModeList()))
+    AutoChooser(50, 10, autoSequencerGetInstance().getDelayModeNTTableName(), 
+                autoSequencerGetInstance().getDelayModeList()))
 
 self.webserver.addDashboardWidget(
-    AutoChooser(75, 10, as_getInstance().getMainModeNTTableName(), 
-                as_getInstance().getMainModeList()))
+    AutoChooser(75, 10, autoSequencerGetInstance().getMainModeNTTableName(), 
+                autoSequencerGetInstance().getMainModeList()))
 ```
 
 [More information about adding widgets is found here.](dashboardWidgets.py)

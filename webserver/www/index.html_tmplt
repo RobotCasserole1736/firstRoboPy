@@ -19,7 +19,6 @@
             <a class="bigLinkButton" href="/cameras/cameras.html">Cameras</a> <br>
             <a class="bigLinkButton" href="/stripchart/stripchart.html">Strip Charts</a> <br>
             <a class="bigLinkButton" href="/calibration/calibration.html">Calibration</a> <br>
-            <a class="bigLinkButton" href="/logs/logs.html">Data Logs</a> <br>
             <a class="bigLinkButton" href="/outlineViewer/outlineViewer.html">NT Outline Viewer</a> <br>
 
         </linksBox>

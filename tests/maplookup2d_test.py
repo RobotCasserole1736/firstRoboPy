@@ -1,3 +1,4 @@
+# pylint: disable-all
 
 
 from utils.mapLookup2d import MapLookup2D
