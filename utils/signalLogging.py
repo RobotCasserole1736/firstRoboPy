@@ -87,7 +87,7 @@ def log(name, value, units=None):
         _mainInst.sigUnitsDict[name] = units
 
 # Call once per robot periodic loop
-def publishSignals():
+def update():
     _mainInst.publishPeriodic()
 
 def sigNameToNT4TopicName(name):

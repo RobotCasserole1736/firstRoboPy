@@ -18,10 +18,10 @@ class TestCommand(Command):
 
 
 def test_topLevel():
-    autoSequencerGetInstance().updateMode()
-    autoSequencerGetInstance().initiaize()
-    autoSequencerGetInstance().update()
-    autoSequencerGetInstance().end()
+    getInstance().updateMode()
+    getInstance().initiaize()
+    getInstance().update()
+    getInstance().end()
 
 
 

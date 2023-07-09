@@ -58,21 +58,21 @@ _inst = _MySingletonClass()
 
 #Provide a single public function to get the instance of the class
 
-def MySingletonClass_getInstance():
+def getInstance():
     return _inst
 
 ```
 
-Then, to use it in another file, first import the `getInstance()` method
+Then, to use it in another file, first import the whole module, and give it a nice name
 
 ```py
-from someFolder.mySingletonClass import MySingletonClass_getInstance
+import someFolder.mySingletonClass as MySingletonClass
 ```
 
 Finally, use `getInstance` to access the instance, and call methods from it:
 
 ```py
-print(MySingletonClass_getInstance().doAThing())
+print(MySingletonClass.getInstance().doAThing())
 ```
 
 (the above should print `"42"`)

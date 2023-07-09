@@ -24,7 +24,7 @@ class WrapperedSparkMax():
             errList.append(self.ctrl.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus2, 65500))
             # Status 3 = Analog Sensor Input
             errList.append(self.ctrl.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus3, 65500))
-            if(any([x is not REVLibError.kOk for x in errList])):
+            if(any(x is not REVLibError.kOk for x in errList)):
                 print(f"Failure configuring Spark Max {name} CAN ID {canID}, retrying...")
         
     def setInverted(self, isInverted):
@@ -36,7 +36,8 @@ class WrapperedSparkMax():
         self.pidCtrl.setD(kD)
         
     def setVelCmd(self, velCmd, arbFF=0):
-        self.pidCtrl.setReference(velCmd, CANSparkMax.ControlType.kVelocity, 0, arbFF, SparkMaxPIDController.ArbFFUnits.kVoltage)
+        self.pidCtrl.setReference(velCmd, CANSparkMax.ControlType.kVelocity, 
+                                  0, arbFF, SparkMaxPIDController.ArbFFUnits.kVoltage)
 
     def setVoltage(self, outputVoltageVolts):
         log(self.name + "_cmdVoltage", outputVoltageVolts, "V")
