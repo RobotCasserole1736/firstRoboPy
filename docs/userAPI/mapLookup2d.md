@@ -24,8 +24,29 @@ myMapLookup = MapLookup2D([
     ])
 ```
 
+
 Finally, at runtime, perform the lookup when needed:
 
 ```py
 outputVal = myMapLookup.lookup(inputVal)
 ```
+
+In this example, we expect the points to form the following relationship:
+
+
+```
+outputVal
+    ^
+   5+
+    |
+====+==o
+    |   +++
+   3+      +++
+    |         +++
+   2+           +o=========o====o
+    |                            ++++
+   1+                                ++++ 
+    |                                    ++++++    
+ <--+--+----+----+----+----+----+----+----+----o=======> inputVal
+       1    2    3    4    5    6    7    8    9    10
+ ```   
