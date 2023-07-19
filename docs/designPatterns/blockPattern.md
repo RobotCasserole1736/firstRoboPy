@@ -34,7 +34,7 @@ class RecieverBlock():
 
 Remember that classes are simply patterns for how to create functionalty. To actually invoke their functionality, you have to _instantiate_ an _object_ with the class as its type.
 
-In our case, this will happen to create one sender and one reciever within `robot.py`. Note that we must import class definitions before using them.
+In our case, we will need to create one of each block in `robot.py`. Note that we must import class definitions before using them.
 
 **`robot.py`**
 
@@ -168,3 +168,5 @@ class MyRobot(wpilib.TimedRobot):
 
         self.r.update()
 ```
+
+We have now fully implemented a two-block architecture with init, update, and passing one piece of data.

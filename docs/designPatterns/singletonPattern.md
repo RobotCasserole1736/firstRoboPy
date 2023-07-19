@@ -2,7 +2,9 @@
 
 In code, we frequently want to indicate "there is only ever one of these".
 
-This can be difficult in python, as it does not have a concept of "public" or "private" variables built into the language at runtime.
+## Public & Private in Python.
+
+Python does not have a concept of "public" or "private" variables built into the language.
 
 However, a common convention is to prefix names with an underscore `_` to indicate the named thing is private.
 
@@ -31,7 +33,9 @@ class _SomePrivateClass():
         self._myPrivateVariable = 6
 ```
 
-In this case, it indicates `_SomPrivateClass` shoudl not be instantiated outside the module both those classes are delcared in.
+In this case, it indicates `_SomPerivateClass` should not be instantiated outside the file both those classes are delcared in.
+
+## Making a Class into a Singleton
 
 Along with the fact that python supports global variables (delcared outside any class structure), we can emulate a simple singleton class architecture like this:
 
@@ -63,13 +67,15 @@ def getInstance():
 
 ```
 
-Then, to use it in another file, first import the whole module, and give it a nice name
+## Using a Singleton
+
+To use it in another file, first import the whole module, and give it a nice name
 
 ```py
 import someFolder.mySingletonClass as MySingletonClass
 ```
 
-Finally, use `getInstance` to access the instance, and call methods from it:
+Then, use `getInstance` to access the instance, and call methods from it:
 
 ```py
 print(MySingletonClass.getInstance().doAThing())
