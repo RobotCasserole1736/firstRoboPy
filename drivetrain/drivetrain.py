@@ -4,15 +4,22 @@
 from dashboardWidgets.swerveState import getAzmthDesTopicName, getAzmthActTopicName
 from dashboardWidgets.swerveState import getSpeedDesTopicName, getSpeedActTopicName
 from utils.signalLogging import log
-from wrappers.wrapperedSparkMax import WrapperedSparkMax
-
-
+import wpilib 
+import wpilib.simulation
+#(wpilib.timedRobot):
 class DriveTrain:
     def __init__(self):
-        self.testMotor = WrapperedSparkMax(1, "test")
+        self.r1 = wpilib.Spark(4)
+        self.r2 = wpilib.Spark(5)
+        self.r3 = wpilib.Spark(6)
+        self.l1 = wpilib.Spark(7)
+        self.l2 = wpilib.Spark(8)
+        self.l3 = wpilib.Spark(9)
+        print("drive init complete")
+        
         
     def update(self):
-        log(getAzmthDesTopicName("FL"), 0)
+        log(getAzmthDesTopicName("FL"), 0)## Do we need all of these logs?
         log(getAzmthActTopicName("FL"), 5)
         log(getSpeedDesTopicName("FL"), 10)
         log(getSpeedActTopicName("FL"), 15)
@@ -28,12 +35,60 @@ class DriveTrain:
         log(getAzmthActTopicName("BR"), 65)
         log(getSpeedDesTopicName("BR"), 70)
         log(getSpeedActTopicName("BR"), 75)
+
+        drivercontroller = wpilib.XboxController(0)
+
+        rightFwdRevCmd = drivercontroller.getRightY()
+        leftTurnRevCmd = drivercontroller.getLeftX()
+
+        rightMotorControl = rightFwdRevCmd + leftTurnRevCmd 
+        leftMotorControl = rightFwdRevCmd - leftTurnRevCmd 
         
-    def setCmdRobotRelative(self, fwdRevMetersPerSec, strafeMetersPerSec, rotateRadiansPerSec):
-        pass
-    
-    def setCmdFieldRelative(self, fwdRevMetersPerSec, strafeMetersPerSec, rotateRadiansPerSec):
-        pass   
-    
-    def setCmdPathplan(self, pathState):
-        pass   
+        if leftMotorControl > 1:
+            leftMotorControl = 1
+        elif leftMotorControl < -1:
+            leftMotorControl = -1
+        
+        if rightMotorControl > 1: 
+            rightMotorControl = 1
+        elif rightMotorControl < -1:
+            rightMotorControl = -1
+
+        rightMotorControl = rightMotorControl * -1 
+
+        
+        self.l1.set(leftMotorControl)
+        self.l2.set(leftMotorControl)
+        self.l3.set(leftMotorControl)
+        self.r1.set(rightMotorControl)
+        self.r2.set(rightMotorControl)
+        self.r3.set(rightMotorControl)
+        '''
+        elif  rightFwdRevCmd > 0.25 or rightFwdRevCmd < -0.25:
+
+            self.l1.set(0)
+            self.l2.set(0)
+            self.l3.set(0)
+            self.r1.set(0)
+            self.r2.set(0)
+            self.r3.set(0)
+            
+            
+
+            self.r1.set(rightFwdRevCmd)
+            self.r2.set(rightFwdRevCmd)
+            self.r3.set(rightFwdRevCmd)
+
+        else:
+
+            self.r1.set(0.0)
+            self.r2.set(0.0)
+            self.r3.set(0.0)
+            self.l1.set(0.0)
+            self.l2.set(0.0)
+            self.l3.set(0.0)
+            '''
+
+        
+
+
