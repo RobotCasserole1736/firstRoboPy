@@ -63,6 +63,7 @@ _inst = None
 ###########################################
 ## Public API
 def getInstance():
+    global _inst
     if(_inst is None):
         _inst = _AutoSequencer()
     return _inst

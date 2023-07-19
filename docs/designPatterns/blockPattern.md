@@ -185,9 +185,11 @@ class _SenderBlock():
     def getSomeValue(self):
         return self.someValue 
 
-_inst = _SenderBlock()
-
+_inst = None
 def getInstance():
+    global _inst
+    if(_inst is None):
+        _inst = _SenderBlock()
     return _inst
 
 ```
@@ -258,9 +260,11 @@ class _RecieverBlock():
     def setSomeValue(self, valIn):
         self.someValue = valIn
 
-_inst = _RecieverBlock()
-
+_inst = None
 def getInstance():
+    global _inst
+    if(_inst is None):
+        _inst = _RecieverBlock()
     return _inst
 ```
 

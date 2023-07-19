@@ -47,6 +47,7 @@ class _FaultWrangler():
 
 _inst = None
 def getInstance():
+    global _inst
     if(_inst is None):
         _inst = _FaultWrangler()
     return _inst

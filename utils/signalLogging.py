@@ -76,6 +76,7 @@ class _SignalWrangler:
 # Singleton-ish instance for main thread only.
 _inst = None
 def getInstance():
+    global _inst
     if(_inst is None):
         _inst = _SignalWrangler()
     return _inst

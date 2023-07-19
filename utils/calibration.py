@@ -18,6 +18,7 @@ class _CalibrationWrangler():
 # Singleton infrastructure
 _inst = None
 def getInstance():
+    global _inst
     if(_inst is None):
         _inst = _CalibrationWrangler()
     return _inst

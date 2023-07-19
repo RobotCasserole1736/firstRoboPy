@@ -70,6 +70,7 @@ _inst = None
 #Provide a single public function to instantiate the class if needed, 
 # then get the instance of the class
 def getInstance():
+    global _inst
     if(_inst is None):
         _inst = _AutoSequencer()
     return _inst
