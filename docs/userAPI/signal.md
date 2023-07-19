@@ -13,3 +13,5 @@ Then, after you've calculated the value, record it with the `log` function:
 ```py
 log("signal name", val)
 ```
+
+Be sure that `"signal name"` is unique - recording the same named signal in multiple spots will cause issues.

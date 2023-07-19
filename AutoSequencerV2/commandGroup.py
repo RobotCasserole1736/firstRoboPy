@@ -1,6 +1,7 @@
+from enum import Enum
+
 from AutoSequencerV2.composer import Composer
 from AutoSequencerV2.runnable import Runnable
-from enum import Enum
 
 
 # Defines the style of execution a group should have. 
@@ -10,14 +11,19 @@ class GroupType(Enum):
     RACE = 3
 
     """Command Group - implements all types of command groups.
-    CMG Note: This feels very not-pythonic. However, because commands need to know about commandGroups to do composition,
-    but commandGroups need to know about commands to run them, you tend to get circular imports which python hates.
+    CMG Note: This feels very not-pythonic. However, because commands need to 
+    know about commandGroups to do composition,
+    but commandGroups need to know about commands to run them, you tend to get
+    circular imports which python hates.
     I'm not sure there's a better way around this
     """
 class CommandGroup(Runnable, Composer):
-    def __init__(self, cmdList=[], groupType=GroupType.SEQUENTIAL):
+    def __init__(self, cmdList=None, groupType=GroupType.SEQUENTIAL):
         self.groupType = groupType
-        self.cmdList = cmdList
+        if(cmdList is None):
+            self.cmdList = []
+        else:
+            self.cmdList = cmdList
         self._curCmdIdx = 0
         self._cmdFinishedDict = {}
         self._finishedFirstIdx = None # Set to the index of the command which finished first, or None if all are running
@@ -53,7 +59,7 @@ class CommandGroup(Runnable, Composer):
 
     def _isDoneRace(self):
         #We're done when one command has finished
-        return (self._finishedFirstIdx != None)
+        return (self._finishedFirstIdx is not None)
 
 
     ##################################################
@@ -190,7 +196,9 @@ class CommandGroup(Runnable, Composer):
         return self._composeWith(other, GroupType.PARALLEL)
 
     def _composeWith(self, other, outputGroupType):
-        if(isinstance(other, CommandGroup) and other.groupType == outputGroupType and self.groupType == outputGroupType):
+        if(isinstance(other, CommandGroup) and 
+           other.groupType == outputGroupType and 
+           self.groupType == outputGroupType):
             cmds = []
             cmds.extend(self.cmdList)
             cmds.extend(other.cmdList)

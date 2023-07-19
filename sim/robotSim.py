@@ -10,3 +10,6 @@ class RobotSim():
         
     def update(self):
         self.drivetrain.update()
+        
+    def reset(self):
+        pass # TODO

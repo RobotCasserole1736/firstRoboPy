@@ -14,9 +14,6 @@ class _CalibrationWrangler():
     def update(self):
         for cal in self.calDict.values():
             cal.update()
-        
-    
-
 
 # Singleton-ish instance for main thread only.
 _wranglerInst = _CalibrationWrangler()
@@ -25,7 +22,7 @@ _wranglerInst = _CalibrationWrangler()
 # Public API
 ###########################################
 
-def updateCalibrations():
+def update():
     _wranglerInst.update()
 
 class Calibration():

@@ -9,10 +9,12 @@ from drivetrain.drivetrain import DriveTrain
 from sim.robotSim import RobotSim
 from utils.functionGenerator import FunctionGenerator
 from utils.segmentTimeTracker import SegmentTimeTracker
-from utils.signalLogging import log, publishSignals
-from utils.calibration import updateCalibrations
+from utils.signalLogging import log
+import utils.signalLogging as SignalLogging
+import utils.calibration as Calibration
+import utils.faults as Faults
 from webserver.webserver import Webserver
-from AutoSequencerV2.autoSequencer import as_getInstance
+import AutoSequencerV2.autoSequencer as AS
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -43,30 +45,29 @@ class MyRobot(wpilib.TimedRobot):
         self.webserver.addDashboardWidget(
             Camera(75, 60, getRIOStreamURL(1181)))
         self.webserver.addDashboardWidget(
-            AutoChooser(50, 10, as_getInstance().getDelayModeNTTableName(), 
-                        as_getInstance().getDelayModeList()))
+            AutoChooser(50, 10, AS.getInstance().getDelayModeNTTableName(), 
+                        AS.getInstance().getDelayModeList()))
 
     def robotPeriodic(self):
         self.stt.start()
         self.driveTrain.update()
         log("test", self.fgTest.get())
-        publishSignals()
-        updateCalibrations()
+        SignalLogging.update()
+        Calibration.update()
+        Faults.update()
         self.stt.end()
         
     #########################################################
     ## Autonomous-Specific init and update
     def autonomousInit(self):
-        as_getInstance().initiaize()
+        AS.getInstance().initiaize()
         
     def autonomousPeriodic(self):
-        as_getInstance().update()
+        AS.getInstance().update()
 
     def autonomousExit(self):
-        as_getInstance().end()
+        AS.getInstance().end()
 
-        
-    
     #########################################################
     ## Teleop-Specific init and update
     def teleopInit(self):
@@ -79,7 +80,7 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Disabled-Specific init and update
     def disabledPeriodic(self):
-        as_getInstance().updateMode()
+        AS.getInstance().updateMode()
         
     #########################################################
     ## Robot Simulation Support
