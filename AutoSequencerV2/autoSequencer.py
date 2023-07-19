@@ -58,10 +58,11 @@ class _AutoSequencer():
     def getDelayModeNTTableName(self):
         return self.delayModeList.getModeTopicBase()
 
-# Singleton-ish instance for main thread only.
-_autoSequencerInst = _AutoSequencer()
+_inst = None
 
 ###########################################
 ## Public API
 def getInstance():
-    return _autoSequencerInst
+    if(_inst is None):
+        _inst = _AutoSequencer()
+    return _inst

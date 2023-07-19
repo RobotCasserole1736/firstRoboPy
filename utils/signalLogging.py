@@ -74,7 +74,12 @@ class _SignalWrangler:
 
 
 # Singleton-ish instance for main thread only.
-_mainInst = _SignalWrangler()
+_inst = None
+def getInstance():
+    if(_inst is None):
+        _inst = _SignalWrangler()
+    return _inst
+
 
 ###########################################
 # Public API
@@ -82,13 +87,13 @@ _mainInst = _SignalWrangler()
 
 # Log a new named value
 def log(name, value, units=None):
-    _mainInst.addSampleForThisLoop(name, value)
+    getInstance().addSampleForThisLoop(name, value)
     if units is not None :
-        _mainInst.sigUnitsDict[name] = units
+        getInstance().sigUnitsDict[name] = units
 
 # Call once per robot periodic loop
 def update():
-    _mainInst.publishPeriodic()
+    getInstance().publishPeriodic()
 
 def sigNameToNT4TopicName(name):
     return f"/{BASE_TABLE}/{name}"

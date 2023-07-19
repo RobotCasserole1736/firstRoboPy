@@ -15,15 +15,19 @@ class _CalibrationWrangler():
         for cal in self.calDict.values():
             cal.update()
 
-# Singleton-ish instance for main thread only.
-_wranglerInst = _CalibrationWrangler()
+# Singleton infrastructure
+_inst = None
+def getInstance():
+    if(_inst is None):
+        _inst = _CalibrationWrangler()
+    return _inst
 
 ###########################################
 # Public API
 ###########################################
 
 def update():
-    _wranglerInst.update()
+    getInstance().update()
 
 class Calibration():
     def __init__(self, name, default=0, units="", minVal=float('-Inf'), maxVal=float('Inf')):
@@ -56,7 +60,7 @@ class Calibration():
         desValueTopic = table.getDoubleTopic(name + "/desValue")
         self.desValueSubscriber = desValueTopic.subscribe(self._default)
         
-        _wranglerInst.register(self)
+        getInstance().register(self)
         
     # Resets the value of the calibration back to its default
     def reset(self):

@@ -44,7 +44,12 @@ class _FaultWrangler():
     def register(self, fault):
         self.faultList.append(fault)
         
-_wrangler = _FaultWrangler()
+
+_inst = None
+def getInstance():
+    if(_inst is None):
+        _inst = _CalibrationWrangler()
+    return _inst
    
 ###########################################
 # Public API
@@ -55,7 +60,7 @@ _wrangler = _FaultWrangler()
 class Fault():
     def __init__(self, message):
         self.message = message
-        _wrangler.register(self)
+        getInstance().register(self)
         self.isActive = False
         
     def set(self, isActive):
@@ -69,4 +74,4 @@ class Fault():
         
 # Call this in the main robot loop to keep led's blinking
 def update():
-    _wrangler.update()
+    getInstance().update()

@@ -13,7 +13,7 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 # Main robot website server
 class Webserver():
     
-    def __init__(self):
+    def __init__(self, port=5805):
         
         # Serve all contents of the webserver/www folder, with special
         # logic to handle filling out template html files
@@ -22,7 +22,6 @@ class Webserver():
 
         hostname=socket.gethostname()   
         ipAddr=socket.gethostbyname(hostname)   
-        port = 5805
 
         self.server = ThreadedTCPServer(("", port), handler)
 

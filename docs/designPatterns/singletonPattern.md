@@ -35,6 +35,14 @@ class _SomePrivateClass():
 
 In this case, it indicates `_SomPerivateClass` should not be instantiated outside the file both those classes are delcared in.
 
+## How to make a Singleton
+
+In general, a singleton pattern is accomplished by:
+
+1. Declaring a private class, and putting all main functionality inside of it
+2. Delcaring a single, private instance of that class, named `_inst`. `_inst` should start equal to `None`
+3. Providing a public `getInstance()` function which creates and returns the instance if `_inst` is `None` (IE, on the first call), and simply returns the existing instance on subsequent calls.
+
 ## Making a Class into a Singleton
 
 Along with the fact that python supports global variables (delcared outside any class structure), we can emulate a simple singleton class architecture like this:
@@ -53,26 +61,31 @@ class _MySingletonClass():
 
     # TODO - other class functions
 
-# Declare and instantiate a single instace of the class, saved in a variable named _inst
-
-_inst = _MySingletonClass()
+# Declare the single instance of the class
+_inst = None
 
 ##################################
 ## Public API
 
-#Provide a single public function to get the instance of the class
-
+#Provide a single public function to instantiate the class if needed, 
+# then get the instance of the class
 def getInstance():
+    if(_inst is None):
+        _inst = _AutoSequencer()
     return _inst
 
 ```
 
 ## Using a Singleton
 
-To use it in another file, first import the whole module, and give it a nice name
+To use it in another file, first import the whole module, and give it a nice name.
 
 ```py
+# Singleton Import Pattern
 import someFolder.mySingletonClass as MySingletonClass
+
+#For Reference- non-singleton import pattern
+from someFolder.myNonSingletonClass import MyNonSingletonClass
 ```
 
 Then, use `getInstance` to access the instance, and call methods from it:
