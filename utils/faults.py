@@ -48,7 +48,7 @@ class _FaultWrangler():
 _inst = None
 def getInstance():
     if(_inst is None):
-        _inst = _CalibrationWrangler()
+        _inst = _FaultWrangler()
     return _inst
    
 ###########################################
