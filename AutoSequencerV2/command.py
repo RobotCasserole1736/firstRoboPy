@@ -26,4 +26,4 @@ class Command(Runnable, Composer):
         return CommandGroup(cmds, outputGroupType)
     
     def getName(self):
-        return self.__class__.__qualname__
+        return self.__class__.__name__
