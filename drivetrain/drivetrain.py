@@ -1,11 +1,11 @@
-
+import wpilib 
+import wpilib.simulation
 
 # Class which implements control logic for a 4-module swerve drive
 from dashboardWidgets.swerveState import getAzmthDesTopicName, getAzmthActTopicName
 from dashboardWidgets.swerveState import getSpeedDesTopicName, getSpeedActTopicName
 from utils.signalLogging import log
-import wpilib 
-import wpilib.simulation
+
 #(wpilib.timedRobot):
 class DriveTrain:
     def __init__(self):
@@ -63,7 +63,7 @@ class DriveTrain:
         self.r1.set(rightMotorControl)
         self.r2.set(rightMotorControl)
         self.r3.set(rightMotorControl)
-        '''
+        """
         elif  rightFwdRevCmd > 0.25 or rightFwdRevCmd < -0.25:
 
             self.l1.set(0)
@@ -87,8 +87,4 @@ class DriveTrain:
             self.l1.set(0.0)
             self.l2.set(0.0)
             self.l3.set(0.0)
-            '''
-
-        
-
-
+            """
