@@ -91,6 +91,11 @@ class MyRobot(wpilib.TimedRobot):
     def _simulationPeriodic(self):
         self.botSim.update()
         
+    #########################################################
+    ## Unit Test Support
+    def __del__(self):
+        Faults.destroyInstance()
+        
         
 if __name__ == '__main__':
     wpilib.run(MyRobot)

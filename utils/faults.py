@@ -51,6 +51,11 @@ def getInstance():
     if(_inst is None):
         _inst = _FaultWrangler()
     return _inst
+
+def destroyInstance():
+    global _inst
+    _inst = None
+
    
 ###########################################
 # Public API
