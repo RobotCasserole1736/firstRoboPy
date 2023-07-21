@@ -9,12 +9,12 @@ from utils.signalLogging import log
 #(wpilib.timedRobot):
 class DriveTrain:
     def __init__(self):
-        self.r1 = wpilib.Spark(4)
-        self.r2 = wpilib.Spark(5)
-        self.r3 = wpilib.Spark(6)
-        self.l1 = wpilib.Spark(7)
-        self.l2 = wpilib.Spark(8)
-        self.l3 = wpilib.Spark(9)
+        self.rightMotor1 = wpilib.Spark(4)
+        self.rightMotor2 = wpilib.Spark(5)
+        self.rightMotor3 = wpilib.Spark(6)
+        self.leftMotor1 = wpilib.Spark(7)
+        self.leftMotor2 = wpilib.Spark(8)
+        self.leftMotor3 = wpilib.Spark(9)
         print("drive init complete")
         
         
@@ -57,34 +57,34 @@ class DriveTrain:
         rightMotorControl = rightMotorControl * -1 
 
         
-        self.l1.set(leftMotorControl)
-        self.l2.set(leftMotorControl)
-        self.l3.set(leftMotorControl)
-        self.r1.set(rightMotorControl)
-        self.r2.set(rightMotorControl)
-        self.r3.set(rightMotorControl)
+        self.leftMotor1.set(leftMotorControl)
+        self.leftMotor2.set(leftMotorControl)
+        self.leftMotor3.set(leftMotorControl)
+        self.rightMotor1.set(rightMotorControl)
+        self.rightMotor2.set(rightMotorControl)
+        self.rightMotor3.set(rightMotorControl)
         """
         elif  rightFwdRevCmd > 0.25 or rightFwdRevCmd < -0.25:
 
-            self.l1.set(0)
-            self.l2.set(0)
-            self.l3.set(0)
-            self.r1.set(0)
-            self.r2.set(0)
-            self.r3.set(0)
+            self.leftMotor1.set(0)
+            self.leftMotor2.set(0)
+            self.leftMotor3.set(0)
+            self.rightMotor1.set(0)
+            self.rightMotor2.set(0)
+            self.rightMotor3.set(0)
             
             
 
-            self.r1.set(rightFwdRevCmd)
-            self.r2.set(rightFwdRevCmd)
-            self.r3.set(rightFwdRevCmd)
+            self.rightMotor1.set(rightFwdRevCmd)
+            self.rightMotor2.set(rightFwdRevCmd)
+            self.rightMotor3.set(rightFwdRevCmd)
 
         else:
 
-            self.r1.set(0.0)
-            self.r2.set(0.0)
-            self.r3.set(0.0)
-            self.l1.set(0.0)
-            self.l2.set(0.0)
-            self.l3.set(0.0)
+            self.rightMotor1.set(0.0)
+            self.rightMotor2.set(0.0)
+            self.rightMotor3.set(0.0)
+            self.leftMotor1.set(0.0)
+            self.leftMotor2.set(0.0)
+            self.leftMotor3.set(0.0)
             """
