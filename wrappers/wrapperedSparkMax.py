@@ -11,7 +11,7 @@ from utils.faults import Fault
 # Fault handling for not crashing code if the motor controller is disconnected
 # Fault annunication logic to trigger warnings if a motor couldn't be configured
 class WrapperedSparkMax():
-    def __init__(self, canID, name, idleMode = CANSparkMax.IdleMode.kCoast):
+    def __init__(self, canID, name, brakeMode = False):
         self.ctrl = CANSparkMax(canID, CANSparkMaxLowLevel.MotorType.kBrushless)
         self.pidCtrl = self.ctrl.getPIDController()
         self.encoder = self.ctrl.getEncoder()
@@ -26,7 +26,7 @@ class WrapperedSparkMax():
             retryCounter += 1
             errList = []
             errList.append(self.ctrl.restoreFactoryDefaults())
-            errList.append(self.ctrl.setIdleMode(idleMode))
+            errList.append(self.ctrl.setIdleMode(CANSparkMax.IdleMode.kBrake if brakeMode else CANSparkMax.IdleMode.kCoast))
             errList.append(self.ctrl.setSmartCurrentLimit(40))
             # Status 0 = Motor output and Faults
             errList.append(self.ctrl.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 20)) 

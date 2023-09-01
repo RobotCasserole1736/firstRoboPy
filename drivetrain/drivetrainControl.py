@@ -7,7 +7,7 @@ from dashboardWidgets.swerveState import getSpeedDesTopicName, getSpeedActTopicN
 from utils.signalLogging import log
 
 #(wpilib.timedRobot):
-class DriveTrain:
+class DrivetrainControl():
     def __init__(self):
         self.rightMotor1 = wpilib.Spark(4)
         self.rightMotor2 = wpilib.Spark(5)

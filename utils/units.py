@@ -1,9 +1,7 @@
-
-
 import math
 
 ################################################################
-## Unit conversion classes
+## Additional Unit conversion classes not in wpilib.units
 
 def deg2Rad(inVal):
     return  math.pi / 180.0 * inVal
@@ -35,3 +33,15 @@ def radPerSec2RPM(inVal):
 # pylint: disable=invalid-name
 def RPM2RadPerSec(inVal):
     return inVal / 9.55
+
+def wrapAngleDeg(angle):
+    angle %= 360.0
+    angle = (angle - 360) if angle > 180 else angle
+    angle = (angle + 360) if angle < -180 else angle
+    return angle
+
+def wrapAngleRad(angle):
+    return deg2Rad(wrapAngleDeg(rad2Deg(angle)))
+
+def lbsToKg(lbs_in):
+    return 0.4535924 * lbs_in

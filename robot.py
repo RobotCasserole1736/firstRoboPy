@@ -5,7 +5,7 @@ from dashboardWidgets.circularGauge import CircularGauge
 from dashboardWidgets.lineGauge import LineGauge
 from dashboardWidgets.swerveState import SwerveState
 from dashboardWidgets.text import Text
-from drivetrain.drivetrain import DriveTrain
+from drivetrain.drivetrainControl import DrivetrainControl
 from sim.robotSim import RobotSim
 from utils.functionGenerator import FunctionGenerator
 from utils.segmentTimeTracker import SegmentTimeTracker
@@ -30,7 +30,7 @@ class MyRobot(wpilib.TimedRobot):
                 
         self.stt = SegmentTimeTracker()
         
-        self.driveTrain = DriveTrain()
+        self.driveTrain = DrivetrainControl()
         
         wpilib.CameraServer.launch()
         
