@@ -98,18 +98,11 @@ robotToModuleTranslations.append(Translation2d( WHEEL_BASE_HALF_WIDTH_M, -WHEEL_
 robotToModuleTranslations.append(Translation2d(-WHEEL_BASE_HALF_WIDTH_M,  WHEEL_BASE_HALF_LENGTH_M))
 robotToModuleTranslations.append(Translation2d(-WHEEL_BASE_HALF_WIDTH_M, -WHEEL_BASE_HALF_LENGTH_M))
 
-# Array of Transforms from robot's origin (center bottom, on floor) to the module's contact patch with the ground
-robotToModuleTransforms = []
-robotToModuleTransforms.append(Transform2d(robotToModuleTranslations[FL], Rotation2d(0.0)))
-robotToModuleTransforms.append(Transform2d(robotToModuleTranslations[FR], Rotation2d(0.0)))
-robotToModuleTransforms.append(Transform2d(robotToModuleTranslations[BL], Rotation2d(0.0)))
-robotToModuleTransforms.append(Transform2d(robotToModuleTranslations[BR], Rotation2d(0.0)))
-
 # WPILib Kinematics object
 kinematics = SwerveDrive4Kinematics(
-        robotToModuleTransforms[FL], 
-        robotToModuleTransforms[FR], 
-        robotToModuleTransforms[BL], 
-        robotToModuleTransforms[BR]
+        robotToModuleTranslations[FL], 
+        robotToModuleTranslations[FR], 
+        robotToModuleTranslations[BL], 
+        robotToModuleTranslations[BR]
     )
    

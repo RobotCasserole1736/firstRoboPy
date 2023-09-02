@@ -50,19 +50,17 @@ class SwerveModuleControl():
     def getDesiredState(self):
         return self.desiredState
 
-    def setClosedLoopGains(self, 
-                           wheel_kP, 
-                           wheel_kI, 
-                           wheel_kD, 
-                           wheel_kA, 
-                           wheel_kV, 
-                           wheel_kS, 
-                           azmth_kP, 
-                           azmth_kI, 
-                           azmth_kD):
-        self.wheelMotor.setPID(wheel_kP, wheel_kI, wheel_kD)
-        self.wheelMotorFF = SimpleMotorFeedforwardMeters(wheel_kS, wheel_kV, wheel_kA)
-        self.azmthCtrl.setPID(azmth_kP, azmth_kI, azmth_kD)
+    def setClosedLoopGains(self, gains):
+        
+        self.wheelMotor.setPID(gains.wheel_kP.get(), 
+                               gains.wheel_kI.get(), 
+                               gains.wheel_kD.get())
+        self.wheelMotorFF = SimpleMotorFeedforwardMeters(gains.wheel_kS.get(), 
+                                                         gains.wheel_kV.get(), 
+                                                         gains.wheel_kA.get())
+        self.azmthCtrl.setPID(gains.azmth_kP.get(), 
+                              gains.azmth_kI.get(), 
+                              gains.azmth_kD.get())
 
     def setDesiredState(self, desState):
         self.desiredState = desState
@@ -77,7 +75,7 @@ class SwerveModuleControl():
         self.optimizedDesiredState = SwerveModuleState.optimize(self.desiredState, Rotation2d(self.azmthEnc.getAngleRad()))
 
         # Use a PID controller to calculate the voltage for the azimuth motor
-        self.azmthCtrl.setSetpoint(self.optimizedDesiredState.angle.degrees())
+        self.azmthCtrl.setSetpoint(self.optimizedDesiredState.angle.degrees()) # type: ignore - I think robotpy has the wrong typehint specified
         azmthVoltage = self.azmthCtrl.calculate(rad2Deg(self.azmthEnc.getAngleRad()))
         self.azmthMotor.setVoltage(azmthVoltage)
 
@@ -88,5 +86,5 @@ class SwerveModuleControl():
 
         # Update this module's actual state with measurements from the sensors
         self.actualState.angle = Rotation2d(self.azmthEnc.getAngleRad())
-        self.actualState.speed = dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec)
+        self.actualState.speed = dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec())
 

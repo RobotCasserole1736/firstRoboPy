@@ -29,16 +29,16 @@ class _FaultWrangler():
             
         # Update faults LED
         if(self.activeFaultCount > 0):
-            self.fixMeLED.updateDutyCycle(self._blinkPatter(1.3))
+            self.fixMeLED.updateDutyCycle(self._blinkPattern(1.3))
         else:
             self.fixMeLED.updateDutyCycle(0.0)
             
         # Update heartbeat LED
-        self.heartbeatLED.updateDutyCycle(self._blinkPatter(0.75))
+        self.heartbeatLED.updateDutyCycle(self._blinkPattern(0.75))
         
     # Returns a time-varying blink intensity to drive the LED
     # at a given frequency
-    def _blinkPatter(self, freq):
+    def _blinkPattern(self, freq):
         return abs(math.sin(2 * math.pi * wpilib.Timer.getFPGATimestamp() * freq / 2.0))
     
     def register(self, fault):

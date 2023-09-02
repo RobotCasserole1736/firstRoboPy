@@ -31,7 +31,7 @@ def update():
     getInstance().update()
 
 class Calibration():
-    def __init__(self, name, default=0, units="", minVal=float('-Inf'), maxVal=float('Inf')):
+    def __init__(self, name, default=0.0, units="", minVal=float('-Inf'), maxVal=float('Inf')):
         self.name = name
         self.units = units
         self._default = float(default)

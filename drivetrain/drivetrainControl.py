@@ -3,7 +3,8 @@ from wpimath.geometry import Pose2d
 
 from utils.signalLogging import log
 from drivetrain.swerveModuleControl import SwerveModuleControl
-from drivetrain.drivetrainPhysical import FL_ENCODER_MOUNT_OFFSET_RAD
+from drivetrain.swerveModuleGainSet import SwerveModuleGainSet
+from drivetrain.drivetrainPhysical import FL_ENCODER_MOUNT_OFFSET_RAD, MAX_FWD_REV_SPEED_MPS
 from drivetrain.drivetrainPhysical import FR_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import BL_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import BR_ENCODER_MOUNT_OFFSET_RAD
@@ -19,7 +20,16 @@ class DrivetrainControl():
         
         self.desChSpd = ChassisSpeeds()
         self.curDesPose = Pose2d()
-    
+
+        self.gains = SwerveModuleGainSet()
+
+        self.calUpdate(True)
+
+    def calUpdate(self, force=False):
+        if(self.gains.hasChanged() or force):
+            for module in self.modules:
+                module.setClosedLoopGains(self.gains)
+            
     def setCmdBrace(self):
         pass # TODO
 
@@ -32,6 +42,7 @@ class DrivetrainControl():
 
     def update(self):
         desModStates = kinematics.toSwerveModuleStates(self.desChSpd)
+        kinematics.desaturateWheelSpeeds(desModStates, MAX_FWD_REV_SPEED_MPS)
 
         for idx, module in enumerate(self.modules):
             module.setDesiredState(desModStates[idx])

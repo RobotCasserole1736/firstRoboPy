@@ -5,6 +5,7 @@ from dashboardWidgets.circularGauge import CircularGauge
 from dashboardWidgets.lineGauge import LineGauge
 from dashboardWidgets.swerveState import SwerveState
 from dashboardWidgets.text import Text
+from humanInterface.driverInterface import DriverInterface
 from drivetrain.drivetrainControl import DrivetrainControl
 from sim.robotSim import RobotSim
 from utils.functionGenerator import FunctionGenerator
@@ -47,6 +48,8 @@ class MyRobot(wpilib.TimedRobot):
         self.webserver.addDashboardWidget(
             AutoChooser(50, 10, AS.getInstance().getDelayModeNTTableName(), 
                         AS.getInstance().getDelayModeList()))
+        
+        self.di = DriverInterface()
 
     def robotPeriodic(self):
         self.stt.start()
@@ -74,7 +77,11 @@ class MyRobot(wpilib.TimedRobot):
         pass
         
     def teleopPeriodic(self):
-        pass
+        self.di.update()
+        self.driveTrain.setCmdRobotRelative(
+            self.di.getFwdRevCmd(),
+            self.di.getStrafeCmd(),
+            self.di.getRotateCmd())
     
     
     #########################################################
