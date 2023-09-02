@@ -1,6 +1,11 @@
 import math
 from wpimath.units import inchesToMeters
 from wpimath.system.plant import DCMotor
+from wpimath.geometry import Transform2d
+from wpimath.geometry import Translation2d
+from wpimath.geometry import Rotation2d
+from wpimath.geometry import Pose2d
+from wpimath.kinematics import SwerveDrive4Kinematics
 from utils.units import lbsToKg
 from utils.units import deg2Rad
 from utils.units import in2m
@@ -63,3 +68,48 @@ MAX_ROTATE_SPEED_RAD_PER_SEC = deg2Rad(360.0) #Fixed at the maximum rotational s
 # Accelerations - also a total guess
 MAX_TRANSLATE_ACCEL_MPS2 = MAX_FWD_REV_SPEED_MPS/0.50 #0-full time of 0.5 second - this is a guestimate
 MAX_ROTATE_ACCEL_RAD_PER_SEC_2 = MAX_ROTATE_SPEED_RAD_PER_SEC/.25 #0-full time of 0.25 second - this is a guestaimate
+
+
+# Mechanical mounting offsets of the encoder & magnet within the shaft
+# Must be updated whenever the module is reassembled
+# Procedure: 
+# 0 - Put the robot up on blocks.
+# 1 - Reset all these values to 0, deploy code
+# 2 - Pull up dashboard with encoder readings (in radians)
+# 3 - Using a square, twist the modules by hand until they are aligned with the robot's chassis
+# 4 - Read out the encoder readings for each module, put them here
+# 5 - Redeploy code, verify that the  encoder readings are correct as each module is manually rotated
+FL_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(143.6)
+FR_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(106.2)
+BL_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(162.2)
+BR_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(-168.4)
+
+
+# Module Indices (for ease of array manipulation)
+FL = 0
+FR = 1
+BL = 2
+BR = 3
+
+# Array of translations from robot's origin (center bottom, on floor) to the module's contact patch with the ground
+robotToModuleTranslations = []
+robotToModuleTranslations.append(Translation2d( WHEEL_BASE_HALF_WIDTH_M,  WHEEL_BASE_HALF_LENGTH_M))
+robotToModuleTranslations.append(Translation2d( WHEEL_BASE_HALF_WIDTH_M, -WHEEL_BASE_HALF_LENGTH_M))
+robotToModuleTranslations.append(Translation2d(-WHEEL_BASE_HALF_WIDTH_M,  WHEEL_BASE_HALF_LENGTH_M))
+robotToModuleTranslations.append(Translation2d(-WHEEL_BASE_HALF_WIDTH_M, -WHEEL_BASE_HALF_LENGTH_M))
+
+# Array of Transforms from robot's origin (center bottom, on floor) to the module's contact patch with the ground
+robotToModuleTransforms = []
+robotToModuleTransforms.append(Transform2d(robotToModuleTranslations[FL], Rotation2d(0.0)))
+robotToModuleTransforms.append(Transform2d(robotToModuleTranslations[FR], Rotation2d(0.0)))
+robotToModuleTransforms.append(Transform2d(robotToModuleTranslations[BL], Rotation2d(0.0)))
+robotToModuleTransforms.append(Transform2d(robotToModuleTranslations[BR], Rotation2d(0.0)))
+
+# WPILib Kinematics object
+kinematics = SwerveDrive4Kinematics(
+        robotToModuleTransforms[FL], 
+        robotToModuleTransforms[FR], 
+        robotToModuleTransforms[BL], 
+        robotToModuleTransforms[BR]
+    )
+   
