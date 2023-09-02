@@ -10,6 +10,7 @@ class _FaultWrangler():
         self.activeFaultCount = 0
         self.loopCounter = 0
         self.statusUpdateLoops = 40 # Only update the status every 40 loops
+        self.curDisplayedFaultIdx = 0
         
         self.fixMeLED = wpilib.DigitalOutput(FIX_ME_LED_PIN)
         self.fixMeLED.setPWMRate(500.0)
@@ -26,6 +27,17 @@ class _FaultWrangler():
             activeFaults = [x for x in self.faultList if x.isActive]
             self.activeFaultCount = len(activeFaults)
             self.loopCounter = 0 # reset counter
+
+            if(self.activeFaultCount > 0):
+                self.curDisplayedFaultIdx = (self.curDisplayedFaultIdx + 1) % self.activeFaultCount
+                curFaultString = activeFaults[self.curDisplayedFaultIdx].message
+            else:
+                curFaultString = ""
+
+            wpilib.SmartDashboard.putBoolean("faultActive", self.activeFaultCount > 0)
+            wpilib.SmartDashboard.putString("faultDescription", curFaultString)
+
+
             
         # Update faults LED
         if(self.activeFaultCount > 0):
