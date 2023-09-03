@@ -21,8 +21,7 @@ class WrapperedSparkMax():
         
         # Perform motor configuration, tracking errors and retrying until we have success
         retryCounter = 0
-        success = False
-        while(not success and retryCounter < 10):
+        while(not self.connected and retryCounter < 10):
             retryCounter += 1
             errList = []
             errList.append(self.ctrl.restoreFactoryDefaults())
@@ -36,14 +35,11 @@ class WrapperedSparkMax():
             errList.append(self.ctrl.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus2, 65500))
             # Status 3 = Analog Sensor Input
             errList.append(self.ctrl.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus3, 65500))
-            if(any(x is not REVLibError.kOk for x in errList)):
+            if(any([x != REVLibError.kOk for x in errList])):
                 print(f"Failure configuring Spark Max {name} CAN ID {canID}, retrying...")
             else:
-                success = True
+                self.connected = True
                 
-        if(not success):
-            self.connected = False
-            
         self.disconFault.set(not self.connected)
         
     def setInverted(self, isInverted):

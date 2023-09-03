@@ -35,10 +35,14 @@ class SwerveModuleControl():
         self.moduleName = moduleName
 
     def updateTelemetry(self):
-        log(getAzmthDesTopicName(self.moduleName), self.optimizedDesiredState.angle.degrees(), "deg")
-        log(getAzmthActTopicName(self.moduleName), rad2Deg(self.azmthEnc.getAngleRad()), "deg")
-        log(getSpeedDesTopicName(self.moduleName), self.optimizedDesiredState.speed/MAX_FWD_REV_SPEED_MPS, "frac")
-        log(getSpeedActTopicName(self.moduleName), dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec())/MAX_FWD_REV_SPEED_MPS, "frac")
+        log(getAzmthDesTopicName(self.moduleName), 
+            self.optimizedDesiredState.angle.degrees(), "deg")
+        log(getAzmthActTopicName(self.moduleName), 
+            rad2Deg(self.azmthEnc.getAngleRad()), "deg")
+        log(getSpeedDesTopicName(self.moduleName), 
+            self.optimizedDesiredState.speed/MAX_FWD_REV_SPEED_MPS, "frac")
+        log(getSpeedActTopicName(self.moduleName), 
+            dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec())/MAX_FWD_REV_SPEED_MPS, "frac")
 
     def getActualPosition(self):
         wheelPosMeters = dtMotorRotToLinear_m(self.wheelMotor.getMotorPositionRad())
@@ -87,4 +91,6 @@ class SwerveModuleControl():
         # Update this module's actual state with measurements from the sensors
         self.actualState.angle = Rotation2d(self.azmthEnc.getAngleRad())
         self.actualState.speed = dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec())
+
+        self.updateTelemetry()
 
