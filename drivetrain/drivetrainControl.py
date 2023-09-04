@@ -3,6 +3,7 @@ from wpimath.kinematics import ChassisSpeeds
 from wpimath.geometry import Pose2d
 
 from utils.signalLogging import log
+from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
 from drivetrain.swerveModuleControl import SwerveModuleControl
 from drivetrain.swerveModuleGainSet import SwerveModuleGainSet
 from drivetrain.drivetrainPhysical import FL_ENCODER_MOUNT_OFFSET_RAD, MAX_FWD_REV_SPEED_MPS
@@ -25,6 +26,8 @@ class DrivetrainControl():
         self.gains = SwerveModuleGainSet()
 
         self.calUpdate(True)
+
+        self.pe = DrivetrainPoseEstimator(self.getModulePositions())
 
     def calUpdate(self, force=False):
         if(self.gains.hasChanged() or force):
@@ -49,5 +52,8 @@ class DrivetrainControl():
         for idx, module in enumerate(self.modules):
             module.setDesiredState(desModStates[idx])
             module.update()
+
+    def getModulePositions(self):
+        return (x.getActualPosition() for x in self.modules)
 
 
