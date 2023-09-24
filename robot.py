@@ -1,13 +1,7 @@
 import wpilib
-from dashboardWidgets.autoChooser import AutoChooser
-from dashboardWidgets.camera import Camera, getRIOStreamURL
-from dashboardWidgets.circularGauge import CircularGauge
-from dashboardWidgets.lineGauge import LineGauge
-from dashboardWidgets.swerveState import SwerveState
-from dashboardWidgets.text import Text
+from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
 from drivetrain.drivetrainControl import DrivetrainControl
-from sim.robotSim import RobotSim
 from utils.functionGenerator import FunctionGenerator
 from utils.segmentTimeTracker import SegmentTimeTracker
 from utils.signalLogging import log
@@ -35,19 +29,7 @@ class MyRobot(wpilib.TimedRobot):
         
         wpilib.CameraServer.launch()
         
-        self.webserver.addDashboardWidget(
-            CircularGauge(15, 15, "/SmartDashboard/test", -10,10,-5,5))
-        self.webserver.addDashboardWidget(
-            LineGauge(15, 50, "/SmartDashboard/test", -10,10,-5,5))
-        self.webserver.addDashboardWidget(
-            Text(30, 75, "/SmartDashboard/test"))
-        self.webserver.addDashboardWidget(
-            SwerveState(85, 15))
-        self.webserver.addDashboardWidget(
-            Camera(75, 60, getRIOStreamURL(1181)))
-        self.webserver.addDashboardWidget(
-            AutoChooser(50, 10, AS.getInstance().getDelayModeNTTableName(), 
-                        AS.getInstance().getDelayModeList()))
+        self.dashboard = Dashboard(self.webserver)
         
         self.di = DriverInterface()
 
@@ -78,7 +60,7 @@ class MyRobot(wpilib.TimedRobot):
         
     def teleopPeriodic(self):
         self.di.update()
-        self.driveTrain.setCmdRobotRelative(
+        self.driveTrain.setCmdFieldRelative(
             self.di.getFwdRevCmd(),
             self.di.getStrafeCmd(),
             self.di.getRotateCmd())
@@ -89,15 +71,7 @@ class MyRobot(wpilib.TimedRobot):
     def disabledPeriodic(self):
         AS.getInstance().updateMode()
         
-    #########################################################
-    ## Robot Simulation Support
-    def _simulationInit(self):
-        # pylint: disable=attribute-defined-outside-init
-        self.botSim = RobotSim()
-    
-    def _simulationPeriodic(self):
-        self.botSim.update()
-        
+
     #########################################################
     ## Unit Test Support
     def __del__(self):

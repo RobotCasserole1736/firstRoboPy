@@ -3,6 +3,7 @@ from wpimath.controller import PIDController
 from wpimath.kinematics import SwerveModuleState
 from wpimath.kinematics import SwerveModulePosition
 from wpimath.geometry import Rotation2d
+import wpilib
 
 from wrappers.wrapperedSparkMax import WrapperedSparkMax
 from wrappers.wrapperedSRXMagEncoder import WrapperedSRXMagEncoder
@@ -88,9 +89,14 @@ class SwerveModuleControl():
         motorVoltageFF = self.wheelMotorFF.calculate(motorDesSpd_radpersec)
         self.wheelMotor.setVelCmd(motorDesSpd_radpersec, motorVoltageFF)
 
-        # Update this module's actual state with measurements from the sensors
-        self.actualState.angle = Rotation2d(self.azmthEnc.getAngleRad())
-        self.actualState.speed = dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec())
+        if(wpilib.TimedRobot.isSimulation()):
+            # Simulation - assume module is perfect and goes to where we want it to
+            self.actualState = self.optimizedDesiredState
+        else:
+            # Real Robot
+            # Update this module's actual state with measurements from the sensors
+            self.actualState.angle = Rotation2d(self.azmthEnc.getAngleRad())
+            self.actualState.speed = dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec())
 
         self.updateTelemetry()
 

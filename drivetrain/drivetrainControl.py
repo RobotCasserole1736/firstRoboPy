@@ -1,8 +1,6 @@
-import math
 from wpimath.kinematics import ChassisSpeeds
 from wpimath.geometry import Pose2d
 
-from utils.signalLogging import log
 from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
 from drivetrain.swerveModuleControl import SwerveModuleControl
 from drivetrain.swerveModuleGainSet import SwerveModuleGainSet
@@ -33,15 +31,20 @@ class DrivetrainControl():
         if(self.gains.hasChanged() or force):
             for module in self.modules:
                 module.setClosedLoopGains(self.gains)
-            
-    def setCmdBrace(self):
-        pass # TODO
 
     def setCmdFieldRelative(self, downUpFieldCmd, leftRightFieldCmd, rotateCmd):
-        pass # TODO
+        self.desChSpd = ChassisSpeeds.fromFieldRelativeSpeeds(downUpFieldCmd, leftRightFieldCmd, rotateCmd, self.pe.getCurEstPose().rotation())
+        self.pe.setDesiredPose(self.pe.getCurEstPose())
 
     def setCmdRobotRelative(self, fwdRevCmd, strafeCmd, rotateCmd):
         self.desChSpd = ChassisSpeeds(fwdRevCmd, strafeCmd, rotateCmd)
+        self.pe.setDesiredPose(self.pe.getCurEstPose())
+        
+    def setCmdTrajectory(self, cmd):
+        # TODO - 
+        self.pe.setDesiredPose(Pose2d(cmd.desTrajState.poseMeters.getTranslation(), cmd.desAngle))
+
+        
 
 
     def update(self):
@@ -52,8 +55,10 @@ class DrivetrainControl():
         for idx, module in enumerate(self.modules):
             module.setDesiredState(desModStates[idx])
             module.update()
+            
+        self.pe.update(self.getModulePositions())
 
     def getModulePositions(self):
-        return (x.getActualPosition() for x in self.modules)
+        return tuple(mod.getActualPosition() for mod in self.modules)
 
 

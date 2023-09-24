@@ -1,10 +1,7 @@
 import math
 from wpimath.units import inchesToMeters
 from wpimath.system.plant import DCMotor
-from wpimath.geometry import Transform2d
 from wpimath.geometry import Translation2d
-from wpimath.geometry import Rotation2d
-from wpimath.geometry import Pose2d
 from wpimath.kinematics import SwerveDrive4Kinematics
 from utils.units import lbsToKg
 from utils.units import deg2Rad
