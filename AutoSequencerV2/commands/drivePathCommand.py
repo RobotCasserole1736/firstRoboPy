@@ -1,9 +1,9 @@
 
 
 import wpilib
+from pathplannerlib import PathPlanner
 
 from AutoSequencerV2.command import Command
-from pathplannerlib import PathPlanner
 from drivetrain.drivetrainPhysical import MAX_DT_LINEAR_SPEED
 from drivetrain.drivetrainPhysical import MAX_TRANSLATE_ACCEL_MPS2
 import drivetrain.drivetrainControl as dt

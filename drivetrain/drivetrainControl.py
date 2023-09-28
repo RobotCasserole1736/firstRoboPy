@@ -4,6 +4,7 @@ from wpimath.geometry import Pose2d
 from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
 from drivetrain.swerveModuleControl import SwerveModuleControl
 from drivetrain.swerveModuleGainSet import SwerveModuleGainSet
+from drivetrain.drivetrainTrajectoryControl import DrivetrainTrajectoryControl
 from drivetrain.drivetrainPhysical import FL_ENCODER_MOUNT_OFFSET_RAD, MAX_FWD_REV_SPEED_MPS
 from drivetrain.drivetrainPhysical import FR_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import BL_ENCODER_MOUNT_OFFSET_RAD
@@ -26,6 +27,8 @@ class _DrivetrainControl():
         self.calUpdate(True)
 
         self.pe = DrivetrainPoseEstimator(self.getModulePositions())
+        
+        self.tc = DrivetrainTrajectoryControl()
 
     def calUpdate(self, force=False):
         if(self.gains.hasChanged() or force):
@@ -41,10 +44,8 @@ class _DrivetrainControl():
         self.pe.setDesiredPose(self.pe.getCurEstPose())
         
     def setCmdTrajectory(self, cmd):
-        # TODO - 
+        self.desChSpd = self.tc.update(cmd, self.pe.getCurEstPose())
         self.pe.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
-
-        
 
 
     def update(self):
