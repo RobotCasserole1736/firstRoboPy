@@ -10,7 +10,7 @@ from drivetrain.drivetrainPhysical import BL_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import BR_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import kinematics
 
-class DrivetrainControl():
+class _DrivetrainControl():
     def __init__(self):
         self.modules = []
         self.modules.append(SwerveModuleControl("FL", 0, 1, 0, FL_ENCODER_MOUNT_OFFSET_RAD, False))
@@ -42,7 +42,7 @@ class DrivetrainControl():
         
     def setCmdTrajectory(self, cmd):
         # TODO - 
-        self.pe.setDesiredPose(Pose2d(cmd.desTrajState.poseMeters.getTranslation(), cmd.desAngle))
+        self.pe.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
 
         
 
@@ -61,4 +61,12 @@ class DrivetrainControl():
     def getModulePositions(self):
         return tuple(mod.getActualPosition() for mod in self.modules)
 
+_inst = None
 
+###########################################
+## Public API
+def getInstance():
+    global _inst
+    if(_inst is None):
+        _inst = _DrivetrainControl()
+    return _inst

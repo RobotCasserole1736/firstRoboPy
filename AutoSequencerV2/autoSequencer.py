@@ -1,6 +1,7 @@
 from AutoSequencerV2.commandGroup import CommandGroup
 from AutoSequencerV2.modeList import ModeList
 from AutoSequencerV2.modes.doNothingMode import DoNothingMode
+from AutoSequencerV2.modes.drivePathTest1 import DrivePathTest1
 from AutoSequencerV2.modes.waitMode import WaitMode
 
 
@@ -14,6 +15,7 @@ class _AutoSequencer():
         self.delayModeList.addMode(WaitMode(9.0))
         
         self.mainModeList = ModeList("Main")
+        self.mainModeList.addMode(DrivePathTest1())
         self.mainModeList.addMode(DoNothingMode())
         # TODO - add more autonomous modes here
         

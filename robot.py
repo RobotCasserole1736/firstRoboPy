@@ -1,7 +1,7 @@
 import wpilib
 from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
-from drivetrain.drivetrainControl import DrivetrainControl
+import drivetrain.drivetrainControl as dt
 from utils.functionGenerator import FunctionGenerator
 from utils.segmentTimeTracker import SegmentTimeTracker
 from utils.signalLogging import log
@@ -25,7 +25,7 @@ class MyRobot(wpilib.TimedRobot):
                 
         self.stt = SegmentTimeTracker()
         
-        self.driveTrain = DrivetrainControl()
+        self.driveTrain = dt.getInstance()
         
         wpilib.CameraServer.launch()
         
