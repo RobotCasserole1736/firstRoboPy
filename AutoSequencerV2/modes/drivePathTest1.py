@@ -7,7 +7,11 @@ class DrivePathTest1(Mode):
     def __init__(self):
         # Build a reasonable name out of the specified duration
         Mode.__init__(self, f"Drive Path Test 1")
+        self.pathCmd = DrivePathCommand("testPath1", 1.0)
         
     def getCmdGroup(self):
         # A wait mode should have only one command, jsut wait the specified duration
-        return DrivePathCommand("testPath1", 1.0)
+        return self.pathCmd
+    
+    def getInitialDrivetrainPose(self):
+        return self.pathCmd.path.getInitialPose()

@@ -8,5 +8,5 @@ class DrivetrainPoseTelemetry():
         wpilib.SmartDashboard.putData("DT Pose 2D", self.field)
         
     def update(self, estPose, desPose):
-        self.field.getObject("estPose").setPose(estPose)
+        self.field.getRobotObject().setPose(estPose)
         self.field.getObject("desPose").setPose(desPose)

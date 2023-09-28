@@ -3,6 +3,7 @@ from AutoSequencerV2.modeList import ModeList
 from AutoSequencerV2.modes.doNothingMode import DoNothingMode
 from AutoSequencerV2.modes.drivePathTest1 import DrivePathTest1
 from AutoSequencerV2.modes.waitMode import WaitMode
+from wpimath.geometry import Pose2d
 
 
 class _AutoSequencer():
@@ -20,6 +21,7 @@ class _AutoSequencer():
         # TODO - add more autonomous modes here
         
         self.topLevelCmdGroup = CommandGroup()
+        self.startPose = Pose2d()
         
         self.updateMode(force=True) # Ensure we load the auto sequener at least once.
         
@@ -33,6 +35,7 @@ class _AutoSequencer():
             mainMode = self.mainModeList.getCurMode()
             delayMode = self.delayModeList.getCurMode()
             self.topLevelCmdGroup = delayMode.getCmdGroup().andThen(mainMode.getCmdGroup())
+            self.startPose = mainMode.getInitialDrivetrainPose()
             print(f"[Auto] New Modes Selected: {delayMode.getName()}, {mainMode.getName()}")
 
     
@@ -59,6 +62,9 @@ class _AutoSequencer():
     
     def getDelayModeNTTableName(self):
         return self.delayModeList.getModeTopicBase()
+    
+    def getStartingPose(self):
+        return self.startPose
 
 _inst = None
 
