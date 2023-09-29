@@ -26,9 +26,9 @@ class _DrivetrainControl():
 
         self.calUpdate(True)
 
-        self.pe = DrivetrainPoseEstimator(self.getModulePositions())
+        self.poseEst = DrivetrainPoseEstimator(self.getModulePositions())
         
-        self.tc = DrivetrainTrajectoryControl()
+        self.trajCtrl = DrivetrainTrajectoryControl()
 
     def calUpdate(self, force=False):
         if(self.gains.hasChanged() or force):
@@ -36,16 +36,19 @@ class _DrivetrainControl():
                 module.setClosedLoopGains(self.gains)
 
     def setCmdFieldRelative(self, downUpFieldCmd, leftRightFieldCmd, rotateCmd):
-        self.desChSpd = ChassisSpeeds.fromFieldRelativeSpeeds(downUpFieldCmd, leftRightFieldCmd, rotateCmd, self.pe.getCurEstPose().rotation())
-        self.pe.setDesiredPose(self.pe.getCurEstPose())
+        self.desChSpd = ChassisSpeeds.fromFieldRelativeSpeeds(downUpFieldCmd, 
+                                                              leftRightFieldCmd, 
+                                                              rotateCmd, 
+                                                              self.poseEst.getCurEstPose().rotation())
+        self.poseEst.setDesiredPose(self.poseEst.getCurEstPose())
 
     def setCmdRobotRelative(self, fwdRevCmd, strafeCmd, rotateCmd):
         self.desChSpd = ChassisSpeeds(fwdRevCmd, strafeCmd, rotateCmd)
-        self.pe.setDesiredPose(self.pe.getCurEstPose())
+        self.poseEst.setDesiredPose(self.poseEst.getCurEstPose())
         
     def setCmdTrajectory(self, cmd):
-        self.desChSpd = self.tc.update(cmd, self.pe.getCurEstPose())
-        self.pe.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
+        self.desChSpd = self.trajCtrl.update(cmd, self.poseEst.getCurEstPose())
+        self.poseEst.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
 
 
     def update(self):
@@ -57,10 +60,11 @@ class _DrivetrainControl():
             module.setDesiredState(desModStates[idx])
             module.update()
             
-        self.pe.update(self.getModulePositions())
+        self.poseEst.update(self.getModulePositions())
 
     def getModulePositions(self):
         return tuple(mod.getActualPosition() for mod in self.modules)
+
 
 _inst = None
 

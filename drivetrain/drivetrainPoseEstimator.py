@@ -1,6 +1,6 @@
-from wpimath.geometry import Pose2d, Rotation2d
 from wpilib import ADXRS450_Gyro 
 from wpimath.estimator import SwerveDrive4PoseEstimator
+from wpimath.geometry import Pose2d, Rotation2d
 from drivetrain.drivetrainPhysical import kinematics
 from drivetrain.drivetrainPoseTelemetry import DrivetrainPoseTelemetry
 from utils.signalLogging import log
@@ -37,6 +37,3 @@ class DrivetrainPoseEstimator():
 
     def getCurEstPose(self):
         return self.curEstPose
-
-    
-

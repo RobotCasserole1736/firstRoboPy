@@ -31,7 +31,7 @@ class MyRobot(wpilib.TimedRobot):
         
         self.dashboard = Dashboard(self.webserver)
         
-        self.di = DriverInterface()
+        self.dInt = DriverInterface()
         
         self.autoSequencer = AS.getInstance()
 
@@ -51,7 +51,7 @@ class MyRobot(wpilib.TimedRobot):
         self.autoSequencer.initiaize()
         
         # Use the autonomous rouines starting pose to init the pose estimator
-        self.driveTrain.pe.setKnownPose(self.autoSequencer.getStartingPose())
+        self.driveTrain.poseEst.setKnownPose(self.autoSequencer.getStartingPose())
         
     def autonomousPeriodic(self):
         self.autoSequencer.update()
@@ -65,11 +65,11 @@ class MyRobot(wpilib.TimedRobot):
         pass
         
     def teleopPeriodic(self):
-        self.di.update()
+        self.dInt.update()
         self.driveTrain.setCmdFieldRelative(
-            self.di.getFwdRevCmd(),
-            self.di.getStrafeCmd(),
-            self.di.getRotateCmd())
+            self.dInt.getFwdRevCmd(),
+            self.dInt.getStrafeCmd(),
+            self.dInt.getRotateCmd())
     
     
     #########################################################

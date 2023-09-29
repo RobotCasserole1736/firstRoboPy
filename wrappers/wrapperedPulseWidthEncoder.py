@@ -1,10 +1,9 @@
-
+import math
 from wpilib import DigitalInput, DutyCycle
 from utils.faults import Fault
 from utils.signalLogging import log
 from utils.calibration import Calibration
 from utils.units import wrapAngleRad
-import math
 
 
 class WrapperedPulseWidthEncoder():
@@ -16,8 +15,8 @@ class WrapperedPulseWidthEncoder():
     """
     def __init__(self, port, name, mountOffsetRad, dirInverted, minPulse, maxPulse, minAcceptableFreq):
         self.dutyCycle = DutyCycle(DigitalInput(port))
-        self.name = "Encoder_{}".format(name)
-        self.disconFault = Fault("{} DIO port {} Disconnected".format(self.name, port))
+        self.name = f"Encoder_{name}"
+        self.disconFault = Fault(f"{self.name} DIO port {port} Disconnected")
         self.mountOffsetCal = Calibration(self.name + "_mountOffset", mountOffsetRad, "rad")
         self.faulted = False
         self.curAngleRad = 0
@@ -42,7 +41,8 @@ class WrapperedPulseWidthEncoder():
         else:
             # Not-Faulted - read the raw angle from the pulse width
             pulseTime = self.dutyCycle.getOutput() * (1.0/freq)
-            rawAngle = ((pulseTime - self.minPulseTimeSec) / (self.maxPulseTimeSec - self.minPulseTimeSec)) * 2 * math.pi
+            rawAngle = ((pulseTime - self.minPulseTimeSec) / 
+                        (self.maxPulseTimeSec - self.minPulseTimeSec)) * 2 * math.pi
 
             # Invert, Offset, and wrap the reading as needed
             if(self.dirInverted):
@@ -50,9 +50,9 @@ class WrapperedPulseWidthEncoder():
 
             self.curAngleRad = wrapAngleRad(rawAngle - self.mountOffsetCal.get())
 
-        log("{}_freq".format(self.name), freq, "Hz")
-        log("{}_pulseTime".format(self.name), pulseTime, "sec")
-        log("{}_angle".format(self.name), self.curAngleRad, "rad")
+        log(f"{self.name}_freq", freq, "Hz")
+        log(f"{self.name}_pulseTime", pulseTime, "sec")
+        log(f"{self.name}_angle", self.curAngleRad, "rad")
 
     def getAngleRad(self):
         return self.curAngleRad

@@ -24,11 +24,11 @@ BUMPER_THICKNESS_M = inchesToMeters(2.5)
 
 # Total mass includes robot, battery, and bumpers
 # more than the "weigh-in" weight
-ROBOT_MASS_kg = lbsToKg(140)
+ROBOT_MASS_KG = lbsToKg(140)
 
 # Model the robot's moment of intertia as a square slab 
 # slightly bigger than wheelbase with axis through center
-ROBOT_MOI_KGM2 = 1.0/12.0 * ROBOT_MASS_kg *  math.pow((WHEEL_BASE_HALF_WIDTH_M*2.2),2) * 2 
+ROBOT_MOI_KGM2 = 1.0/12.0 * ROBOT_MASS_KG *  math.pow((WHEEL_BASE_HALF_WIDTH_M*2.2),2) * 2 
 
 # SDS MK4i Swerve Modules 
 # See https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=39598777172081
@@ -47,11 +47,11 @@ WHEEL_FUDGE_FACTOR = 0.9238
 WHEEL_RADIUS_IN = 4.0/2.0 * WHEEL_FUDGE_FACTOR 
 
 # Utility conversion functions to go between drivetrain "linear" measurements and wheel motor rotational measurements
-def dtLinearToMotorRot_rad(linear_m_in):
-    return linear_m_in / (inchesToMeters(WHEEL_RADIUS_IN)) * WHEEL_GEAR_RATIO
+def dtLinearToMotorRot(lin):
+    return lin / (inchesToMeters(WHEEL_RADIUS_IN)) * WHEEL_GEAR_RATIO
 
-def dtMotorRotToLinear_m(motorRot_rad_in):
-    return motorRot_rad_in * (inchesToMeters(WHEEL_RADIUS_IN)) / WHEEL_GEAR_RATIO
+def dtMotorRotToLinear(rot):
+    return rot * (inchesToMeters(WHEEL_RADIUS_IN)) / WHEEL_GEAR_RATIO
 
 
 # Drivetrain Performance Mechanical limits

@@ -11,8 +11,8 @@ from dashboardWidgets.swerveState import getAzmthDesTopicName, getAzmthActTopicN
 from dashboardWidgets.swerveState import getSpeedDesTopicName, getSpeedActTopicName
 from utils.signalLogging import log
 from utils.units import rad2Deg
-from drivetrain.drivetrainPhysical import dtMotorRotToLinear_m
-from drivetrain.drivetrainPhysical import dtLinearToMotorRot_rad
+from drivetrain.drivetrainPhysical import dtMotorRotToLinear
+from drivetrain.drivetrainPhysical import dtLinearToMotorRot
 from drivetrain.drivetrainPhysical import MAX_FWD_REV_SPEED_MPS
 
 class SwerveModuleControl():
@@ -43,10 +43,10 @@ class SwerveModuleControl():
         log(getSpeedDesTopicName(self.moduleName), 
             self.optimizedDesiredState.speed/MAX_FWD_REV_SPEED_MPS, "frac")
         log(getSpeedActTopicName(self.moduleName), 
-            dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec())/MAX_FWD_REV_SPEED_MPS, "frac")
+            dtMotorRotToLinear(self.wheelMotor.getMotorVelocityRadPerSec())/MAX_FWD_REV_SPEED_MPS, "frac")
 
     def getActualPosition(self):
-        wheelPosMeters = dtMotorRotToLinear_m(self.wheelMotor.getMotorPositionRad())
+        wheelPosMeters = dtMotorRotToLinear(self.wheelMotor.getMotorPositionRad())
         return SwerveModulePosition(wheelPosMeters, Rotation2d(self.azmthEnc.getAngleRad()))
 
     def getActualState(self):
@@ -77,17 +77,18 @@ class SwerveModuleControl():
         self.azmthEnc.update()
 
         # Optimize our incoming swerve command to minimize motion
-        self.optimizedDesiredState = SwerveModuleState.optimize(self.desiredState, Rotation2d(self.azmthEnc.getAngleRad()))
+        self.optimizedDesiredState = SwerveModuleState.optimize(self.desiredState, 
+                                                                Rotation2d(self.azmthEnc.getAngleRad()))
 
         # Use a PID controller to calculate the voltage for the azimuth motor
-        self.azmthCtrl.setSetpoint(self.optimizedDesiredState.angle.degrees()) # type: ignore - I think robotpy has the wrong typehint specified
+        self.azmthCtrl.setSetpoint(self.optimizedDesiredState.angle.degrees()) # type: ignore
         azmthVoltage = self.azmthCtrl.calculate(rad2Deg(self.azmthEnc.getAngleRad()))
         self.azmthMotor.setVoltage(azmthVoltage)
 
         # Send voltage and speed commands to the wheel motor
-        motorDesSpd_radpersec = dtLinearToMotorRot_rad(self.optimizedDesiredState.speed)
-        motorVoltageFF = self.wheelMotorFF.calculate(motorDesSpd_radpersec)
-        self.wheelMotor.setVelCmd(motorDesSpd_radpersec, motorVoltageFF)
+        motorDesSpd = dtLinearToMotorRot(self.optimizedDesiredState.speed)
+        motorVoltageFF = self.wheelMotorFF.calculate(motorDesSpd)
+        self.wheelMotor.setVelCmd(motorDesSpd, motorVoltageFF)
 
         if(wpilib.TimedRobot.isSimulation()):
             # Simulation - assume module is perfect and goes to where we want it to
@@ -96,7 +97,6 @@ class SwerveModuleControl():
             # Real Robot
             # Update this module's actual state with measurements from the sensors
             self.actualState.angle = Rotation2d(self.azmthEnc.getAngleRad())
-            self.actualState.speed = dtMotorRotToLinear_m(self.wheelMotor.getMotorVelocityRadPerSec())
+            self.actualState.speed = dtMotorRotToLinear(self.wheelMotor.getMotorVelocityRadPerSec())
 
         self.updateTelemetry()
-

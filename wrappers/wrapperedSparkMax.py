@@ -25,7 +25,8 @@ class WrapperedSparkMax():
             retryCounter += 1
             errList = []
             errList.append(self.ctrl.restoreFactoryDefaults())
-            errList.append(self.ctrl.setIdleMode(CANSparkMax.IdleMode.kBrake if brakeMode else CANSparkMax.IdleMode.kCoast))
+            mode = CANSparkMax.IdleMode.kBrake if brakeMode else CANSparkMax.IdleMode.kCoast            
+            errList.append(self.ctrl.setIdleMode(mode))
             errList.append(self.ctrl.setSmartCurrentLimit(40))
             # Status 0 = Motor output and Faults
             errList.append(self.ctrl.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus0, 20)) 
@@ -35,7 +36,7 @@ class WrapperedSparkMax():
             errList.append(self.ctrl.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus2, 65500))
             # Status 3 = Analog Sensor Input
             errList.append(self.ctrl.setPeriodicFramePeriod(CANSparkMax.PeriodicFrame.kStatus3, 65500))
-            if(any([x != REVLibError.kOk for x in errList])):
+            if(any(x != REVLibError.kOk for x in errList)):
                 print(f"Failure configuring Spark Max {name} CAN ID {canID}, retrying...")
             else:
                 self.connected = True

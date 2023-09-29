@@ -1,9 +1,9 @@
+from wpimath.geometry import Pose2d
 from AutoSequencerV2.commandGroup import CommandGroup
 from AutoSequencerV2.modeList import ModeList
 from AutoSequencerV2.modes.doNothingMode import DoNothingMode
 from AutoSequencerV2.modes.drivePathTest1 import DrivePathTest1
 from AutoSequencerV2.modes.waitMode import WaitMode
-from wpimath.geometry import Pose2d
 
 
 class _AutoSequencer():
