@@ -99,6 +99,7 @@ class MyRobot(wpilib.TimedRobot):
         # HAL resource from the previous instantiation. Hence this very not-singleton-pattern
         # call to cleanly destroy our FaultWrangler instance when the robot class is destroyed.
         Faults.destroyInstance()
+        dt.destroyInstance()
         
         
 if __name__ == '__main__':

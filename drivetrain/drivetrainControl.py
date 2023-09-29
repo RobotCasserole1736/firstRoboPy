@@ -64,6 +64,10 @@ class _DrivetrainControl():
 
 _inst = None
 
+def destroyInstance():
+    global _inst
+    _inst = None
+
 ###########################################
 ## Public API
 def getInstance():
