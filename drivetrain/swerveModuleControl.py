@@ -57,15 +57,15 @@ class SwerveModuleControl():
 
     def setClosedLoopGains(self, gains):
         
-        self.wheelMotor.setPID(gains.wheel_kP.get(), 
-                               gains.wheel_kI.get(), 
-                               gains.wheel_kD.get())
-        self.wheelMotorFF = SimpleMotorFeedforwardMeters(gains.wheel_kS.get(), 
-                                                         gains.wheel_kV.get(), 
-                                                         gains.wheel_kA.get())
-        self.azmthCtrl.setPID(gains.azmth_kP.get(), 
-                              gains.azmth_kI.get(), 
-                              gains.azmth_kD.get())
+        self.wheelMotor.setPID(gains.wheelP.get(), 
+                               gains.wheelI.get(), 
+                               gains.wheelD.get())
+        self.wheelMotorFF = SimpleMotorFeedforwardMeters(gains.wheelS.get(), 
+                                                         gains.wheelV.get(), 
+                                                         gains.wheelA.get())
+        self.azmthCtrl.setPID(gains.azmthP.get(), 
+                              gains.azmthI.get(), 
+                              gains.azmthD.get())
 
     def setDesiredState(self, desState):
         self.desiredState = desState

@@ -11,6 +11,8 @@ import utils.faults as Faults
 from webserver.webserver import Webserver
 import AutoSequencerV2.autoSequencer as AS
 
+ENABLE_DEBUG = True
+
 class MyRobot(wpilib.TimedRobot):
 
     #########################################################
@@ -26,9 +28,7 @@ class MyRobot(wpilib.TimedRobot):
         self.stt = SegmentTimeTracker()
         
         self.driveTrain = dt.getInstance()
-        
-        wpilib.CameraServer.launch()
-        
+                
         self.dashboard = Dashboard(self.webserver)
         
         self.dInt = DriverInterface()
@@ -103,4 +103,9 @@ class MyRobot(wpilib.TimedRobot):
         
         
 if __name__ == '__main__':
+
+    if(ENABLE_DEBUG):
+        import debugpy
+        debugpy.listen(('0.0.0.0', 5678))
+
     wpilib.run(MyRobot)

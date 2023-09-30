@@ -4,7 +4,22 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "name": "Debug RoboRIO",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "roboRIO-1736-frc.local",
+                "port": 5678
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/home/lvuser/py"
+                }
+            ],
+            "justMyCode": true
+        },
         {
             "name": "Simulate",
             "type": "python",
@@ -12,7 +27,9 @@
             "program": "robot.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["sim"]
+            "args": [
+                "sim"
+            ]
         },
         {
             "name": "Test",
@@ -21,7 +38,9 @@
             "program": "robot.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": ["test"]
+            "args": [
+                "test"
+            ]
         }
     ]
 }

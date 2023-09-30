@@ -1,7 +1,9 @@
 import os
 import wpilib
 import ntcore as nt
-import wpiutil._wpiutil.log as wpilog # pylint: disable=import-error,no-name-in-module
+import wpiutil._wpiutil.log as wpilog
+
+from utils.faults import Fault # pylint: disable=import-error,no-name-in-module
 
 
 BASE_TABLE = "SmartDashboard"
@@ -17,18 +19,28 @@ class _SignalWrangler:
         self.publishedSigDict = {}
         self.sigUnitsDict = {}
         self.sampleList = []
+        self.enableDiskLogging = True
+        self.driveAvailableFault = Fault("Logging USB Drive Not Available")
+
 
         if wpilib.RobotBase.isSimulation():
             logDir = "./simulationLogs"
         else:
             logDir = "/U/logs"
 
-        if not os.path.isdir(logDir):
-            os.makedirs(logDir)
+        try:
+            if not os.path.isdir(logDir):
+                os.makedirs(logDir)
+        except Exception as err:
+            print("Logging disabled!")
+            print(err)
+            self.enableDiskLogging = False
+            self.driveAvailableFault.setFaulted()
 
-        wpilib.DataLogManager.start(dir=logDir)
-        wpilib.DriverStation.startDataLog(wpilib.DataLogManager.getLog())
-        self.log = wpilib.DataLogManager.getLog()
+        if(self.enableDiskLogging):
+            wpilib.DataLogManager.start(dir=logDir)
+            wpilib.DriverStation.startDataLog(wpilib.DataLogManager.getLog())
+            self.log = wpilib.DataLogManager.getLog()
 
     # Periodic value update
     # Should be called once per periodic loop
@@ -54,8 +66,11 @@ class _SignalWrangler:
                     unitsStr = self.sigUnitsDict[name]
                     sigTopic.setProperty("units", str(unitsStr))
 
-                # Set up log file publishing
-                sigLog = wpilog.DoubleLogEntry(log=self.log, name=name)
+                # Set up log file publishing if enabled
+                if(self.enableDiskLogging):
+                    sigLog = wpilog.DoubleLogEntry(log=self.log, name=name)
+                else:
+                    sigLog = None
 
                 # Remember handles for both
                 self.publishedSigDict[name] = (sigPub, sigLog)
@@ -63,7 +78,8 @@ class _SignalWrangler:
             # Publish value to NT
             self.publishedSigDict[name][0].set(value, time)
             # Put value to log file
-            self.publishedSigDict[name][1].append(value, time)
+            if(self.enableDiskLogging):
+                self.publishedSigDict[name][1].append(value, time)
 
         # Reset sample list back to empty for next loop
         self.sampleList = []

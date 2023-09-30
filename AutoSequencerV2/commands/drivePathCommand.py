@@ -30,7 +30,7 @@ class DrivePathCommand(Command):
 
         dt.getInstance().setCmdTrajectory(curState)        
 
-        self.done = curTime >= (self.startTime + self.duration)
+        self.done = curTime >= (self.duration)
         
         if(self.done):
             dt.getInstance().setCmdRobotRelative(0,0,0)
