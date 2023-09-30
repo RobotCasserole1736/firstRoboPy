@@ -57,19 +57,16 @@ class WrapperedSparkMax():
         if(self.connected):
             self.pidCtrl.setReference(velCmd, CANSparkMax.ControlType.kVelocity, 
                                     0, arbFF, SparkMaxPIDController.ArbFFUnits.kVoltage)
+            self._logCurrent()
 
     def setVoltage(self, outputVoltageVolts):
         log(self.name + "_cmdVoltage", outputVoltageVolts, "V")
         if(self.connected):
             self.ctrl.setVoltage(outputVoltageVolts)
+            self._logCurrent()
     
-    def getCurrent(self):
-        if(self.connected):
-            current = self.ctrl.getOutputCurrent()
-        else:
-            current = 0
-        log(self.name + "_outputCurrent", current, "A")
-        return current
+    def _logCurrent(self):
+        log(self.name + "_outputCurrent", self.ctrl.getOutputCurrent(), "A")
     
     def getMotorPositionRad(self):
         if(self.connected):

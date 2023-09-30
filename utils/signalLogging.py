@@ -1,9 +1,9 @@
 import os
 import wpilib
 import ntcore as nt
-import wpiutil._wpiutil.log as wpilog
+import wpiutil._wpiutil.log as wpilog # pylint: disable=import-error,no-name-in-module
 
-from utils.faults import Fault # pylint: disable=import-error,no-name-in-module
+from utils.faults import Fault 
 
 
 BASE_TABLE = "SmartDashboard"
@@ -31,7 +31,7 @@ class _SignalWrangler:
         try:
             if not os.path.isdir(logDir):
                 os.makedirs(logDir)
-        except Exception as err:
+        except PermissionError as err:
             print("Logging disabled!")
             print(err)
             self.enableDiskLogging = False

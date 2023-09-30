@@ -2,6 +2,8 @@ import wpilib
 
 from utils.signalLogging import log
 
+# Utilties for tracking how long certain chunks of code take
+# including logging overall loop execution time
 class SegmentTimeTracker():
     def __init__(self, longLoopThresh = 0.03):
         self.longLoopThresh = longLoopThresh

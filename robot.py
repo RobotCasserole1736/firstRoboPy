@@ -8,10 +8,9 @@ from utils.signalLogging import log
 import utils.signalLogging as SignalLogging
 import utils.calibration as Calibration
 import utils.faults as Faults
+from utils.rioMonitor import RIOMonitor
 from webserver.webserver import Webserver
 import AutoSequencerV2.autoSequencer as AS
-
-ENABLE_DEBUG = True
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -35,6 +34,8 @@ class MyRobot(wpilib.TimedRobot):
         
         self.autoSequencer = AS.getInstance()
 
+        self.rioMonitor = RIOMonitor()
+
     def robotPeriodic(self):
         self.stt.start()
         self.driveTrain.update()
@@ -42,6 +43,7 @@ class MyRobot(wpilib.TimedRobot):
         SignalLogging.update()
         Calibration.update()
         Faults.update()
+        self.rioMonitor.update()
         self.stt.end()
         
     #########################################################
@@ -104,8 +106,8 @@ class MyRobot(wpilib.TimedRobot):
         
 if __name__ == '__main__':
 
-    if(ENABLE_DEBUG):
-        import debugpy
-        debugpy.listen(('0.0.0.0', 5678))
+    # Uncomment these two lines to enable debugging the RIO remotely
+    # import debugpy
+    # debugpy.listen(('0.0.0.0', 5678))
 
     wpilib.run(MyRobot)
