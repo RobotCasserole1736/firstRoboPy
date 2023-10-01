@@ -87,27 +87,22 @@ class MyRobot(wpilib.TimedRobot):
         oopsie = (5/0.0)
 
     #########################################################
-    ## Unit Test Support
-    def __del__(self):
-        # Students! Look away! Do as I say, not as I do!
-        #
-        #
-        # ...
-        #
-        #
-        # Ok since you asked:
-        # The FaultWrangler singleton instantiates two WPILIB Hal objeccts 
-        # to control the blinky LED's. This is fine on the robot, because the 
-        # whole python process is killed and restarted whenever robot code restarts.
-        # However, in unit simulations, only this _class_ is destroyed and recreated,
-        # which leakes any singleton's state from one test to another. Again, this is
-        # _sorta_ ok, because the singletons by definition have to handle abitrary
-        # call sequences and data inputs. While it makes the test case order matter,
-        # it's not the end of the world. Except for Faults, where we can't re-use the 
-        # HAL resource from the previous instantiation. Hence this very not-singleton-pattern
-        # call to cleanly destroy our FaultWrangler instance when the robot class is destroyed.
+    ## Cleanup
+    def endCompetition(self):
+        # Our code has a number of things which create "global state",
+        # that is to say variables and objects which are not children
+        # of the main robot class (including python global variables)
+        # We hook the endCompetition method to clean these things up
+        # when our code exits.
+        # Note this is primarily for unit test support: Usually,
+        # our code exits in one of two "abnormal" ways:
+        # 1) On Robot: we unplug the RIO
+        # 2) In Simulation: The process ends
+        self.rioMonitor.stopThreads()
         Faults.destroyInstance()
         dt.destroyInstance()
+        super().endCompetition()
+
 
         
         

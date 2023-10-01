@@ -21,21 +21,29 @@ class RIOMonitor():
         self.prevSystemTime = 0
         self.prevIdleTime = 0
 
-        Thread(target=self._updateFast,daemon=True).start()
-        Thread(target=self._updateSlow,daemon=True).start()
+        self.thread1 = Thread(target=self._updateFast,daemon=True)
+        self.thread2 = Thread(target=self._updateSlow,daemon=True)
+        self.runCmd = True
+        self.thread1.start()
+        self.thread2.start()
+
+    def stopThreads(self):
+        self.runCmd = False
+        self.thread1.join()
+        self.thread2.join()
         
 
 
 
     # Things that should be recorded fairly quickly
     def _updateFast(self):
-        while(True):
+        while(self.runCmd):
             self._updateVoltages()
             time.sleep(0.02)
 
     # Things that don't have to be updated as fast
     def _updateSlow(self):
-        while(True):
+        while(self.runCmd):
             self._updateMemStats()
             self._updateCPUStats()
             self._updateCANStats()
