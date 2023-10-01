@@ -3,15 +3,15 @@ import wpilib
 from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
 import drivetrain.drivetrainControl as dt
-from utils.functionGenerator import FunctionGenerator
 from utils.segmentTimeTracker import SegmentTimeTracker
-from utils.signalLogging import log
 import utils.signalLogging as SignalLogging
 import utils.calibration as Calibration
 import utils.faults as Faults
+from utils.crashLogger import CrashLogger
 from utils.rioMonitor import RIOMonitor
 from webserver.webserver import Webserver
 import AutoSequencerV2.autoSequencer as AS
+
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -21,9 +21,10 @@ class MyRobot(wpilib.TimedRobot):
         # Since we're defining a bunch of new things here, tell pylint 
         # to ignore these instantiations in a method.
         # pylint: disable=attribute-defined-outside-init
-        self.fgTest = FunctionGenerator("test")
+
+        self.crashLogger = CrashLogger()
+
         self.webserver = Webserver()
-        log("test", -1, "rpm")
                 
         self.stt = SegmentTimeTracker()
         
@@ -39,8 +40,8 @@ class MyRobot(wpilib.TimedRobot):
 
     def robotPeriodic(self):
         self.stt.start()
+        self.crashLogger.update()
         self.driveTrain.update()
-        log("test", self.fgTest.get())
         SignalLogging.update()
         Calibration.update()
         Faults.update()
@@ -78,7 +79,12 @@ class MyRobot(wpilib.TimedRobot):
     ## Disabled-Specific init and update
     def disabledPeriodic(self):
         AS.getInstance().updateMode()
-        
+
+    #########################################################
+    ## Test-Specific init and update
+    def testInit(self):
+        # Induce a crash
+        oopsie = (5/0.0)
 
     #########################################################
     ## Unit Test Support
@@ -102,6 +108,7 @@ class MyRobot(wpilib.TimedRobot):
         # call to cleanly destroy our FaultWrangler instance when the robot class is destroyed.
         Faults.destroyInstance()
         dt.destroyInstance()
+
         
         
 if __name__ == '__main__':
