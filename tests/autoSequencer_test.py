@@ -1,6 +1,7 @@
 # pylint: disable-all
 
 
+import os
 from AutoSequencerV2.autoSequencer import *
 from AutoSequencerV2.command import Command
 from AutoSequencerV2.commandGroup import CommandGroup, GroupType
@@ -18,10 +19,13 @@ class TestCommand(Command):
 
 
 def test_topLevel():
+    oldDir = os.getcwd()
+    os.chdir("../") # Hack around the fact that tests runs in a different folder, and wpilib's "getDeployDirectory" has a bug for that situation
     getInstance().updateMode()
     getInstance().initiaize()
     getInstance().update()
     getInstance().end()
+    os.chdir(oldDir)
 
 
 

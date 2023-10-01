@@ -1,5 +1,6 @@
 import io
-import os
+from threading import Thread
+import time 
 import subprocess
 from wpilib import RobotController
 from wpilib import RobotBase
@@ -20,37 +21,48 @@ class RIOMonitor():
         self.prevSystemTime = 0
         self.prevIdleTime = 0
 
-    # Fast update - needs to be called "in-line" with other robot functions
-    def update20ms(self):
-        self._updateVoltages()
+        Thread(target=self._updateFast,daemon=True).start()
+        Thread(target=self._updateSlow,daemon=True).start()
+        
 
-    # Slow update - for things that shouldn't be changing fast to not add overhead
-    def update500ms(self):
-        self._updateMemStats()
-        self._updateCPUStats()
-        self._updateCANStats()
-        self._updateDiskStats()
+
+
+    # Things that should be recorded fairly quickly
+    def _updateFast(self):
+        while(True):
+            self._updateVoltages()
+            time.sleep(0.02)
+
+    # Things that don't have to be updated as fast
+    def _updateSlow(self):
+        while(True):
+            self._updateMemStats()
+            self._updateCPUStats()
+            self._updateCANStats()
+            self._updateDiskStats()
+            time.sleep(1.0)
 
     def _updateDiskStats(self):
-        # Use the built-in `df` command to get info about disk usage
-        result = subprocess.Popen("df", stdout=subprocess.PIPE)
-        if(result.stdout is not None):
-            for line in io.TextIOWrapper(result.stdout, encoding="utf-8"): # abstract-class-instantiated: ignore
-                lineParts = line.split()
-                lineParts = [i for i in lineParts if i]
-                try:
-                    mountDir = str(lineParts[5])
-                    usedBytes = int(lineParts[2])
-                    availBytes = int(lineParts[3])
-                except ValueError:
-                    continue # Skip this line if we couldn't parse values
+        if(RobotBase.isReal()):
+            # Use the built-in `df` command to get info about disk usage
+            with subprocess.Popen("df", stdout=subprocess.PIPE) as result:
+                if(result.stdout is not None):
+                    for line in io.TextIOWrapper(result.stdout, encoding="utf-8"): # abstract-class-instantiated: ignore
+                        lineParts = line.split()
+                        lineParts = [i for i in lineParts if i]
+                        try:
+                            mountDir = str(lineParts[5])
+                            usedBytes = int(lineParts[2])
+                            availBytes = int(lineParts[3])
+                        except ValueError:
+                            continue # Skip this line if we couldn't parse values
 
-                pctUsed = usedBytes / float(usedBytes + availBytes) * 100.0
-                if(mountDir == "/"):
-                    log("RIO SD Card Disk Usage", pctUsed, "pct")
-                elif(mountDir.startswith("/media")):
-                    mountDir = mountDir.replace("/", "\\")
-                    log(f"RIO USB {mountDir} Disk Usage", pctUsed, "pct")
+                        pctUsed = usedBytes / float(usedBytes + availBytes) * 100.0
+                        if(mountDir == "/"):
+                            log("RIO SD Card Disk Usage", pctUsed, "pct")
+                        elif(mountDir.startswith("/media")):
+                            mountDir = mountDir.replace("/", "\\")
+                            log(f"RIO USB {mountDir} Disk Usage", pctUsed, "pct")
 
 
     def _updateCANStats(self):
@@ -77,13 +89,13 @@ class RIOMonitor():
 
             # The /proc/stat file contains running totals
             # of how long the CPU spent doing different things
-            with open("/proc/stat", 'r') as file:
+            with open("/proc/stat", 'r', encoding="utf-8") as file:
                 for line in file:
                     if line.startswith("cpu "):
                         loadLine = line
                         break
             
-            if(loadLine != None):
+            if(loadLine is not None):
                 # Parse out the running totals
                 parts = loadLine.split(" ")
                 parts = [i for i in parts if i] # Filter out empty strings
@@ -124,7 +136,7 @@ class RIOMonitor():
             memFreeStr = None
 
             # Read lines out of the special linux "meminfo" file
-            with open("/proc/meminfo", 'r') as file:
+            with open("/proc/meminfo", 'r', encoding="utf-8") as file:
                 for line in file:
                     if line.startswith("MemTotal:"):
                         memTotalStr = line
@@ -132,7 +144,7 @@ class RIOMonitor():
                         memFreeStr = line
 
             # If we found both lines, parse out the numbers we care about
-            if(memTotalStr != None and memFreeStr != None):
+            if(memTotalStr is not None and memFreeStr is not None):
                 memTotalParts = memTotalStr.split()
                 memFreeParts = memFreeStr.split()
 
@@ -144,4 +156,3 @@ class RIOMonitor():
 
 
                 log("RIO Memory Usage", (1.0 - curFreeMem/curTotalMem) * 100.0, "pct")
-

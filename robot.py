@@ -36,7 +36,6 @@ class MyRobot(wpilib.TimedRobot):
         self.autoSequencer = AS.getInstance()
 
         self.rioMonitor = RIOMonitor()
-        self.addPeriodic(self.rioMonitor.update500ms, 0.5)
 
     def robotPeriodic(self):
         self.stt.start()
@@ -45,7 +44,6 @@ class MyRobot(wpilib.TimedRobot):
         SignalLogging.update()
         Calibration.update()
         Faults.update()
-        self.rioMonitor.update20ms()
         self.stt.end()
         
     #########################################################
