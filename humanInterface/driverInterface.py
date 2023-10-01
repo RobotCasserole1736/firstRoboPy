@@ -4,16 +4,19 @@ from drivetrain.drivetrainPhysical import MAX_FWD_REV_SPEED_MPS
 from drivetrain.drivetrainPhysical import MAX_STRAFE_SPEED_MPS
 from drivetrain.drivetrainPhysical import MAX_ROTATE_SPEED_RAD_PER_SEC
 from utils.faults import Fault
+from utils.signalLogging import log
+
 
 
 class DriverInterface():
 
     def __init__(self):
-        self.ctrl = XboxController(0)
+        ctrlIdx = 0
+        self.ctrl = XboxController(ctrlIdx)
         self.fwdRevCmd = 0
         self.strafeCmd = 0
         self.rotateCmd = 0
-        self.connectedFault = Fault("Driver XBox Controller (0) Unplugged")
+        self.connectedFault = Fault(f"Driver XBox Controller ({ctrlIdx}) Unplugged")
 
 
 
@@ -33,6 +36,11 @@ class DriverInterface():
             self.strafeCmd = 0.0
             self.rotateCmd = 0.0
             self.connectedFault.setFaulted()
+
+        log("DI FwdRev Cmd", self.fwdRevCmd, "mps")
+        log("DI Strafe Cmd", self.strafeCmd, "mps")
+        log("DI Rotate Cmd", self.rotateCmd, "radPerSec")
+        log("DI connected", self.ctrl.isConnected(), "bool")
 
     def getFwdRevCmd(self):
         return self.fwdRevCmd

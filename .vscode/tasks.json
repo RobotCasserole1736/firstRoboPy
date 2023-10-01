@@ -97,6 +97,31 @@
             "icon": {
                 "id": "check-all"
             }
+        },
+        {
+            "label": "PyFRC: _View Netconsole",
+            "type": "shell",
+            "windows": {
+                "command": "py -3 -m netconsole roboRIO-1736-frc.local"
+            },
+            "linux": {
+                "command": "netconsole roboRIO-1736-frc.local"
+            },
+            "group": {
+                "kind": "build",
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true,
+                "focus": true,
+                "showReuseMessage": false,
+                "revealProblems": "onProblem"
+            },
+            "problemMatcher": [],
+            "icon": {
+                "id": "check-all"
+            }
         }
     ]
 }

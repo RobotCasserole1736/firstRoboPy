@@ -35,6 +35,7 @@ class MyRobot(wpilib.TimedRobot):
         self.autoSequencer = AS.getInstance()
 
         self.rioMonitor = RIOMonitor()
+        self.addPeriodic(self.rioMonitor.update500ms, 0.5)
 
     def robotPeriodic(self):
         self.stt.start()
@@ -43,7 +44,7 @@ class MyRobot(wpilib.TimedRobot):
         SignalLogging.update()
         Calibration.update()
         Faults.update()
-        self.rioMonitor.update()
+        self.rioMonitor.update20ms()
         self.stt.end()
         
     #########################################################
@@ -106,8 +107,9 @@ class MyRobot(wpilib.TimedRobot):
         
 if __name__ == '__main__':
 
-    # Uncomment these two lines to enable debugging the RIO remotely
-    # import debugpy
-    # debugpy.listen(('0.0.0.0', 5678))
+    # Uncomment these lines to enable debugging the RIO remotely
+    import debugpy
+    debugpy.listen(('0.0.0.0', 5678))
+    #debugpy.wait_for_client()
 
     wpilib.run(MyRobot)
