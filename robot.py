@@ -1,3 +1,4 @@
+import os
 import wpilib
 from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
@@ -107,9 +108,11 @@ class MyRobot(wpilib.TimedRobot):
         
 if __name__ == '__main__':
 
-    # Uncomment these lines to enable debugging the RIO remotely
-    import debugpy
-    debugpy.listen(('0.0.0.0', 5678))
-    #debugpy.wait_for_client()
+    enableDebug = os.path.isfile("/home/lvuser/py/enableDebug")
+    if(enableDebug):
+        print("Starting Debug Support....")
+        import debugpy
+        debugpy.listen(('0.0.0.0', 5678))
+        debugpy.wait_for_client()
 
     wpilib.run(MyRobot)

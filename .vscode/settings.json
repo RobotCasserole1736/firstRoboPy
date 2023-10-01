@@ -1,5 +1,7 @@
 {
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "basic",
+    "stm32-for-vscode.openOCDPath": false,
+    "stm32-for-vscode.makePath": false
 }
