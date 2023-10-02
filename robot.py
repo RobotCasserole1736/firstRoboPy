@@ -84,7 +84,7 @@ class MyRobot(wpilib.TimedRobot):
     ## Test-Specific init and update
     def testInit(self):
         # Induce a crash
-        oopsie = (5/0.0)
+        oopsie = (5/0.0) # pylint: disable=unused-variable
 
     #########################################################
     ## Cleanup
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     enableDebug = os.path.isfile("/home/lvuser/py/enableDebug")
     if(enableDebug):
         print("Starting Debug Support....")
-        import debugpy
+        import debugpy 
         debugpy.listen(('0.0.0.0', 5678))
         debugpy.wait_for_client()
 
