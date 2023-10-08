@@ -1,0 +1,41 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/DT Pose 2D": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/DT Pose 2D": {
+        "Robot": {
+          "style": "Box/Image"
+        },
+        "desTraj": {
+          "arrowColor": [
+            187.2151641845703,
+            0.0,
+            255.0,
+            255.0
+          ],
+          "arrowWeight": 2.0,
+          "color": [
+            0.0,
+            255.0,
+            245.31642150878906,
+            255.0
+          ],
+          "style": "Line"
+        },
+        "window": {
+          "visible": true
+        }
+      }
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "SmartDashboard": {
+        "open": true
+      }
+    }
+  }
+}
