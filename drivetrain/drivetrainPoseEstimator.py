@@ -2,7 +2,7 @@ from wpilib import ADXRS450_Gyro
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Rotation2d
 from drivetrain.drivetrainPhysical import kinematics
-from drivetrain.drivetrainPoseTelemetry import DrivetrainPoseTelemetry
+import drivetrain.drivetrainPoseTelemetry as DrivetrainPoseTelemetry
 from utils.signalLogging import log
 
 
@@ -19,7 +19,7 @@ class DrivetrainPoseEstimator():
         )
         self.lastModulePositions = initialModuleStates
         self.curRawGyroAngle = Rotation2d()
-        self.telem = DrivetrainPoseTelemetry()
+        self.telemetry = DrivetrainPoseTelemetry.getInstance()
         
     def setDesiredPose(self, desPose):
         self.curDesPose = desPose
@@ -33,7 +33,7 @@ class DrivetrainPoseEstimator():
         self.lastModulePositions = curModulePositions
         self.curEstPose = self.poseEst.getEstimatedPosition()
         log("PE Gyro Angle", self.curRawGyroAngle.degrees(), "deg")
-        self.telem.update(self.curEstPose, self.curDesPose)
+        self.telemetry.update(self.curEstPose, self.curDesPose)
 
     def getCurEstPose(self):
         return self.curEstPose
