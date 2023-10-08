@@ -27,13 +27,13 @@ class DrivetrainPoseEstimator():
     def setKnownPose(self, knownPose):
         self.poseEst.resetPosition(self.gyro.getRotation2d(), self.lastModulePositions, knownPose)
 
-    def update(self, curModulePositions):
+    def update(self, curModulePositions, curDesModulePositions):
         self.curRawGyroAngle = self.gyro.getRotation2d()
         self.poseEst.update(self.curRawGyroAngle, curModulePositions)
         self.lastModulePositions = curModulePositions
         self.curEstPose = self.poseEst.getEstimatedPosition()
         log("PE Gyro Angle", self.curRawGyroAngle.degrees(), "deg")
-        self.telemetry.update(self.curEstPose, self.curDesPose)
+        self.telemetry.update(self.curEstPose, self.curDesPose, curDesModulePositions)
 
     def getCurEstPose(self):
         return self.curEstPose
