@@ -46,7 +46,9 @@ class _DrivetrainPoseTelemetry():
     # account for holonomic heading. Fix that.
     def _pathplannerToWPIState(self, inVal):
         trans = inVal.pose.translation()
-        rot = inVal.holonomicRotation
+        # Critically - in the shown pose,
+        # display the holonomic rotation, not the path velocity vector
+        rot = inVal.holonomicRotation 
         pose = Pose2d(trans, rot)
         return Trajectory.State(
             acceleration=inVal.acceleration,
