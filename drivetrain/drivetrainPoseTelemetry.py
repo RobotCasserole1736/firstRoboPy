@@ -1,10 +1,9 @@
 import wpilib
-from drivetrain.drivetrainPhysical import *
 
 from wpimath.units import metersToFeet
 from wpimath.trajectory import Trajectory
 from utils.signalLogging import log
-from wpimath.geometry import Pose2d, Transform2d
+from wpimath.geometry import Pose2d
 
 
 
@@ -15,15 +14,10 @@ class _DrivetrainPoseTelemetry():
         wpilib.SmartDashboard.putData("DT Pose 2D", self.field)
         self.curTraj = Trajectory()
         
-    def update(self, estPose, desPose, swerveStates):
+    def update(self, estPose, desPose):
         self.field.getRobotObject().setPose(estPose)
         self.field.getObject("desPose").setPose(desPose)
         self.field.getObject("desTraj").setTrajectory(self.curTraj)
-
-        self.field.getObject("Module_FL").setPose(desPose.transformBy(Transform2d(robotToModuleTranslations[FL], swerveStates[FL].angle)))
-        self.field.getObject("Module_FR").setPose(desPose.transformBy(Transform2d(robotToModuleTranslations[FR], swerveStates[FR].angle)))
-        self.field.getObject("Module_BL").setPose(desPose.transformBy(Transform2d(robotToModuleTranslations[BL], swerveStates[BL].angle)))
-        self.field.getObject("Module_BR").setPose(desPose.transformBy(Transform2d(robotToModuleTranslations[BR], swerveStates[BR].angle)))
 
         log("DT Pose Est X", metersToFeet(estPose.X()), "ft")
         log("DT Pose Est Y", metersToFeet(estPose.Y()), "ft")

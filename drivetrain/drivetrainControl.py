@@ -60,7 +60,7 @@ class _DrivetrainControl():
             module.setDesiredState(desModStates[idx])
             module.update()
             
-        self.poseEst.update(self.getModulePositions(), desModStates)
+        self.poseEst.update(self.getModulePositions())
 
     def getModulePositions(self):
         return tuple(mod.getActualPosition() for mod in self.modules)
