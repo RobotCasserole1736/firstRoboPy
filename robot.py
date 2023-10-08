@@ -37,6 +37,7 @@ class MyRobot(wpilib.TimedRobot):
         self.autoSequencer = AS.getInstance()
 
         self.rioMonitor = RIOMonitor()
+    
 
     def robotPeriodic(self):
         self.stt.start()

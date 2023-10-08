@@ -7,10 +7,10 @@
             "label": "PyFRC: _Deploy",
             "type": "shell",
             "windows": {
-                "command": "python ${workspaceFolder}\\robot.py deploy --skip-tests"
+                "command": "python ${workspaceFolder}\\robot.py deploy --skip-tests "
             },
             "linux": {
-                "command": "python ${workspaceFolder}/robot.py deploy --skip-tests"
+                "command": "python ${workspaceFolder}/robot.py deploy --skip-tests "
             },
             "group": {
                 "kind": "build",

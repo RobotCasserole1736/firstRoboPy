@@ -39,7 +39,7 @@ class _SignalWrangler:
 
         if(self.enableDiskLogging):
             wpilib.DataLogManager.start(dir=logDir)
-            wpilib.DriverStation.startDataLog(wpilib.DataLogManager.getLog())
+            wpilib.DataLogManager.logNetworkTables(False) # We have a lot of things in NT that don't need to be logged
             self.log = wpilib.DataLogManager.getLog()
 
     # Periodic value update
