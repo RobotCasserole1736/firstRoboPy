@@ -8,8 +8,13 @@ from wpimath.geometry import Pose2d
 
 
 class _DrivetrainPoseTelemetry():
+    """
+    Helper class to wrapper sending all drivetrain Pose related information 
+    to dashboards
+    """
     
     def __init__(self):
+        
         self.field = wpilib.Field2d()
         wpilib.SmartDashboard.putData("DT Pose 2D", self.field)
         self.curTraj = Trajectory()
@@ -27,6 +32,11 @@ class _DrivetrainPoseTelemetry():
         log("DT Pose Des T", desPose.rotation().degrees(), "deg")
 
     def setTrajectory(self, trajIn):
+        """Display a specific trajectory on the robot Field2d
+
+        Args:
+            trajIn (PathPlannerTrajectory): The trajectory to display
+        """
         # Transform pathplanner state into useful trajectory for telemetry
         if trajIn is not None:
             stateList = []

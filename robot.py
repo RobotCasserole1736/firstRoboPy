@@ -71,9 +71,9 @@ class MyRobot(wpilib.TimedRobot):
     def teleopPeriodic(self):
         self.dInt.update()
         self.driveTrain.setCmdFieldRelative(
-            self.dInt.getFwdRevCmd(),
-            self.dInt.getStrafeCmd(),
-            self.dInt.getRotateCmd())
+            self.dInt.getVxCmd(),
+            self.dInt.getVyCmd(),
+            self.dInt.getVtCmd())
     
     
     #########################################################

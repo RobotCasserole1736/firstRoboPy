@@ -2,6 +2,12 @@ from utils.calibration import Calibration
 
 
 class SwerveModuleGainSet():
+    """Helper class to house all calibrated gains for one swerve drive module. 
+    Currently, this includes
+     * Wheel feed back PID gains
+     * Wheel feed-forward SVA gains
+     * Azimuth feed back PID gains
+    """
     def __init__(self):
         self.wheelP = Calibration("Drivetrain Module Wheel kP", 0.02) 
         self.wheelI = Calibration("Drivetrain Module Wheel kI", 0.0)
@@ -14,6 +20,10 @@ class SwerveModuleGainSet():
         self.azmthD = Calibration("Drivetrain Module Azmth kD", 0.00001)
 
     def hasChanged(self):
+        """
+        Returns:
+            bool: True if any gain in the set is modified, false otherwise
+        """
         return (self.wheelP.isChanged() or
                 self.wheelI.isChanged() or
                 self.wheelD.isChanged() or
