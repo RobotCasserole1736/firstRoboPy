@@ -23,7 +23,7 @@ class SwerveModuleControl():
         """Instantiate one swerve drive module
 
         Args:
-            moduleName (str): Name Prefix for the module (IE, "FL", or "BR"). For logging and calibration purposes mostly
+            moduleName (str): Name Prefix for the module (IE, "FL", or "BR"). For logging purposes mostly
             wheelMotorCanID (int): CAN Id for the wheel motor for this module
             azmthMotorCanID (int): CAN Id for the azimuth motor for this module
             azmthEncoderPortIdx (int): RIO Port for the azimuth absolute encoder for this module

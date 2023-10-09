@@ -2,7 +2,6 @@
 
 import wpilib
 from pathplannerlib import PathPlanner
-from wpimath.trajectory import Trajectory
 
 from AutoSequencerV2.command import Command
 from drivetrain.drivetrainPhysical import MAX_DT_LINEAR_SPEED

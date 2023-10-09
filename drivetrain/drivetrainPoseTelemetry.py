@@ -2,8 +2,8 @@ import wpilib
 
 from wpimath.units import metersToFeet
 from wpimath.trajectory import Trajectory
-from utils.signalLogging import log
 from wpimath.geometry import Pose2d
+from utils.signalLogging import log
 
 
 
