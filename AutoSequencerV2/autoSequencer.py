@@ -7,14 +7,18 @@ from AutoSequencerV2.modes.waitMode import WaitMode
 
 
 class _AutoSequencer():
+    """Top-level implementation of the AutoSequencer 
+    """
     def __init__(self):
         
+        # Have different d=modes for delaying the start of autonomous
         self.delayModeList = ModeList("Delay")
         self.delayModeList.addMode(WaitMode(0.0))
         self.delayModeList.addMode(WaitMode(3.0))
         self.delayModeList.addMode(WaitMode(6.0))
         self.delayModeList.addMode(WaitMode(9.0))
         
+        # Create a list of every autonomous mode we want
         self.mainModeList = ModeList("Main")
         self.mainModeList.addMode(DrivePathTest1())
         self.mainModeList.addMode(DoNothingMode())

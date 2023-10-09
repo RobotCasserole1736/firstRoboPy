@@ -5,6 +5,12 @@ from datetime import  datetime
 import wpilib
 
 class CrashLogger():
+    
+    """
+    Python code has many more issues which are caught at runtime. In case one of these happens while on the field, 
+    it's important that we record what happened. This class adds an extra logging handle to record these to uniquely
+    named log files on the USB drive for later retrieval
+    """
 
     def update(self):
         if(not self.prefixWritten and wpilib.DriverStation.isFMSAttached()):

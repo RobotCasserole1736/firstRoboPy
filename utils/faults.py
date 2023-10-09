@@ -5,6 +5,9 @@ FIX_ME_LED_PIN = 8
 HEARTBEAT_LED_PIN = 9
 
 class _FaultWrangler():
+    """
+    The Fault Wrangler tracks all faults, and pulses two LED's to indicate current state.
+    """
     def __init__(self):
         self.faultList = []
         self.activeFaultCount = 0
@@ -21,6 +24,9 @@ class _FaultWrangler():
         self.heartbeatLED.enablePWM(1.0) # Initially should be just "ON" until the first call to update
             
     def update(self):
+        """
+        Main update - call this every 20ms from main robot code to keep animating LED blinks, indicating code is running
+        """
         self.loopCounter += 1
         if(self.loopCounter == self.statusUpdateLoops):
             # Every N loops, Update status String
@@ -76,6 +82,9 @@ def destroyInstance():
 # Create a new Fault whenever you have a condition for which you can
 # annunciate a fault    
 class Fault():
+    """
+    A Fault is an abnormal condition on our robot which software can detect, and requires pit crew attention.
+    """
     def __init__(self, message):
         self.message = message
         getInstance().register(self)

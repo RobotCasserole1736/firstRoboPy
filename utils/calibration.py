@@ -2,35 +2,56 @@ import wpilib
 import ntcore as nt
 
 class _CalibrationWrangler():
-
-    # Starts up logging to file, along with network tables infrastructure
-    # Picks approprate logging directory based on our current target
+    """
+    Starts up logging to file, along with network tables infrastructure
+    Picks approprate logging directory based on our current target
+    """
     def __init__(self):
         self.calDict = {}
         
     def register(self, cal):
+        """Record that a new calibration is present and should be processed in the future
+
+        Args:
+            cal (Calibration): the calibration to register
+        """
         self.calDict[cal.name] = cal
         
     def update(self):
+        """Update all calibrations. Should be called every 20ms
+        """
         for cal in self.calDict.values():
             cal.update()
 
 # Singleton infrastructure
 _inst = None
-def getInstance():
-    global _inst
-    if(_inst is None):
-        _inst = _CalibrationWrangler()
-    return _inst
 
 ###########################################
 # Public API
 ###########################################
 
+def getInstance():
+    """Singleton infrastructure
+
+    Returns:
+        CalibrationWrangler: the instance of the calibration wrangler
+    """
+    global _inst
+    if(_inst is None):
+        _inst = _CalibrationWrangler()
+    return _inst
+
 def update():
+    """Update all calibrations. Should be called every 20ms
+    """
     getInstance().update()
 
 class Calibration():
+    """
+    Defines a single calibration point.
+    A calibration is any number which is constant normally on the robot, but will need to be tweaked
+    empirically as part of robot development.
+    """
     def __init__(self, name, default=0.0, units="", minVal=float('-Inf'), maxVal=float('Inf')):
         self.name = name
         self.units = units

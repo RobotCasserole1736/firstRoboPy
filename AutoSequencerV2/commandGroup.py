@@ -10,14 +10,15 @@ class GroupType(Enum):
     PARALLEL = 2
     RACE = 3
 
+
+class CommandGroup(Runnable, Composer):
     """Command Group - implements all types of command groups.
     CMG Note: This feels very not-pythonic. However, because commands need to 
     know about commandGroups to do composition,
     but commandGroups need to know about commands to run them, you tend to get
-    circular imports which python hates.
+    circular imports which python hates. C++ and Java are less picky.
     I'm not sure there's a better way around this
     """
-class CommandGroup(Runnable, Composer):
     def __init__(self, cmdList=None, groupType=GroupType.SEQUENTIAL):
         self.groupType = groupType
         if(cmdList is None):
