@@ -18,6 +18,7 @@ class DriverInterface():
         self.velXCmd = 0
         self.velYCmd = 0
         self.velTCmd = 0
+        self.gyroResetCmd = False
         self.connectedFault = Fault(f"Driver XBox Controller ({ctrlIdx}) Unplugged")
 
     def update(self):
@@ -26,19 +27,30 @@ class DriverInterface():
         
         if(self.ctrl.isConnected()):
             # Only attempt to read from the joystick if it's plugged in
-            vXJoy = applyDeadband(self.ctrl.getLeftX(),0.1)
-            vYJoy = applyDeadband(self.ctrl.getLeftY(),0.1)
-            vTJoy = applyDeadband(self.ctrl.getRightX(),0.1)
+            
+            # Convert from joystic sign/axis conventions to robot velocity conventions
+            vXJoyRaw = -1.0*self.ctrl.getLeftY()
+            vYJoyRaw = -1.0*self.ctrl.getLeftX()
+            vTJoyRaw = -1.0*self.ctrl.getRightX()
+            
+            # Apply deadband to make sure letting go of the joystick actually stops the bot
+            vXJoy = applyDeadband(vXJoyRaw,0.1)
+            vYJoy = applyDeadband(vYJoyRaw,0.1)
+            vTJoy = applyDeadband(vTJoyRaw,0.1)
 
-            self.velXCmd = vXJoy * -1.0 * MAX_FWD_REV_SPEED_MPS
-            self.velYCmd = vYJoy * -1.0 * MAX_STRAFE_SPEED_MPS
-            self.velTCmd = vTJoy * -1.0 * MAX_ROTATE_SPEED_RAD_PER_SEC
+            self.velXCmd = vXJoy * MAX_FWD_REV_SPEED_MPS
+            self.velYCmd = vYJoy * MAX_STRAFE_SPEED_MPS
+            self.velTCmd = vTJoy * MAX_ROTATE_SPEED_RAD_PER_SEC
+            
+            self.gyroResetCmd = self.ctrl.getAButtonPressed()
+            
             self.connectedFault.setNoFault()
         else:
             # If the joystick is unplugged, pick safe-state commands and raise a fault
             self.velXCmd = 0.0
             self.velYCmd = 0.0
             self.velTCmd = 0.0
+            self.gyroResetCmd = False
             self.connectedFault.setFaulted()
 
         log("DI FwdRev Cmd", self.velXCmd, "mps")
@@ -66,3 +78,11 @@ class DriverInterface():
             float: Driver's current vT (rotation) command in radians per second
         """
         return self.velTCmd
+    
+    def getGyroResetCmd(self):
+        """_summary_
+
+        Returns:
+            boolean: True if the driver wants to reset the gyro, false otherwise
+        """
+        return self.gyroResetCmd 

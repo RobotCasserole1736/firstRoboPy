@@ -23,6 +23,8 @@ class MyRobot(wpilib.TimedRobot):
         # pylint: disable=attribute-defined-outside-init
 
         self.crashLogger = CrashLogger()
+        
+        wpilib.LiveWindow.disableAllTelemetry()
 
         self.webserver = Webserver()
                 
@@ -42,6 +44,10 @@ class MyRobot(wpilib.TimedRobot):
     def robotPeriodic(self):
         self.stt.start()
         self.crashLogger.update()
+        
+        if(self.dInt.getGyroResetCmd()):
+            self.driveTrain.resetGyro()
+        
         self.driveTrain.update()
         SignalLogging.update()
         Calibration.update()

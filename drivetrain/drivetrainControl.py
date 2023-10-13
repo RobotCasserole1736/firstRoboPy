@@ -1,5 +1,5 @@
 from wpimath.kinematics import ChassisSpeeds
-from wpimath.geometry import Pose2d
+from wpimath.geometry import Pose2d, Rotation2d, Translation2d
 
 from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
 from drivetrain.swerveModuleControl import SwerveModuleControl
@@ -17,10 +17,10 @@ class _DrivetrainControl():
     """
     def __init__(self):
         self.modules = []
-        self.modules.append(SwerveModuleControl("FL", 0, 1, 0, FL_ENCODER_MOUNT_OFFSET_RAD, False))
-        self.modules.append(SwerveModuleControl("FR", 2, 3, 1, FR_ENCODER_MOUNT_OFFSET_RAD, True))
-        self.modules.append(SwerveModuleControl("BL", 4, 5, 2, BL_ENCODER_MOUNT_OFFSET_RAD, False))
-        self.modules.append(SwerveModuleControl("BR", 6, 7, 3, BR_ENCODER_MOUNT_OFFSET_RAD, True))
+        self.modules.append(SwerveModuleControl("FL", 2, 3, 0, FL_ENCODER_MOUNT_OFFSET_RAD, False))
+        self.modules.append(SwerveModuleControl("FR", 4, 5, 1, FR_ENCODER_MOUNT_OFFSET_RAD, True))
+        self.modules.append(SwerveModuleControl("BL", 6, 7, 2, BL_ENCODER_MOUNT_OFFSET_RAD, False))
+        self.modules.append(SwerveModuleControl("BR", 8, 9, 3, BR_ENCODER_MOUNT_OFFSET_RAD, True))
         
         self.desChSpd = ChassisSpeeds()
         self.curDesPose = Pose2d()
@@ -106,6 +106,14 @@ class _DrivetrainControl():
             Tuple of the actual module positions (as read from sensors)
         """
         return tuple(mod.getActualPosition() for mod in self.modules)
+    
+    def resetGyro(self):
+        # Update pose estimator to think we're at the same translation,
+        # but aligned facing downfield
+        curTranslation = self.poseEst.getCurEstPose().translation()
+        newGyroRotation = Rotation2d(0.0)
+        newPose = Pose2d(curTranslation, newGyroRotation)
+        self.poseEst.setKnownPose(newPose)
 
 
 # The actual drivetrain instance

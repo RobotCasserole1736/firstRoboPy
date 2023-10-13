@@ -34,6 +34,9 @@ def radPerSec2RPM(inVal):
 def RPM2RadPerSec(inVal):
     return inVal / 9.55
 
+def radPerSec2RPM(inVal):
+    return inVal * 9.55
+
 def wrapAngleDeg(angle):
     angle %= 360.0
     angle = (angle - 360) if angle > 180 else angle

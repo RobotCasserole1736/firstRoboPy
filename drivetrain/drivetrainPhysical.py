@@ -30,16 +30,22 @@ ROBOT_MASS_KG = lbsToKg(140)
 # slightly bigger than wheelbase with axis through center
 ROBOT_MOI_KGM2 = 1.0/12.0 * ROBOT_MASS_KG *  math.pow((WHEEL_BASE_HALF_WIDTH_M*2.2),2) * 2 
 
-# SDS MK4i Swerve Modules 
+# SDS MK4i Swerve Module Ratios
 # See https://www.swervedrivespecialties.com/products/mk4i-swerve-module?variant=39598777172081
-WHEEL_GEAR_RATIO = 6.75 #L2 gearing - change this if the module speed is changed
+WHEEL_GEAR_RATIO_L1 = 8.41 
+WHEEL_GEAR_RATIO_L2 = 6.75 
+WHEEL_GEAR_RATIO_L2 = 6.12 
 AZMTH_GEAR_RATIO = 12.8
+
+### CHANGE THIS DEPENDING ON WHICH MODULE GEAR RATIO IS INSTALLED
+WHEEL_GEAR_RATIO = WHEEL_GEAR_RATIO_L1
 
 # carpet/roughtop interface fudge factor
 # This accounts for the fact that roughtop tread
 # sinks into the carpet slightly. Determined empirically
 # by driving the robot a known distance, seeing the measured distance in software,
 # and adjusting this factor till the measured distance matches known
+# Might have to be different for colson wheels?
 WHEEL_FUDGE_FACTOR = 0.9238 
 
 # Nominal 4-inch diameter swerve drive wheels
@@ -48,9 +54,13 @@ WHEEL_RADIUS_IN = 4.0/2.0 * WHEEL_FUDGE_FACTOR
 
 # Utility conversion functions to go between drivetrain "linear" measurements and wheel motor rotational measurements
 def dtLinearToMotorRot(lin):
+    # lin - meters per second at wheel contact patch
+    # return - radians per second of motor shaft
     return lin / (inchesToMeters(WHEEL_RADIUS_IN)) * WHEEL_GEAR_RATIO
 
 def dtMotorRotToLinear(rot):
+    # rot - radians per second of motor shaft
+    # return = meters per second at wheel contact patch
     return rot * (inchesToMeters(WHEEL_RADIUS_IN)) / WHEEL_GEAR_RATIO
 
 
@@ -76,10 +86,10 @@ MAX_ROTATE_ACCEL_RAD_PER_SEC_2 = MAX_ROTATE_SPEED_RAD_PER_SEC/.25 #0-full time o
 # 3 - Using a square, twist the modules by hand until they are aligned with the robot's chassis
 # 4 - Read out the encoder readings for each module, put them here
 # 5 - Redeploy code, verify that the  encoder readings are correct as each module is manually rotated
-FL_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(143.6)
-FR_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(106.2)
-BL_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(162.2)
-BR_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(-168.4)
+FL_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(-37.86)
+FR_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(136.3)
+BL_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(59.97)
+BR_ENCODER_MOUNT_OFFSET_RAD = deg2Rad(-64.44)
 
 
 # Module Indices (for ease of array manipulation)

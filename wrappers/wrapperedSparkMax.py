@@ -1,6 +1,6 @@
 from rev import CANSparkMax, CANSparkMaxLowLevel, SparkMaxPIDController, REVLibError
 from utils.signalLogging import log
-from utils.units import rev2Rad, RPM2RadPerSec
+from utils.units import rev2Rad, radPerSec2RPM
 from utils.faults import Fault
 
 ## Wrappered Spark Max
@@ -54,10 +54,18 @@ class WrapperedSparkMax():
             self.pidCtrl.setD(kD)
         
     def setVelCmd(self, velCmd, arbFF=0):
+        """_summary_
+
+        Args:
+            velCmd (float): motor desired shaft velocity in radians per second
+            arbFF (int, optional): _description_. Defaults to 0.
+        """
         if(self.connected):
-            self.pidCtrl.setReference(velCmd, CANSparkMax.ControlType.kVelocity, 
+            self.pidCtrl.setReference(radPerSec2RPM(velCmd), CANSparkMax.ControlType.kVelocity, 
                                     0, arbFF, SparkMaxPIDController.ArbFFUnits.kVoltage)
-            self._logCurrent()
+        log(self.name + "_desVel", velCmd, "V")
+        log(self.name + "_arbFF", velCmd, "V")
+        self._logCurrent()
 
     def setVoltage(self, outputVoltageVolts):
         log(self.name + "_cmdVoltage", outputVoltageVolts, "V")
@@ -78,8 +86,8 @@ class WrapperedSparkMax():
     
     def getMotorVelocityRadPerSec(self):
         if(self.connected):
-            vel = RPM2RadPerSec(self.encoder.getVelocity())
+            vel = self.encoder.getVelocity()
         else:
             vel = 0
-        log(self.name + "_motorActVel", vel, "radPerSec")
+        log(self.name + "_motorActVel", vel, "RPM")
         return vel

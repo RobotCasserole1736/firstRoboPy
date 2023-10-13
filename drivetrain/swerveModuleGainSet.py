@@ -9,15 +9,15 @@ class SwerveModuleGainSet():
      * Azimuth feed back PID gains
     """
     def __init__(self):
-        self.wheelP = Calibration("Drivetrain Module Wheel kP", 0.02) 
+        self.wheelP = Calibration("Drivetrain Module Wheel kP", 0.00) 
         self.wheelI = Calibration("Drivetrain Module Wheel kI", 0.0)
         self.wheelD = Calibration("Drivetrain Module Wheel kD", 0.0)
         self.wheelA = Calibration("Drivetrain Module Wheel kA", 0.00,  "volts/radPerSecPerSec")
         self.wheelV = Calibration("Drivetrain Module Wheel kV", 0.017, "volts/radPerSec")
         self.wheelS = Calibration("Drivetrain Module Wheel kS", 0.12,  "volts")
-        self.azmthP = Calibration("Drivetrain Module Azmth kP", 0.008)
+        self.azmthP = Calibration("Drivetrain Module Azmth kP", 0.25)
         self.azmthI = Calibration("Drivetrain Module Azmth kI", 0.0)
-        self.azmthD = Calibration("Drivetrain Module Azmth kD", 0.00001)
+        self.azmthD = Calibration("Drivetrain Module Azmth kD", 0.0001)
 
     def hasChanged(self):
         """
