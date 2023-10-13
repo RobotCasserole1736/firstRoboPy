@@ -86,6 +86,7 @@ class MyRobot(wpilib.TimedRobot):
     ## Disabled-Specific init and update
     def disabledPeriodic(self):
         AS.getInstance().updateMode()
+        self.driveTrain.trajCtrl.updateCals()
 
     #########################################################
     ## Test-Specific init and update

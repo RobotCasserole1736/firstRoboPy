@@ -17,10 +17,10 @@ class DrivetrainTrajectoryControl():
         self.curVy = 0
         self.curVtheta = 0
         
-        self.transP = Calibration("Drivetrain HDC Translation kP", 0) 
+        self.transP = Calibration("Drivetrain HDC Translation kP", 6.0) 
         self.transI = Calibration("Drivetrain HDC Translation kI", 0.0)
         self.transD = Calibration("Drivetrain HDC Translation kD", 0.0)
-        self.rotP = Calibration("Drivetrain HDC Rotation kP", 0.0) 
+        self.rotP = Calibration("Drivetrain HDC Rotation kP", 8.0) 
         self.rotI = Calibration("Drivetrain HDC Rotation kI", 0.0)
         self.rotD = Calibration("Drivetrain HDC Rotation kD", 0.0)
 
@@ -46,7 +46,24 @@ class DrivetrainTrajectoryControl():
         )
         # Make sure the controller knows that -170 and 170 are just 20 degrees apart
         self.tCtrl.enableContinuousInput(-math.pi, math.pi)
-    
+        
+    def updateCals(self):
+        self.xCtrl.setPID(            
+            self.transP.get(),
+            self.transI.get(),
+            self.transD.get()
+        )
+        self.yCtrl.setPID(            
+            self.transP.get(),
+            self.transI.get(),
+            self.transD.get()
+        )
+        self.tCtrl.setPID(            
+            self.rotP.get(),
+            self.rotI.get(),
+            self.rotD.get()
+        )
+        
     def update(self, trajCmd,  curEstPose):
         """Main periodic update, call this whenever you need new commands
 
@@ -58,7 +75,7 @@ class DrivetrainTrajectoryControl():
             ChassisSpeeds: the Field-relative set of vx, vy, and vt commands for 
             the robot to follow that will get it to the desired pose
         """
-        
+                
         # Feed-Forward - calculate how fast we should be going at this point in the trajectory
         xFF = trajCmd.velocity * trajCmd.pose.rotation().cos()
         yFF = trajCmd.velocity * trajCmd.pose.rotation().sin()

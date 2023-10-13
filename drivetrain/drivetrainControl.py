@@ -1,5 +1,5 @@
 from wpimath.kinematics import ChassisSpeeds
-from wpimath.geometry import Pose2d, Rotation2d, Translation2d
+from wpimath.geometry import Pose2d, Rotation2d
 
 from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
 from drivetrain.swerveModuleControl import SwerveModuleControl
@@ -27,11 +27,12 @@ class _DrivetrainControl():
 
         self.gains = SwerveModuleGainSet()
 
-        self._updateAllCals()
-
         self.poseEst = DrivetrainPoseEstimator(self.getModulePositions())
         
         self.trajCtrl = DrivetrainTrajectoryControl()
+        
+        self._updateAllCals()
+
 
 
 
@@ -95,7 +96,7 @@ class _DrivetrainControl():
             
                 
     def _updateAllCals(self):
-        # Helper function - udpates calibration on request
+        # Helper function - updates all calibration on request
         for module in self.modules:
             module.setClosedLoopGains(self.gains)
 

@@ -1,8 +1,11 @@
 from wpilib import XboxController
 from wpimath import applyDeadband
+from wpimath.filter import SlewRateLimiter
 from drivetrain.drivetrainPhysical import MAX_FWD_REV_SPEED_MPS
 from drivetrain.drivetrainPhysical import MAX_STRAFE_SPEED_MPS
 from drivetrain.drivetrainPhysical import MAX_ROTATE_SPEED_RAD_PER_SEC
+from drivetrain.drivetrainPhysical import MAX_ROTATE_ACCEL_RAD_PER_SEC_2
+from drivetrain.drivetrainPhysical import MAX_TRANSLATE_ACCEL_MPS2
 from utils.faults import Fault
 from utils.signalLogging import log
 
@@ -20,6 +23,10 @@ class DriverInterface():
         self.velTCmd = 0
         self.gyroResetCmd = False
         self.connectedFault = Fault(f"Driver XBox Controller ({ctrlIdx}) Unplugged")
+        
+        self.velXSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_TRANSLATE_ACCEL_MPS2)
+        self.velYSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_TRANSLATE_ACCEL_MPS2)
+        self.velTSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_ROTATE_ACCEL_RAD_PER_SEC_2)
 
     def update(self):
         """Main update - call this once every 20ms
@@ -37,10 +44,22 @@ class DriverInterface():
             vXJoy = applyDeadband(vXJoyRaw,0.1)
             vYJoy = applyDeadband(vYJoyRaw,0.1)
             vTJoy = applyDeadband(vTJoyRaw,0.1)
+            
+            # Normally robot goes half speed - unlock full speed on 
+            # sprint command being active
+            sprintMult = 1.0 if(self.ctrl.getRightBumper()) else 0.5
 
-            self.velXCmd = vXJoy * MAX_FWD_REV_SPEED_MPS
-            self.velYCmd = vYJoy * MAX_STRAFE_SPEED_MPS
-            self.velTCmd = vTJoy * MAX_ROTATE_SPEED_RAD_PER_SEC
+            # Convert joystick fractions into physical units of velocity
+            velXCmdRaw = vXJoy * MAX_FWD_REV_SPEED_MPS * sprintMult
+            velYCmdRaw = vYJoy * MAX_STRAFE_SPEED_MPS * sprintMult
+            velTCmdRaw = vTJoy * MAX_ROTATE_SPEED_RAD_PER_SEC
+            
+            # Slew-rate limit the velocity units to not change faster than
+            # the robot can physically accomplish
+            self.velXCmd = self.velXSlewRateLimiter.calculate(velXCmdRaw)
+            self.velYCmd = self.velYSlewRateLimiter.calculate(velYCmdRaw)
+            self.velTCmd = self.velTSlewRateLimiter.calculate(velTCmdRaw) 
+            
             
             self.gyroResetCmd = self.ctrl.getAButtonPressed()
             

@@ -60,11 +60,14 @@ class WrapperedSparkMax():
             velCmd (float): motor desired shaft velocity in radians per second
             arbFF (int, optional): _description_. Defaults to 0.
         """
+        velCmdRPM = radPerSec2RPM(velCmd)
+
         if(self.connected):
-            self.pidCtrl.setReference(radPerSec2RPM(velCmd), CANSparkMax.ControlType.kVelocity, 
+            self.pidCtrl.setReference(velCmdRPM, CANSparkMax.ControlType.kVelocity, 
                                     0, arbFF, SparkMaxPIDController.ArbFFUnits.kVoltage)
-        log(self.name + "_desVel", velCmd, "V")
-        log(self.name + "_arbFF", velCmd, "V")
+            
+        log(self.name + "_desVel", velCmdRPM, "RPM")
+        log(self.name + "_arbFF", arbFF, "V")
         self._logCurrent()
 
     def setVoltage(self, outputVoltageVolts):

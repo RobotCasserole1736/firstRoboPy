@@ -46,6 +46,8 @@ class SwerveModuleControl():
         self.azmthCtrl = PIDController(0,0,0)
         self.azmthCtrl.enableContinuousInput(-180.0, 180.0)
 
+        self._prevMotorDesSpeed = 0
+
         self.moduleName = moduleName
 
     def _updateTelemetry(self):
@@ -125,9 +127,13 @@ class SwerveModuleControl():
         self.azmthMotor.setVoltage(azmthVoltage)
 
         # Send voltage and speed commands to the wheel motor
+        
         motorDesSpd = dtLinearToMotorRot(self.optimizedDesiredState.speed)
-        motorVoltageFF = self.wheelMotorFF.calculate(motorDesSpd)
+        motorDesAccel = (motorDesSpd - self._prevMotorDesSpeed)/ 0.02
+        motorVoltageFF = self.wheelMotorFF.calculate(motorDesSpd, motorDesAccel)
         self.wheelMotor.setVelCmd(motorDesSpd, motorVoltageFF)
+        
+        self._prevMotorDesSpeed = motorDesSpd # save for next loop
 
         if(wpilib.TimedRobot.isSimulation()):
             # Simulation - assume module is perfect and goes to where we want it to

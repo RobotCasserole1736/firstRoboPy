@@ -7,7 +7,7 @@ from AutoSequencerV2.mode import Mode
 class DrivePathTest1(Mode):
     def __init__(self):
         Mode.__init__(self, f"Drive Path Test 1")
-        self.pathCmd = DrivePathCommand("testPath1", 1.0)
+        self.pathCmd = DrivePathCommand("testPath1", 0.75)
         
     def getCmdGroup(self):
         # Just return the path command
