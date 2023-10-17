@@ -23,6 +23,9 @@ class MyRobot(wpilib.TimedRobot):
         # to ignore these instantiations in a method.
         # pylint: disable=attribute-defined-outside-init
 
+        self.driveTrain = dt.getInstance()
+
+
         self.crashLogger = CrashLogger()
         
         wpilib.LiveWindow.disableAllTelemetry()
@@ -31,7 +34,6 @@ class MyRobot(wpilib.TimedRobot):
                 
         self.stt = SegmentTimeTracker()
         
-        self.driveTrain = dt.getInstance()
                 
         self.dashboard = Dashboard(self.webserver)
         
@@ -40,6 +42,9 @@ class MyRobot(wpilib.TimedRobot):
         self.autoSequencer = AS.getInstance()
 
         self.rioMonitor = RIOMonitor()    
+        
+        reportGen.generate(self)
+
 
     def robotPeriodic(self):
         self.stt.start()
@@ -97,8 +102,6 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Cleanup
     def endCompetition(self):
-        reportGen.generate(self)
-
         # Our code has a number of things which create "global state",
         # that is to say variables and objects which are not children
         # of the main robot class (including python global variables)
