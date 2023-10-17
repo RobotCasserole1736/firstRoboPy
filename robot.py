@@ -11,6 +11,7 @@ from utils.crashLogger import CrashLogger
 from utils.rioMonitor import RIOMonitor
 from webserver.webserver import Webserver
 import AutoSequencerV2.autoSequencer as AS
+import reportGen
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -38,8 +39,7 @@ class MyRobot(wpilib.TimedRobot):
         
         self.autoSequencer = AS.getInstance()
 
-        self.rioMonitor = RIOMonitor()
-    
+        self.rioMonitor = RIOMonitor()    
 
     def robotPeriodic(self):
         self.stt.start()
@@ -97,6 +97,8 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Cleanup
     def endCompetition(self):
+        reportGen.generate(self)
+
         # Our code has a number of things which create "global state",
         # that is to say variables and objects which are not children
         # of the main robot class (including python global variables)
