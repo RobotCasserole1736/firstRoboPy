@@ -3,6 +3,7 @@ import wpilib
 from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
 import drivetrain.drivetrainControl as dt
+from utils.ledBoardCtrl import LEDBoardCtrl
 from utils.segmentTimeTracker import SegmentTimeTracker
 import utils.signalLogging as SignalLogging
 import utils.calibration as Calibration
@@ -37,6 +38,8 @@ class MyRobot(wpilib.TimedRobot):
         self.autoSequencer = AS.getInstance()
 
         self.rioMonitor = RIOMonitor()
+
+        self.ledCtrl = LEDBoardCtrl(7)
     
 
     def robotPeriodic(self):
@@ -46,6 +49,7 @@ class MyRobot(wpilib.TimedRobot):
         SignalLogging.update()
         Calibration.update()
         Faults.update()
+        self.ledCtrl.update()
         self.stt.end()
         
     #########################################################
