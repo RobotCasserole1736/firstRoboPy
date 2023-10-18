@@ -15,4 +15,4 @@ class DrivePathTest1(Mode):
     
     def getInitialDrivetrainPose(self):
         # Use the path command to specify the starting pose
-        return self.pathCmd.path.getInitialHolonomicPose()
+        return None

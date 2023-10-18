@@ -1,11 +1,6 @@
 from wpilib import XboxController
 from wpimath import applyDeadband
 from wpimath.filter import SlewRateLimiter
-from drivetrain.drivetrainPhysical import MAX_FWD_REV_SPEED_MPS
-from drivetrain.drivetrainPhysical import MAX_STRAFE_SPEED_MPS
-from drivetrain.drivetrainPhysical import MAX_ROTATE_SPEED_RAD_PER_SEC
-from drivetrain.drivetrainPhysical import MAX_ROTATE_ACCEL_RAD_PER_SEC_2
-from drivetrain.drivetrainPhysical import MAX_TRANSLATE_ACCEL_MPS2
 from utils.faults import Fault
 from utils.signalLogging import log
 
@@ -24,9 +19,9 @@ class DriverInterface():
         self.gyroResetCmd = False
         self.connectedFault = Fault(f"Driver XBox Controller ({ctrlIdx}) Unplugged")
         
-        self.velXSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_TRANSLATE_ACCEL_MPS2)
-        self.velYSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_TRANSLATE_ACCEL_MPS2)
-        self.velTSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_ROTATE_ACCEL_RAD_PER_SEC_2)
+        self.velXSlewRateLimiter = SlewRateLimiter(rateLimit=5.0)
+        self.velYSlewRateLimiter = SlewRateLimiter(rateLimit=5.0)
+        self.velTSlewRateLimiter = SlewRateLimiter(rateLimit=5.0)
 
     def update(self):
         """Main update - call this once every 20ms
@@ -50,9 +45,9 @@ class DriverInterface():
             sprintMult = 1.0 if(self.ctrl.getRightBumper()) else 0.5
 
             # Convert joystick fractions into physical units of velocity
-            velXCmdRaw = vXJoy * MAX_FWD_REV_SPEED_MPS * sprintMult
-            velYCmdRaw = vYJoy * MAX_STRAFE_SPEED_MPS * sprintMult
-            velTCmdRaw = vTJoy * MAX_ROTATE_SPEED_RAD_PER_SEC
+            velXCmdRaw = vXJoy * 13.0 * sprintMult
+            velYCmdRaw = vYJoy * 13.0 * sprintMult
+            velTCmdRaw = vTJoy * 13.0
             
             # Slew-rate limit the velocity units to not change faster than
             # the robot can physically accomplish

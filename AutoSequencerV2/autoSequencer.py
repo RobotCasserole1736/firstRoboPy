@@ -27,7 +27,7 @@ class _AutoSequencer():
         self.topLevelCmdGroup = CommandGroup()
         self.startPose = Pose2d()
         
-        self.updateMode(force=True) # Ensure we load the auto sequener at least once.
+        #self.updateMode(force=True) # Ensure we load the auto sequener at least once.
         
         
     # Call this periodically while disabled to keep the dashboard updated
