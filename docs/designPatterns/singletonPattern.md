@@ -33,7 +33,7 @@ class _SomePrivateClass():
         self._myPrivateVariable = 6
 ```
 
-In this case, it indicates `_SomPerivateClass` should not be instantiated outside the file both those classes are delcared in.
+In this case, it indicates `_SomePrivateClass` should not be instantiated outside the file both those classes are delcared in.
 
 ## How to make a Singleton
 
