@@ -1,6 +1,6 @@
 # Singletons
 
-In code, we frequently want to indicate "there is only ever one of these".
+In code, we frequently want to indicate "there is only ever one of these". The Singleton pattern sets up a class for which there is only ever one instance, which can be accessed everywhere.
 
 ## Public & Private in Python.
 
