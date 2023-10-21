@@ -11,7 +11,7 @@ from utils.crashLogger import CrashLogger
 from utils.rioMonitor import RIOMonitor
 from webserver.webserver import Webserver
 import AutoSequencerV2.autoSequencer as AS
-import reportGen
+from codeStructureReportGen import reportGen
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -43,7 +43,8 @@ class MyRobot(wpilib.TimedRobot):
 
         self.rioMonitor = RIOMonitor()    
         
-        reportGen.generate(self)
+        if(self.isSimulation()):
+            reportGen.generate(self)
 
 
     def robotPeriodic(self):

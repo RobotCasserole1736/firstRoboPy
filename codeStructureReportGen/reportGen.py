@@ -40,7 +40,7 @@ class GraphNode():
 
 def isRobotCode(filepath):
     if(filepath is not None):
-        robotRoot = os.path.abspath(os.path.dirname(__file__))
+        robotRoot = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
         if(robotRoot in os.path.abspath(filepath)):
             return True
         else:
@@ -98,8 +98,8 @@ def generate(topLevelObject):
         codeLine = f"    {{ source: \"{edge[0]}\", target: \"{edge[1]}\" }},\n"
         edgeJs += codeLine
 
-    with open("graphTemplate.html", "r", encoding="utf-8") as tmplt_file:
-        with open("graphOfCLasses.html", "w", encoding="utf-8") as outf:
+    with open("./codeStructureReportGen/graphTemplate.html", "r", encoding="utf-8") as tmplt_file:
+        with open("docs/graphOfClasses.html", "w", encoding="utf-8") as outf:
             for line in tmplt_file:
                 line = line.replace("$[[NODES]]", nodeJs)
                 line = line.replace("$[[EDGES]]", edgeJs)

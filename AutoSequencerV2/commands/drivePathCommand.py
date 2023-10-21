@@ -6,7 +6,7 @@ from pathplannerlib import PathPlanner
 from AutoSequencerV2.command import Command
 from drivetrain.drivetrainPhysical import MAX_DT_LINEAR_SPEED
 from drivetrain.drivetrainPhysical import MAX_TRANSLATE_ACCEL_MPS2
-import drivetrain.drivetrainControl as dt
+import drivetrain.drivetrainControl as DrivetrainControl
 import drivetrain.drivetrainPoseTelemetry as DrivetrainPoseTelemetry
 
 class DrivePathCommand(Command):
@@ -20,22 +20,24 @@ class DrivePathCommand(Command):
         self.done = False
         self.startTime = -1 # we'll populate these for real later, just declare they'll exist
         self.duration = self.path.getTotalTime()
+        self.dt = DrivetrainControl.getInstance()
+        self.poseTelem = DrivetrainPoseTelemetry.getInstance()
 
     def initialize(self):
         self.startTime = wpilib.Timer.getFPGATimestamp()
-        DrivetrainPoseTelemetry.getInstance().setTrajectory(self.path)
+        self.poseTelem.setTrajectory(self.path)
 
     def execute(self):
         curTime = wpilib.Timer.getFPGATimestamp() - self.startTime
         curState = self.path.sample(curTime)
 
-        dt.getInstance().setCmdTrajectory(curState)
+        self.dt.setCmdTrajectory(curState)
 
         self.done = curTime >= (self.duration)
 
         if(self.done):
-            dt.getInstance().setCmdRobotRelative(0,0,0)
-            DrivetrainPoseTelemetry.getInstance().setTrajectory(None)
+            self.dt.setCmdRobotRelative(0,0,0)
+            self.poseTelem.setTrajectory(None)
 
 
     def isDone(self):
