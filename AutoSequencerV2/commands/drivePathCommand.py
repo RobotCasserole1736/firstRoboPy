@@ -20,7 +20,7 @@ class DrivePathCommand(Command):
         self.done = False
         self.startTime = -1 # we'll populate these for real later, just declare they'll exist
         self.duration = self.path.getTotalTime()
-        self.dt = DrivetrainControl.getInstance()
+        self.drivetrain = DrivetrainControl.getInstance()
         self.poseTelem = DrivetrainPoseTelemetry.getInstance()
 
     def initialize(self):
@@ -31,12 +31,12 @@ class DrivePathCommand(Command):
         curTime = wpilib.Timer.getFPGATimestamp() - self.startTime
         curState = self.path.sample(curTime)
 
-        self.dt.setCmdTrajectory(curState)
+        self.drivetrain.setCmdTrajectory(curState)
 
         self.done = curTime >= (self.duration)
 
         if(self.done):
-            self.dt.setCmdRobotRelative(0,0,0)
+            self.drivetrain.setCmdRobotRelative(0,0,0)
             self.poseTelem.setTrajectory(None)
 
 

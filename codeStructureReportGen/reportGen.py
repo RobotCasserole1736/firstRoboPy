@@ -2,9 +2,9 @@ import inspect
 import os
 
 class GraphNode():
-    def __init__(self, input:object):
+    def __init__(self, rootNode:object):
 
-        rawName = str(type(input))
+        rawName = str(type(rootNode))
         name = rawName.replace("<class '", "").replace("'>", "")
         if('.' in name):
             name = name.rsplit('.', 1)[1]
@@ -34,18 +34,15 @@ class GraphNode():
 
         for child in self.children:
             child.buildDepthDict(dictIn, depth+1)
-        
-
 
 
 def isRobotCode(filepath):
     if(filepath is not None):
         robotRoot = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-        if(robotRoot in os.path.abspath(filepath)):
-            return True
-        else:
-            return False
-        
+        return (robotRoot in os.path.abspath(filepath))
+    else:
+        return False
+
 def shouldIterate(member):
     try:
         sourceFile = inspect.getfile(type(member))
@@ -54,16 +51,16 @@ def shouldIterate(member):
 
     return hasattr(member, "__dict__") and hasattr(member, "__class__") and isRobotCode(sourceFile)
 
-def iterateRecursive(parent, object):
-    for objName in object.__dict__:
-        member = object.__dict__[objName]
+def iterateRecursive(parent, inputObj):
+    for objName in inputObj.__dict__:
+        member = inputObj.__dict__[objName]
 
-        if(type(member) is list):
+        if(isinstance(member, list)):
             for memberItem in member:
                 newNode = GraphNode(memberItem)
                 parent.addChild(newNode)
                 iterateRecursive(newNode, memberItem)
-        elif(type(member) is dict):
+        elif(isinstance(member, dict)):
             for memberItem in member.items():
                 newNode = GraphNode(memberItem)
                 parent.addChild(newNode)
@@ -85,12 +82,10 @@ def generate(topLevelObject):
     nodeDict = {}
     classStructureRoot.buildDepthDict(nodeDict)
     nodeJs = ""
-    for node in nodeDict.keys():
-        level = nodeDict[node]
+    for node in nodeDict:
         codeLine = f"    {{ id: \"{node}\", color: \"red\"}},\n"
         nodeJs += codeLine
 
-    
     # build up edges
     edgeSet = set(classStructureRoot.getEdgeList())
     edgeJs = ""
@@ -98,12 +93,9 @@ def generate(topLevelObject):
         codeLine = f"    {{ source: \"{edge[0]}\", target: \"{edge[1]}\" }},\n"
         edgeJs += codeLine
 
-    with open("./codeStructureReportGen/graphTemplate.html", "r", encoding="utf-8") as tmplt_file:
+    with open("./codeStructureReportGen/graphTemplate.html", "r", encoding="utf-8") as tmpltf:
         with open("docs/graphOfClasses.html", "w", encoding="utf-8") as outf:
-            for line in tmplt_file:
+            for line in tmpltf:
                 line = line.replace("$[[NODES]]", nodeJs)
                 line = line.replace("$[[EDGES]]", edgeJs)
                 outf.write(line)
-
-
-
