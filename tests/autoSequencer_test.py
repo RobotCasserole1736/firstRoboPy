@@ -1,13 +1,10 @@
 # pylint: disable-all
-
-
-import os
 from AutoSequencerV2.autoSequencer import *
 from AutoSequencerV2.command import Command
 from AutoSequencerV2.commandGroup import CommandGroup, GroupType
+from AutoSequencerV2.mode import Mode
 
-
-class TestCommand(Command):
+class CountingCommand(Command):
     def initialize(self):
         self.execCount = 0
     def execute(self):
@@ -17,20 +14,20 @@ class TestCommand(Command):
     def end(self, interrupted):
         self.execCount = -1
 
+class CountingMode(Mode):
+
+    def getCmdGroup(self):
+        return CommandGroup(CountingCommand())
 
 def test_topLevel():
-    oldDir = os.getcwd()
-    os.chdir("../") # Hack around the fact that tests runs in a different folder, and wpilib's "getDeployDirectory" has a bug for that situation
     getInstance().updateMode()
+    getInstance().addMode(CountingMode())
     getInstance().initiaize()
     getInstance().update()
     getInstance().end()
-    os.chdir(oldDir)
-
-
 
 def test_parallel():
-    dut = TestCommand().alongWith(TestCommand().alongWith(TestCommand()))
+    dut = CountingCommand().alongWith(CountingCommand().alongWith(CountingCommand()))
     
     assert isinstance(dut, CommandGroup)
     assert dut.groupType == GroupType.PARALLEL
@@ -60,7 +57,7 @@ def test_parallel():
         assert cmd.execCount == -1
         
 def test_sequential():
-    dut = TestCommand().andThen(TestCommand().andThen(TestCommand()))
+    dut = CountingCommand().andThen(CountingCommand().andThen(CountingCommand()))
     
     assert isinstance(dut, CommandGroup)
     assert dut.groupType == GroupType.SEQUENTIAL
@@ -93,7 +90,7 @@ def test_sequential():
 
 
 def test_race():
-    dut = TestCommand().raceWith(TestCommand().raceWith(TestCommand()))
+    dut = CountingCommand().raceWith(CountingCommand().raceWith(CountingCommand()))
     
     assert isinstance(dut, CommandGroup)
     assert dut.groupType == GroupType.RACE

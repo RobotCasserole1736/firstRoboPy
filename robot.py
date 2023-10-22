@@ -1,5 +1,6 @@
 import os
 import wpilib
+from Autonomous.modes.drivePathTest1 import DrivePathTest1
 from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
 import drivetrain.drivetrainControl as dt
@@ -11,7 +12,6 @@ from utils.crashLogger import CrashLogger
 from utils.rioMonitor import RIOMonitor
 from webserver.webserver import Webserver
 import AutoSequencerV2.autoSequencer as AS
-from codeStructureReportGen import reportGen
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -40,11 +40,14 @@ class MyRobot(wpilib.TimedRobot):
         self.dInt = DriverInterface()
         
         self.autoSequencer = AS.getInstance()
+        self.autoSequencer.addMode(DrivePathTest1())
 
-        self.rioMonitor = RIOMonitor()    
+        self.rioMonitor = RIOMonitor()
         
-        if(self.isSimulation()):
-            reportGen.generate(self)
+        # Uncomment this and simulate to update the code 
+        # dependencies graph
+        # from codeStructureReportGen import reportGen
+        # reportGen.generate(self)
 
 
     def robotPeriodic(self):
@@ -112,7 +115,7 @@ class MyRobot(wpilib.TimedRobot):
         # our code exits in one of two "abnormal" ways:
         # 1) On Robot: we unplug the RIO
         # 2) In Simulation: The process ends
-        self.rioMonitor.stopThreads()
+        #self.rioMonitor.stopThreads()
         Faults.destroyInstance()
         dt.destroyInstance()
         super().endCompetition()

@@ -1,9 +1,8 @@
 from wpimath.geometry import Pose2d
 from AutoSequencerV2.commandGroup import CommandGroup
 from AutoSequencerV2.modeList import ModeList
-from AutoSequencerV2.modes.doNothingMode import DoNothingMode
-from AutoSequencerV2.modes.drivePathTest1 import DrivePathTest1
-from AutoSequencerV2.modes.waitMode import WaitMode
+from AutoSequencerV2.builtInModes.doNothingMode import DoNothingMode
+from AutoSequencerV2.builtInModes.waitMode import WaitMode
 
 
 class _AutoSequencer():
@@ -11,7 +10,7 @@ class _AutoSequencer():
     """
     def __init__(self):
         
-        # Have different d=modes for delaying the start of autonomous
+        # Have different delay modes for delaying the start of autonomous
         self.delayModeList = ModeList("Delay")
         self.delayModeList.addMode(WaitMode(0.0))
         self.delayModeList.addMode(WaitMode(3.0))
@@ -20,15 +19,15 @@ class _AutoSequencer():
         
         # Create a list of every autonomous mode we want
         self.mainModeList = ModeList("Main")
-        self.mainModeList.addMode(DrivePathTest1())
         self.mainModeList.addMode(DoNothingMode())
-        # TODO - add more autonomous modes here
         
         self.topLevelCmdGroup = CommandGroup()
         self.startPose = Pose2d()
         
-        self.updateMode(force=True) # Ensure we load the auto sequener at least once.
+        self.updateMode(force=True) # Ensure we load the auto sequencer at least once.
         
+    def addMode(self, newMode):
+        self.mainModeList.addMode(newMode)
         
     # Call this periodically while disabled to keep the dashboard updated
     # and, when things change, re-init modes

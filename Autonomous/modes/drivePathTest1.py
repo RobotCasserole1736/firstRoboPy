@@ -1,5 +1,5 @@
 
-from AutoSequencerV2.commands.drivePathCommand import DrivePathCommand
+from Autonomous.commands.drivePathCommand import DrivePathCommand
 from AutoSequencerV2.mode import Mode
 
 # A DrivePathTest1 is an autonomous mode which drives 

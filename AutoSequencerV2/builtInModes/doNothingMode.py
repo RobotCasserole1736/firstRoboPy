@@ -1,5 +1,5 @@
 
-from AutoSequencerV2.commands.doNothingCommand import DoNothingCommand
+from AutoSequencerV2.builtInCommands.doNothingCommand import DoNothingCommand
 from AutoSequencerV2.mode import Mode
 
 # A DoNothingMode is an autonomous mode where the robot just sits doing nothing indefinitely

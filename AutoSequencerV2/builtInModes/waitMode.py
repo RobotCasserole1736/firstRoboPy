@@ -1,5 +1,5 @@
 
-from AutoSequencerV2.commands.waitCommand import WaitCommand
+from AutoSequencerV2.builtInCommands.waitCommand import WaitCommand
 from AutoSequencerV2.mode import Mode
 
 # A WaitMode is an autonomous mode where the robot just sits doing nothing for a specified duration.
