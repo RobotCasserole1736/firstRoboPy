@@ -5,7 +5,7 @@ class GraphNode():
     def __init__(self, rootNode:object):
 
         rawName = str(type(rootNode))
-        name = rawName.replace("<class '", "").replace("'>", "")
+        name = rawName.replace("<class '", "").replace("'>", "").replace("<enum '", "")
         if('.' in name):
             name = name.rsplit('.', 1)[1]
         self.name = name
@@ -78,24 +78,14 @@ def generate(topLevelObject):
 
     iterateRecursive(classStructureRoot, topLevelObject)
 
-    # build up nodes and what depth they should be drawn at
-    nodeDict = {}
-    classStructureRoot.buildDepthDict(nodeDict)
-    nodeJs = ""
-    for node in nodeDict:
-        codeLine = f"    {{ id: \"{node}\", color: \"red\"}},\n"
-        nodeJs += codeLine
-
     # build up edges
     edgeSet = set(classStructureRoot.getEdgeList())
-    edgeJs = ""
-    for edge in edgeSet:
-        codeLine = f"    {{ source: \"{edge[0]}\", target: \"{edge[1]}\" }},\n"
-        edgeJs += codeLine
 
-    with open("./codeStructureReportGen/graphTemplate.html", "r", encoding="utf-8") as tmpltf:
-        with open("docs/graphOfClasses.html", "w", encoding="utf-8") as outf:
-            for line in tmpltf:
-                line = line.replace("$[[NODES]]", nodeJs)
-                line = line.replace("$[[EDGES]]", edgeJs)
-                outf.write(line)
+    with open("docs/graph.md", "w", encoding="utf-8") as outf:
+        outf.write("# Class Relationships\n\n")
+        outf.write("```mermaid\n")
+        outf.write("flowchart TD\n")
+        for edge in edgeSet:
+            outf.write(f"    {edge[0]}-->{edge[1]}\n")
+
+        outf.write("```\n")
