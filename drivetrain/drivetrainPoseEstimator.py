@@ -3,6 +3,7 @@ from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Rotation2d
 from drivetrain.drivetrainPhysical import kinematics
 from drivetrain.drivetrainPoseTelemetry import DrivetrainPoseTelemetry
+from utils.faults import Fault
 from utils.signalLogging import log
 
 
@@ -13,6 +14,7 @@ class DrivetrainPoseEstimator():
         self.curEstPose = Pose2d()
         self.curDesPose = Pose2d()
         self.gyro = ADXRS450_Gyro()
+        self.gyroDisconFault = Fault("Gyro Disconnected")
         self.poseEst = SwerveDrive4PoseEstimator(
             kinematics,
             self.gyro.getRotation2d(),
@@ -41,6 +43,7 @@ class DrivetrainPoseEstimator():
         """
 
         # Read the gyro angle
+        self.gyroDisconFault.set(not self.gyro.isConnected())
         self.curRawGyroAngle = self.gyro.getRotation2d()
         
         # Update the WPILib Pose Estimate

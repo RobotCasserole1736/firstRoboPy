@@ -7,12 +7,12 @@ from drivetrain.drivetrainControl import DrivetrainControl
 from utils.segmentTimeTracker import SegmentTimeTracker
 import utils.signalLogging as SignalLogging
 import utils.calibration as Calibration
-import utils.faults as Faults
+import utils.faults as FaultWrangler
+from utils.faults import FaultStatusLEDs
 from utils.crashLogger import CrashLogger
 from utils.rioMonitor import RIOMonitor
 from webserver.webserver import Webserver
 from AutoSequencerV2.autoSequencer import AutoSequencer
-
 
 class MyRobot(wpilib.TimedRobot):
 
@@ -41,6 +41,8 @@ class MyRobot(wpilib.TimedRobot):
         self.dashboard = Dashboard(self.webserver, self.autoSequencer)
 
         self.rioMonitor = RIOMonitor()
+
+        self.faultLEDs = FaultStatusLEDs()
         
         # Uncomment this and simulate to update the code 
         # dependencies graph
@@ -58,7 +60,8 @@ class MyRobot(wpilib.TimedRobot):
         self.driveTrain.update()
         SignalLogging.update()
         Calibration.update()
-        Faults.update()
+        FaultWrangler.update()
+        self.faultLEDs.update()
         self.stt.end()
         
     #########################################################
@@ -105,12 +108,9 @@ class MyRobot(wpilib.TimedRobot):
     ## Cleanup
     def endCompetition(self):
         self.rioMonitor.stopThreads()
-        Faults.destroyInstance()
         super().endCompetition()
 
 
-        
-        
 if __name__ == '__main__':
 
     enableDebug = os.path.isfile("/home/lvuser/py/enableDebug")
