@@ -1,8 +1,8 @@
 from wpimath.geometry import Pose2d
-from AutoSequencerV2.commandGroup import CommandGroup
 from AutoSequencerV2.modeList import ModeList
 from AutoSequencerV2.builtInModes.doNothingMode import DoNothingMode
 from AutoSequencerV2.builtInModes.waitMode import WaitMode
+from AutoSequencerV2.sequentialCommandGroup import SequentialCommandGroup
 
 
 class AutoSequencer():
@@ -21,7 +21,7 @@ class AutoSequencer():
         self.mainModeList = ModeList("Main")
         self.mainModeList.addMode(DoNothingMode())
         
-        self.topLevelCmdGroup = CommandGroup()
+        self.topLevelCmdGroup = SequentialCommandGroup()
         self.startPose = Pose2d()
         
         self.updateMode(force=True) # Ensure we load the auto sequencer at least once.

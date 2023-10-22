@@ -1,8 +1,9 @@
 # pylint: disable-all
 from AutoSequencerV2.autoSequencer import *
 from AutoSequencerV2.command import Command
-from AutoSequencerV2.commandGroup import CommandGroup, GroupType
 from AutoSequencerV2.mode import Mode
+from AutoSequencerV2.parallelCommandGroup import ParallelCommandGroup
+from AutoSequencerV2.raceCommandGroup import RaceCommandGroup
 
 class CountingCommand(Command):
     def initialize(self):
@@ -17,7 +18,7 @@ class CountingCommand(Command):
 class CountingMode(Mode):
 
     def getCmdGroup(self):
-        return CommandGroup(CountingCommand())
+        return SequentialCommandGroup([CountingCommand()])
 
 def test_topLevel():
     dut = AutoSequencer()
@@ -28,10 +29,10 @@ def test_topLevel():
     dut.end()
 
 def test_parallel():
+
     dut = CountingCommand().alongWith(CountingCommand().alongWith(CountingCommand()))
     
-    assert isinstance(dut, CommandGroup)
-    assert dut.groupType == GroupType.PARALLEL
+    assert isinstance(dut, ParallelCommandGroup)
     assert len(dut.cmdList) == 3
     for cmd in dut.cmdList:
         assert isinstance(cmd, Command)
@@ -60,8 +61,7 @@ def test_parallel():
 def test_sequential():
     dut = CountingCommand().andThen(CountingCommand().andThen(CountingCommand()))
     
-    assert isinstance(dut, CommandGroup)
-    assert dut.groupType == GroupType.SEQUENTIAL
+    assert isinstance(dut, SequentialCommandGroup)
     assert len(dut.cmdList) == 3
     for cmd in dut.cmdList:
         assert isinstance(cmd, Command)
@@ -93,8 +93,7 @@ def test_sequential():
 def test_race():
     dut = CountingCommand().raceWith(CountingCommand().raceWith(CountingCommand()))
     
-    assert isinstance(dut, CommandGroup)
-    assert dut.groupType == GroupType.RACE
+    assert isinstance(dut, RaceCommandGroup)
     assert len(dut.cmdList) == 3
     
     dut.initialize()

@@ -1,7 +1,7 @@
 
 
 from wpimath.geometry import Pose2d
-from AutoSequencerV2.commandGroup import CommandGroup, GroupType
+from AutoSequencerV2.sequentialCommandGroup import SequentialCommandGroup
 
 # An auto mode is something our robot might do during autonomous
 # THe drive team selects the mode before the match
@@ -17,7 +17,7 @@ class Mode():
             self._name = self.__class__.__name__
 
     def getCmdGroup(self):
-        return CommandGroup([],GroupType.SEQUENTIAL)
+        return SequentialCommandGroup([])
     
     def getInitialDrivetrainPose(self):
         return Pose2d(0,0,0)
