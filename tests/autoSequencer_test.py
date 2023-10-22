@@ -20,11 +20,12 @@ class CountingMode(Mode):
         return CommandGroup(CountingCommand())
 
 def test_topLevel():
-    getInstance().updateMode()
-    getInstance().addMode(CountingMode())
-    getInstance().initiaize()
-    getInstance().update()
-    getInstance().end()
+    dut = AutoSequencer()
+    dut.addMode(CountingMode())
+    dut.updateMode()
+    dut.initiaize()
+    dut.update()
+    dut.end()
 
 def test_parallel():
     dut = CountingCommand().alongWith(CountingCommand().alongWith(CountingCommand()))

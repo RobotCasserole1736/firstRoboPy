@@ -11,7 +11,7 @@ from drivetrain.drivetrainPhysical import BL_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import BR_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import kinematics
 
-class _DrivetrainControl():
+class DrivetrainControl():
     """
     Top-level control class for controlling a swerve drivetrain
     """
@@ -48,7 +48,7 @@ class _DrivetrainControl():
                                                               velY, 
                                                               velT, 
                                                               self.poseEst.getCurEstPose().rotation())
-        self.poseEst.setDesiredPose(self.poseEst.getCurEstPose()) 
+        self.poseEst.telemetry.setDesiredPose(self.poseEst.getCurEstPose()) 
 
     def setCmdRobotRelative(self, velX, velY, velT):
         """Send commands to the robot for motion relative to its own reference frame
@@ -59,7 +59,7 @@ class _DrivetrainControl():
             velT (float): Desired rotational speed in the robot's reference frame, in radians per second
         """
         self.desChSpd = ChassisSpeeds(velX, velY, velT)
-        self.poseEst.setDesiredPose(self.poseEst.getCurEstPose())
+        self.poseEst.telemetry.setDesiredPose(self.poseEst.getCurEstPose())
         
     def setCmdTrajectory(self, cmd):
         """Send commands to the robot for motion as a part of following a trajectory
@@ -68,7 +68,7 @@ class _DrivetrainControl():
             cmd (PathPlannerState): PathPlanner trajectory sample for the current time
         """
         self.desChSpd = self.trajCtrl.update(cmd, self.poseEst.getCurEstPose())
-        self.poseEst.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
+        self.poseEst.telemetry.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
 
 
     def update(self):
@@ -115,25 +115,3 @@ class _DrivetrainControl():
         newGyroRotation = Rotation2d(0.0)
         newPose = Pose2d(curTranslation, newGyroRotation)
         self.poseEst.setKnownPose(newPose)
-
-
-# The actual drivetrain instance
-_inst = None
-
-# Necessary singleton cleanup when the robot logic is restarted.
-def destroyInstance():
-    global _inst
-    _inst = None
-
-###########################################
-## Public API
-def getInstance():
-    """Singleton Infrastructure
-
-    Returns:
-        the instance of the drivetrain singleton
-    """
-    global _inst
-    if(_inst is None):
-        _inst = _DrivetrainControl()
-    return _inst

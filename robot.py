@@ -3,7 +3,7 @@ import wpilib
 from Autonomous.modes.drivePathTest1 import DrivePathTest1
 from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
-import drivetrain.drivetrainControl as dt
+from drivetrain.drivetrainControl import DrivetrainControl
 from utils.segmentTimeTracker import SegmentTimeTracker
 import utils.signalLogging as SignalLogging
 import utils.calibration as Calibration
@@ -11,7 +11,7 @@ import utils.faults as Faults
 from utils.crashLogger import CrashLogger
 from utils.rioMonitor import RIOMonitor
 from webserver.webserver import Webserver
-import AutoSequencerV2.autoSequencer as AS
+from AutoSequencerV2.autoSequencer import AutoSequencer
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -23,8 +23,7 @@ class MyRobot(wpilib.TimedRobot):
         # to ignore these instantiations in a method.
         # pylint: disable=attribute-defined-outside-init
 
-        self.driveTrain = dt.getInstance()
-
+        self.driveTrain = DrivetrainControl()
 
         self.crashLogger = CrashLogger()
         
@@ -34,13 +33,12 @@ class MyRobot(wpilib.TimedRobot):
                 
         self.stt = SegmentTimeTracker()
         
-                
-        self.dashboard = Dashboard(self.webserver)
-        
         self.dInt = DriverInterface()
         
-        self.autoSequencer = AS.getInstance()
-        self.autoSequencer.addMode(DrivePathTest1())
+        self.autoSequencer = AutoSequencer()
+        self.autoSequencer.addMode(DrivePathTest1(self.driveTrain))
+
+        self.dashboard = Dashboard(self.webserver, self.autoSequencer)
 
         self.rioMonitor = RIOMonitor()
         
@@ -94,7 +92,7 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Disabled-Specific init and update
     def disabledPeriodic(self):
-        AS.getInstance().updateMode()
+        self.autoSequencer.updateMode()
         self.driveTrain.trajCtrl.updateCals()
 
     #########################################################
@@ -106,18 +104,8 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Cleanup
     def endCompetition(self):
-        # Our code has a number of things which create "global state",
-        # that is to say variables and objects which are not children
-        # of the main robot class (including python global variables)
-        # We hook the endCompetition method to clean these things up
-        # when our code exits.
-        # Note this is primarily for unit test support: Usually,
-        # our code exits in one of two "abnormal" ways:
-        # 1) On Robot: we unplug the RIO
-        # 2) In Simulation: The process ends
-        #self.rioMonitor.stopThreads()
+        self.rioMonitor.stopThreads()
         Faults.destroyInstance()
-        dt.destroyInstance()
         super().endCompetition()
 
 

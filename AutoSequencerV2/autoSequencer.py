@@ -5,7 +5,7 @@ from AutoSequencerV2.builtInModes.doNothingMode import DoNothingMode
 from AutoSequencerV2.builtInModes.waitMode import WaitMode
 
 
-class _AutoSequencer():
+class AutoSequencer():
     """Top-level implementation of the AutoSequencer 
     """
     def __init__(self):
@@ -68,13 +68,3 @@ class _AutoSequencer():
     
     def getStartingPose(self):
         return self.startPose
-
-_inst = None
-
-###########################################
-## Public API
-def getInstance():
-    global _inst
-    if(_inst is None):
-        _inst = _AutoSequencer()
-    return _inst

@@ -7,7 +7,7 @@ from utils.signalLogging import log
 
 
 
-class _DrivetrainPoseTelemetry():
+class DrivetrainPoseTelemetry():
     """
     Helper class to wrapper sending all drivetrain Pose related information 
     to dashboards
@@ -18,18 +18,22 @@ class _DrivetrainPoseTelemetry():
         self.field = wpilib.Field2d()
         wpilib.SmartDashboard.putData("DT Pose 2D", self.field)
         self.curTraj = Trajectory()
+        self.desPose = Pose2d()
+
+    def setDesiredPose(self, desPose):
+        self.desPose = desPose
         
-    def update(self, estPose, desPose):
+    def update(self, estPose):
         self.field.getRobotObject().setPose(estPose)
-        self.field.getObject("desPose").setPose(desPose)
+        self.field.getObject("desPose").setPose(self.desPose)
         self.field.getObject("desTraj").setTrajectory(self.curTraj)
 
         log("DT Pose Est X", metersToFeet(estPose.X()), "ft")
         log("DT Pose Est Y", metersToFeet(estPose.Y()), "ft")
         log("DT Pose Est T", estPose.rotation().degrees(), "deg")
-        log("DT Pose Des X", metersToFeet(desPose.X()), "ft")
-        log("DT Pose Des Y", metersToFeet(desPose.Y()), "ft")
-        log("DT Pose Des T", desPose.rotation().degrees(), "deg")
+        log("DT Pose Des X", metersToFeet(self.desPose.X()), "ft")
+        log("DT Pose Des Y", metersToFeet(self.desPose.Y()), "ft")
+        log("DT Pose Des T", self.desPose.rotation().degrees(), "deg")
 
     def setTrajectory(self, trajIn):
         """Display a specific trajectory on the robot Field2d
@@ -64,14 +68,3 @@ class _DrivetrainPoseTelemetry():
             t=inVal.time,
             velocity=inVal.velocity
             )
-
-
-_inst = None
-
-###########################################
-## Public API
-def getInstance():
-    global _inst
-    if(_inst is None):
-        _inst = _DrivetrainPoseTelemetry()
-    return _inst

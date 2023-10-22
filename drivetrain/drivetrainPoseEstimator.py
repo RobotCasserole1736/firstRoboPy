@@ -2,7 +2,7 @@ from wpilib import ADXRS450_Gyro
 from wpimath.estimator import SwerveDrive4PoseEstimator
 from wpimath.geometry import Pose2d, Rotation2d
 from drivetrain.drivetrainPhysical import kinematics
-import drivetrain.drivetrainPoseTelemetry as DrivetrainPoseTelemetry
+from drivetrain.drivetrainPoseTelemetry import DrivetrainPoseTelemetry
 from utils.signalLogging import log
 
 
@@ -21,15 +21,7 @@ class DrivetrainPoseEstimator():
         )
         self.lastModulePositions = initialModuleStates
         self.curRawGyroAngle = Rotation2d()
-        self.telemetry = DrivetrainPoseTelemetry.getInstance()
-        
-    def setDesiredPose(self, desPose):
-        """Set the pose where we'd like to be at. This is only for telemetry purposes
-
-        Args:
-            desPose (Pose2d): The pose where we like to be
-        """
-        self.curDesPose = desPose
+        self.telemetry = DrivetrainPoseTelemetry()
 
     def setKnownPose(self, knownPose):
         """Reset the robot's estimated pose to some specific position. This is useful if we know with certanty
@@ -47,7 +39,7 @@ class DrivetrainPoseEstimator():
             curModulePositions (list[SwerveModuleState]): current module angle
             and wheel positions as read in from swerve module sensors
         """
-        
+
         # Read the gyro angle
         self.curRawGyroAngle = self.gyro.getRotation2d()
         
@@ -57,7 +49,7 @@ class DrivetrainPoseEstimator():
         
         # Record the estimate to telemetry/logging
         log("PE Gyro Angle", self.curRawGyroAngle.degrees(), "deg")
-        self.telemetry.update(self.curEstPose, self.curDesPose)
+        self.telemetry.update(self.curEstPose)
         
         # Remember the module positions for next loop
         self.lastModulePositions = curModulePositions

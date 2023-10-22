@@ -43,8 +43,6 @@ class _FaultWrangler():
             wpilib.SmartDashboard.putBoolean("faultActive", self.activeFaultCount > 0)
             wpilib.SmartDashboard.putString("faultDescription", curFaultString)
 
-
-            
         # Update faults LED
         if(self.activeFaultCount > 0):
             self.fixMeLED.updateDutyCycle(self._blinkPattern(1.3))

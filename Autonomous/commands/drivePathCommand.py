@@ -1,5 +1,3 @@
-
-
 import os
 import wpilib
 from pathplannerlib import PathPlanner
@@ -7,22 +5,32 @@ from pathplannerlib import PathPlanner
 from AutoSequencerV2.command import Command
 from drivetrain.drivetrainPhysical import MAX_DT_LINEAR_SPEED
 from drivetrain.drivetrainPhysical import MAX_TRANSLATE_ACCEL_MPS2
-import drivetrain.drivetrainControl as DrivetrainControl
-import drivetrain.drivetrainPoseTelemetry as DrivetrainPoseTelemetry
 
 class DrivePathCommand(Command):
     
-    def __init__(self, pathFile, speedScalar):
+    def __init__(self, drivetrain, pathFile, speedScalar):
     
         self.name = pathFile
-        self.path = PathPlanner.loadPath(pathFile, 
+
+        # Hack around the fact that loadPath doesn't account for 
+        # when the code is not running in the normal launch directory.
+        # Critically, we have this issue while running unit tests on our code.
+        # This shouldn't be necessary after PathPlanner is fixed internally
+        absPath = os.path.abspath(os.path.join(os.path.dirname(__file__), 
+                                               "..", 
+                                               "..", 
+                                               "deploy", 
+                                               "pathplanner", 
+                                               pathFile))
+
+        self.path = PathPlanner.loadPath(absPath, 
                                          MAX_DT_LINEAR_SPEED * speedScalar,
-                                         MAX_TRANSLATE_ACCEL_MPS2 * speedScalar)  
+                                         MAX_TRANSLATE_ACCEL_MPS2 * speedScalar)
         self.done = False
         self.startTime = -1 # we'll populate these for real later, just declare they'll exist
         self.duration = self.path.getTotalTime()
-        self.drivetrain = DrivetrainControl.getInstance()
-        self.poseTelem = DrivetrainPoseTelemetry.getInstance()
+        self.drivetrain = drivetrain
+        self.poseTelem = drivetrain.poseEst.telemetry
 
     def initialize(self):
         self.startTime = wpilib.Timer.getFPGATimestamp()
@@ -39,7 +47,6 @@ class DrivePathCommand(Command):
         if(self.done):
             self.drivetrain.setCmdRobotRelative(0,0,0)
             self.poseTelem.setTrajectory(None)
-
 
     def isDone(self):
         return self.done
