@@ -23,11 +23,11 @@ class MyRobot(wpilib.TimedRobot):
         # to ignore these instantiations in a method.
         # pylint: disable=attribute-defined-outside-init
 
-        self.driveTrain = DrivetrainControl()
-
         self.crashLogger = CrashLogger()
-        
+
         wpilib.LiveWindow.disableAllTelemetry()
+
+        self.driveTrain = DrivetrainControl()
 
         self.webserver = Webserver()
                 

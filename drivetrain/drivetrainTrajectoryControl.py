@@ -1,8 +1,10 @@
 import math
 from wpimath.controller import PIDController
 from wpimath.kinematics import ChassisSpeeds
+from drivetrain.drivetrainPhysical import MAX_FWD_REV_SPEED_MPS, MAX_ROTATE_SPEED_RAD_PER_SEC
 from utils.calibration import Calibration
 from utils.signalLogging import log
+from utils.mathUtils import limit
 
 class DrivetrainTrajectoryControl():
     """
@@ -94,5 +96,9 @@ class DrivetrainTrajectoryControl():
         log("Drivetrain HDC xFB", xFB, "mps")
         log("Drivetrain HDC yFB", yFB, "mps")
         log("Drivetrain HDC tFB", tFB, "radpersec")
+
+        vXCmd = limit(xFF + xFB, MAX_FWD_REV_SPEED_MPS)
+        vYCmd = limit(yFF + yFB, MAX_FWD_REV_SPEED_MPS)
+        vTCmd = limit(tFF + tFB, MAX_ROTATE_SPEED_RAD_PER_SEC)
     
-        return ChassisSpeeds.fromFieldRelativeSpeeds(xFF + xFB, yFF + yFB, tFF + tFB, curEstPose.rotation())
+        return ChassisSpeeds.fromFieldRelativeSpeeds(vXCmd, vYCmd, vTCmd, curEstPose.rotation())

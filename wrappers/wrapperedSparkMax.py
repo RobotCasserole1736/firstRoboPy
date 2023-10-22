@@ -1,6 +1,6 @@
 from rev import CANSparkMax, CANSparkMaxLowLevel, SparkMaxPIDController, REVLibError
 from utils.signalLogging import log
-from utils.units import rev2Rad, radPerSec2RPM
+from utils.units import rev2Rad, radPerSec2RPM, RPM2RadPerSec
 from utils.faults import Fault
 
 ## Wrappered Spark Max
@@ -93,4 +93,4 @@ class WrapperedSparkMax():
         else:
             vel = 0
         log(self.name + "_motorActVel", vel, "RPM")
-        return vel
+        return RPM2RadPerSec(vel)
