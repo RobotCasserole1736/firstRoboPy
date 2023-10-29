@@ -2,8 +2,7 @@ import socketserver
 import socket
 import threading
 import functools
-
-from webserver.templatingRequestHandler import TemplatingRequestHandler, dashboardWidgetList, WEB_ROOT
+from webserver.casseroleWebServerImpl import CasseroleWebServerImpl, dashboardWidgetList, WEB_ROOT
 
 # A threaded TCP server starts up new python threads for each client request, which allows
 # complex requests to be handled in the background and not bog down robot code
@@ -13,25 +12,27 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 # Main robot website server
 class Webserver():
     
-    def __init__(self, port=5805):
+    def __init__(self, httpPort=5805):
         
         # Serve all contents of the webserver/www folder, with special
         # logic to handle filling out template html files
-        handler = functools.partial(TemplatingRequestHandler, 
+        templatingHttpHandler = functools.partial(CasseroleWebServerImpl, 
                                      directory=WEB_ROOT)
 
         hostname=socket.gethostname()   
         ipAddr=socket.gethostbyname(hostname)   
 
-        self.server = ThreadedTCPServer(("", port), handler)
+        self.httpServer = ThreadedTCPServer(("", httpPort), templatingHttpHandler)
 
-        # Start a thread with the server -- that thread will then start one
+        # Start a thread with the HTTP server -- that thread will then start one
         # more thread for each request
-        self.serverThread = threading.Thread(target=self.server.serve_forever)
+        self.serverThread = threading.Thread(target=self.httpServer.serve_forever)
         # Exit the server thread when the main thread terminates
         self.serverThread.daemon = True
         self.serverThread.start()
-        print(f"Server started on {hostname} at {ipAddr}:{port} " + 
+        
+        
+        print(f"Server started on {hostname} at {ipAddr}:{httpPort} " + 
               "in thread { self.serverThread.name}")
         
     # Ensure we invoke shutdown procedures on the class destruction
@@ -41,7 +42,7 @@ class Webserver():
             
     # Stop the server and the background thread its running in.
     def shutdown(self):
-        self.server.shutdown()
+        self.httpServer.shutdown()
         self.serverThread.join()
         
     # public api to submit a new dashboard widget

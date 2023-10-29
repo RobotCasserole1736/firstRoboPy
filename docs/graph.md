@@ -2,39 +2,39 @@
 
 ```mermaid
 flowchart TD
-    DrivePathTest1-->DrivePathCommand
-    SwerveModuleControl-->WrapperedSparkMax
+    DrivetrainControl-->DrivetrainTrajectoryControl
+    SequentialCommandGroup-->DoNothingCommand
+    ModeList-->WaitMode
+    DrivetrainPoseEstimator-->DrivetrainPoseTelemetry
+    WrapperedSparkMax-->Fault
+    MyRobot-->DrivetrainControl
+    MyRobot-->CrashLogger
+    DrivetrainPoseEstimator-->Fault
+    MyRobot-->AutoSequencer
+    DrivetrainControl-->DrivetrainPoseEstimator
     RIOMonitor-->Fault
+    MyRobot-->FaultStatusLEDs
+    DrivePathCommand-->DrivetrainControl
+    SwerveModuleControl-->WrapperedSRXMagEncoder
+    DrivePathTest1-->DrivePathCommand
+    MyRobot-->RIOMonitor
+    ModeList-->DoNothingMode
     WrapperedSRXMagEncoder-->Calibration
-    WrapperedSRXMagEncoder-->Fault
-    DrivetrainTrajectoryControl-->Calibration
+    MyRobot-->Webserver
+    DriverInterface-->Fault
+    Webserver-->ThreadedTCPServer
+    MyRobot-->SegmentTimeTracker
     DrivetrainControl-->SwerveModuleGainSet
+    SwerveModuleControl-->WrapperedSparkMax
+    DrivetrainTrajectoryControl-->Calibration
+    MyRobot-->DriverInterface
     AutoSequencer-->ModeList
     ModeList-->DrivePathTest1
-    SequentialCommandGroup-->WaitCommand
-    DrivetrainControl-->DrivetrainPoseEstimator
-    ModeList-->DoNothingMode
-    MyRobot-->Dashboard
-    AutoSequencer-->SequentialCommandGroup
-    MyRobot-->AutoSequencer
-    DrivetrainPoseEstimator-->Fault
-    SwerveModuleControl-->WrapperedSRXMagEncoder
-    Webserver-->ThreadedTCPServer
-    WrapperedSparkMax-->Fault
     DrivetrainControl-->SwerveModuleControl
-    MyRobot-->SegmentTimeTracker
-    DrivePathCommand-->DrivetrainControl
-    MyRobot-->DrivetrainControl
-    DriverInterface-->Fault
-    ModeList-->WaitMode
+    AutoSequencer-->SequentialCommandGroup
     DrivePathCommand-->DrivetrainPoseTelemetry
-    MyRobot-->CrashLogger
     SwerveModuleGainSet-->Calibration
-    DrivetrainPoseEstimator-->DrivetrainPoseTelemetry
-    MyRobot-->RIOMonitor
-    SequentialCommandGroup-->DoNothingCommand
-    MyRobot-->FaultStatusLEDs
-    MyRobot-->DriverInterface
-    DrivetrainControl-->DrivetrainTrajectoryControl
-    MyRobot-->Webserver
+    SequentialCommandGroup-->WaitCommand
+    MyRobot-->Dashboard
+    WrapperedSRXMagEncoder-->Fault
 ```

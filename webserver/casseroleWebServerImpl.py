@@ -4,6 +4,9 @@ import os
 import platform
 import sys
 import pathlib
+import json
+import utils.signalLogging as SignalLogging
+
 import wpilib
 
 # Global list of all widgets on the dashboard. 
@@ -26,10 +29,12 @@ JS_TMPLT_TXT = ""
 with open(DASHBOARD_ROOT / "dashboard.js_tmplt", "r", encoding="utf-8") as infile:
     JS_TMPLT_TXT = infile.read()
 
-# A TemplatingRequestsHandler responds to web queries just like
-# python's built in SimpleHTTPRequestsHandler, with additional
-# hooks for special files that need to be filled out from templates
-class TemplatingRequestHandler(SimpleHTTPRequestHandler):
+# THis class does things custom to how our bot's webserver needs to
+# provide info to clients. 
+# First - some files need hooked to fill out tempalates, rather than just serving the file.
+# Second - log files require HTTP post/get functionality
+# Both are done in this same class.
+class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
     # This code-generation class has some long lines 
     # that I don't know of a good way to get rid of.
     # pylint: disable=line-too-long
@@ -151,6 +156,51 @@ class TemplatingRequestHandler(SimpleHTTPRequestHandler):
 
         return SimpleHTTPRequestHandler
 
+    # Special HTTP Post helper to get a json list of log files
+    def getLogFileList(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        
+        logFilePath = SignalLogging.getInstance().getLogDir()
+
+        files = os.listdir(logFilePath)
+        file_info = [{'name': file, 'size': os.path.getsize(os.path.join(logFilePath, file))} for file in files]
+        self.wfile.write(json.dumps(file_info).encode())     
+        
+    # Special HTTP Post (DELETE method) to delete a log file
+    def deleteOneLogFile(self):
+        logFilePath = SignalLogging.getInstance().getLogDir()
+
+        filename = self.path[len('/delete_file/'):]
+        file_path = os.path.join(logFilePath, filename)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b'File deleted')
+
+        else:
+            self.send_response(404)
+            self.end_headers()
+            self.wfile.write(b'File not found')
+            
+    # Special HTTP Post (DELETE method) to delete all log files
+    def deleteAllLogFiles(self):
+        logFilePath = SignalLogging.getInstance().getLogDir()
+
+        for file in os.listdir(logFilePath):
+            file_path = os.path.join(logFilePath, file)
+            if os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                except PermissionError:
+                    print(f"Warning, log {file_path} in use, skipping...")
+
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'All files deleted')
+
     # Override the get method to apply templates on the files which need templating
     def do_GET(self):
         # Check for known tempaltes first
@@ -160,7 +210,24 @@ class TemplatingRequestHandler(SimpleHTTPRequestHandler):
             return self.handleDashboardHtml()
         elif self.path == "/dashboard/dashboard.js":
             return self.handleDashboardJs()
+        elif self.path == '/get_file_list':
+            return self.getLogFileList()
         else:
             # Fallback on serving like a normal HTTP request handler
             return SimpleHTTPRequestHandler.do_GET(self)
-        
+   
+    # Support a special DELETE method for managing log files
+    def do_DELETE(self):
+        if self.path.startswith('/delete_file/'):
+            self.deleteOneLogFile()
+        elif self.path.startswith('/delete_all_files'):
+            self.deleteAllLogFiles()
+            
+    # Support the web prefix "download_file" to point to wherever the logs are at
+    def translate_path(self, path):
+        prefix = "/download_file"
+        if self.path.startswith(prefix):
+            logFilePath = SignalLogging.getInstance().getLogDir()
+            return logFilePath + path[len(prefix):]
+        else:
+            return SimpleHTTPRequestHandler.translate_path(self, path)

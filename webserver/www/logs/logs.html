@@ -2,46 +2,102 @@
 <html>
 
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
     <link rel="stylesheet" href="../common.css">
     <link rel="stylesheet" href="logs.css">
     <title>Log Files</title>
 </head>
 
 <body>
-    <topLevelContainer>
-        <!-- main table area for logs -->
+    <h1>Log File List</h1>
+    <button id="deleteAll">Delete All Logs</button>
+    <table class="logListingTable" id="fileList">
 
-        <!-- buttons and controls area-->
-        <buttonsContainer class="outlined">
-            <buttonGroup class="outline flexGrow">
-                <div id="connectionStatusDiv" class="statusDiv"> </div>
-            </buttonGroup>
-            <buttonGroup class="outlined flexGrow"> 
-                <button id="delete_all_btn" type="button" onclick="deleteAll()">Delete All</button>
-                <button id="download_all_btn" type="button" onclick="downloadAll()">Download All</button>
-            </buttonGroup>
-        </buttonsContainer>
+        <div id="confirmationModal" class="modal">
+            <div class="modal-content">
+                <p>Are you sure you want to delete all files?</p>
+                <button id="confirmDelete">Yes</button>
+                <button id="cancelDelete">No</button>
+            </div>
+        </div>
 
-        <buttonsContainer class="outlined">
-            <buttonGroup class="outline flexGrow">
-                <div id="statusDiv" class="statusDiv"> </div>
-            </buttonGroup>
-        </buttonsContainer>
+        <script>
+            // Function to fetch and display the file list
+            function displayFileList() {
+                fetch('/get_file_list')
+                    .then(response => response.json())
+                    .then(data => {
+                        const fileList = document.getElementById('fileList');
+                        fileList.innerHTML = '';
+                        data.forEach(file => {
+                            const li = document.createElement('tr');
 
+                            const data1 = document.createElement('td');
+                            data1.innerHTML = `${file.name}`
+                            data1.classList.add('outlined');
+                            li.appendChild(data1);
 
+                            var sizeKb = Math.ceil(file.size / 1024);
+                            const data2 = document.createElement('td');
+                            data2.innerHTML = `${sizeKb} kB`
+                            data2.classList.add('outlined');
+                            li.appendChild(data2);
 
-        <!-- main table area for calibrations -->
-        <table class="logListingTable" id="logListingTable">
-        </table>
-    </topLevelContainer>
+                            const data3 = document.createElement('td');
+                            data3.innerHTML = `<button onclick="downloadFile('${file.name}')">Download</button>
+                        <button onclick="deleteFile('${file.name}')">Delete</button></td>`;
+                            data3.classList.add('outlined');
+                            li.appendChild(data3);
 
-    <script type="module" src="./logs.js"></script>
+                            fileList.appendChild(li);
+                        });
+                    });
+            }
 
+            // Function to download a file
+            function downloadFile(filename) {
+                window.location.href = `/download_file/${filename}`;
+            }
+
+            // Function to delete a file
+            function deleteFile(filename) {
+                fetch(`/delete_file/${filename}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.status === 200) {
+                            displayFileList();
+                        }
+                    });
+            }
+
+            // Function to delete all files
+            document.getElementById('deleteAll').addEventListener('click', function () {
+                // Show the confirmation modal when the "Delete All Files" button is clicked
+                document.getElementById('confirmationModal').style.display = 'block';
+            });
+
+            // Function to confirm and perform delete
+            document.getElementById('confirmDelete').addEventListener('click', function () {
+                fetch('/delete_all_files', { method: 'DELETE' })
+                    .then(response => {
+                        if (response.status === 200) {
+                            // Close the modal
+                            document.getElementById('confirmationModal').style.display = 'none';
+
+                            // Refresh the file list
+                            displayFileList();
+                        }
+                    });
+            });
+
+            // Function to cancel the delete operation
+            document.getElementById('cancelDelete').addEventListener('click', function () {
+                // Close the modal without performing delete
+                document.getElementById('confirmationModal').style.display = 'none';
+            });
+
+            // Initial file list display
+            displayFileList();
+        </script>
 </body>
-
-<footer>
-
-</footer>
 
 </html>

@@ -24,13 +24,13 @@ class _SignalWrangler:
 
 
         if wpilib.RobotBase.isSimulation():
-            logDir = "./simulationLogs"
+            self.logDir = "./simulationLogs"
         else:
-            logDir = "/U/logs"
+            self.logDir = "/U/logs"
 
         try:
-            if not os.path.isdir(logDir):
-                os.makedirs(logDir)
+            if not os.path.isdir(self.logDir):
+                os.makedirs(self.logDir)
         except PermissionError as err:
             print("Logging disabled!")
             print(err)
@@ -38,7 +38,7 @@ class _SignalWrangler:
             self.driveAvailableFault.setFaulted()
 
         if(self.enableDiskLogging):
-            wpilib.DataLogManager.start(dir=logDir)
+            wpilib.DataLogManager.start(dir=self.logDir)
             wpilib.DataLogManager.logNetworkTables(False) # We have a lot of things in NT that don't need to be logged
             self.log = wpilib.DataLogManager.getLog()
 
@@ -87,7 +87,9 @@ class _SignalWrangler:
     # Tack on a new floating point number sample
     def addSampleForThisLoop(self, name, value):
         self.sampleList.append((name, value))
-
+        
+    def getLogDir(self):
+        return self.logDir
 
 # Singleton-ish instance for main thread only.
 _inst = None

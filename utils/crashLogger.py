@@ -4,6 +4,8 @@ import logging
 from datetime import  datetime
 import wpilib
 
+from utils import signalLogging
+
 class CrashLogger():
     
     """
@@ -35,12 +37,8 @@ class CrashLogger():
 
         self.prefixWritten = False
 
-        # Pick the output folder and make it at install time to make sure 
-        # it's there, just in case a crash happens later
-        if wpilib.RobotBase.isSimulation():
-            logDir = "./simulationCrashLogs"
-        else:
-            logDir = "/U/crashLogs"
+        # Log crashes to the same spot signals log to
+        logDir = signalLogging.getInstance().getLogDir()
 
         if(not os.path.isdir(logDir)):
             os.makedirs(logDir)
@@ -50,7 +48,7 @@ class CrashLogger():
         uniqueFileFound = False
         logPath = ""
         while(not uniqueFileFound):
-            logFileName = f"crashLog_{idx}.txt"
+            logFileName = f"crashLog_{idx}.log"
             logPath = os.path.join(logDir, logFileName)
             uniqueFileFound = not os.path.isfile(logPath)
             idx += 1
