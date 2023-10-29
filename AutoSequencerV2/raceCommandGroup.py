@@ -5,12 +5,7 @@ from AutoSequencerV2.runnable import Runnable
 class RaceCommandGroup(Runnable, Composer):
 
     def __init__(self, cmdList=None):
-        if(cmdList is None):
-            self.cmdList = []
-        else:
-            self.cmdList = cmdList
-        self._curCmdIdx = 0
-        self._cmdFinishedDict = {}
+        self.cmdList = cmdList if cmdList else []
         self._finishedFirstIdx = None # Set to the index of the command which finished first, or None if all are running
 
     def execute(self):

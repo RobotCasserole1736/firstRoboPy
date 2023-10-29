@@ -6,7 +6,7 @@
 class Composer():
 
     def _optimizeCmdList(self, first,second, outType):
-        from AutoSequencerV2.command import Command # pylint: disable=import-outside-toplevel
+        from AutoSequencerV2.command import Command # pylint: disable=import-outside-toplevel cyclic-import
 
         if(isinstance(first, outType) and isinstance(second,outType)):
             #They're both the same type - optimize to a single command list
@@ -26,21 +26,21 @@ class Composer():
         return cmds
 
     def andThen(self, other):
-        from .sequentialCommandGroup import SequentialCommandGroup # pylint: disable=import-outside-toplevel
+        from .sequentialCommandGroup import SequentialCommandGroup # pylint: disable=import-outside-toplevel cyclic-import
 
         cmds = self._optimizeCmdList(self, other, SequentialCommandGroup)
 
         return SequentialCommandGroup(cmds)
     
     def raceWith(self, other):
-        from .raceCommandGroup import RaceCommandGroup # pylint: disable=import-outside-toplevel
+        from .raceCommandGroup import RaceCommandGroup # pylint: disable=import-outside-toplevel cyclic-import
         
         cmds = self._optimizeCmdList(self, other, RaceCommandGroup)
 
         return RaceCommandGroup(cmds)
     
     def alongWith(self, other):
-        from .parallelCommandGroup import ParallelCommandGroup # pylint: disable=import-outside-toplevel
+        from .parallelCommandGroup import ParallelCommandGroup # pylint: disable=import-outside-toplevel cyclic-import
 
         cmds = self._optimizeCmdList(self, other, ParallelCommandGroup)
 

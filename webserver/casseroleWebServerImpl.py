@@ -235,7 +235,7 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
             return SimpleHTTPRequestHandler.do_GET(self)
    
     # Support a special DELETE method for managing log files
-    def do_DELETE(self): # pylint: disable=invalid-name - We need this specific function name to get the right behavior.
+    def do_DELETE(self): # pylint: disable=invalid-name
         if self.path.startswith('/delete_file/'):
             self.deleteOneLogFile()
         elif self.path.startswith('/delete_all_files'):
