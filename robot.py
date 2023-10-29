@@ -46,8 +46,8 @@ class MyRobot(wpilib.TimedRobot):
         
         # Uncomment this and simulate to update the code 
         # dependencies graph
-        from codeStructureReportGen import reportGen
-        reportGen.generate(self)
+        # from codeStructureReportGen import reportGen
+        # reportGen.generate(self)
 
 
     def robotPeriodic(self):

@@ -51,4 +51,3 @@ class RaceCommandGroup(Runnable, Composer):
     def raceWith(self, other):
         self.cmdList.append(other)
         return self
-

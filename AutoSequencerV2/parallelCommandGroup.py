@@ -49,4 +49,3 @@ class ParallelCommandGroup(Runnable, Composer):
 
     ##################################################
     ## composition handlers
-

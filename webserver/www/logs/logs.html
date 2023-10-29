@@ -37,17 +37,22 @@
                             data1.classList.add('outlined');
                             li.appendChild(data1);
 
-                            var sizeKb = Math.ceil(file.size / 1024);
                             const data2 = document.createElement('td');
-                            data2.innerHTML = `${sizeKb} kB`
+                            data2.innerHTML = `${file.modTime}`
                             data2.classList.add('outlined');
                             li.appendChild(data2);
 
+                            var sizeKb = Math.ceil(file.size / 1024);
                             const data3 = document.createElement('td');
-                            data3.innerHTML = `<button onclick="downloadFile('${file.name}')">Download</button>
-                        <button onclick="deleteFile('${file.name}')">Delete</button></td>`;
+                            data3.innerHTML = `${sizeKb} kB`
                             data3.classList.add('outlined');
                             li.appendChild(data3);
+
+                            const data4 = document.createElement('td');
+                            data4.innerHTML = `<button onclick="downloadFile('${file.name}')">Download</button>
+                                               <button onclick="deleteFile('${file.name}')">Delete</button></td>`;
+                            data4.classList.add('outlined');
+                            li.appendChild(data4);
 
                             fileList.appendChild(li);
                         });

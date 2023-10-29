@@ -5,9 +5,12 @@ import platform
 import sys
 import pathlib
 import json
-import utils.signalLogging as SignalLogging
+from datetime import datetime, timedelta, timezone
 
 import wpilib
+
+import utils.signalLogging as SignalLogging
+
 
 # Global list of all widgets on the dashboard. 
 dashboardWidgetList = []
@@ -158,24 +161,39 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
 
     # Special HTTP Post helper to get a json list of log files
     def getLogFileList(self):
+        logFilePath = SignalLogging.getInstance().getLogDir()
+
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        
-        logFilePath = SignalLogging.getInstance().getLogDir()
 
         files = os.listdir(logFilePath)
-        file_info = [{'name': file, 'size': os.path.getsize(os.path.join(logFilePath, file))} for file in files]
-        self.wfile.write(json.dumps(file_info).encode())     
+        fileInfo = []
+
+        for file in files:
+            filePath = os.path.join(logFilePath, file)
+            if os.path.isfile(filePath):
+                fileStat = os.stat(filePath)
+                # Define a timedelta to represent the US Central Time zone (CST/CDT)
+                centralTimeZone = timezone(timedelta(hours=-6))
+                modTime = datetime.utcfromtimestamp(fileStat.st_mtime).replace(tzinfo=timezone.utc)
+                modTime = modTime.astimezone(centralTimeZone)
+                modTimeStr = modTime.strftime('%Y-%m-%d %I:%M:%S %p')
+                fileInfo.append({'name': file, 'size': fileStat.st_size, 'modTime': modTimeStr})
+
+        # Sort the file list by modification time in descending order (newest first)
+        fileInfo.sort(key=lambda x: x['modTime'], reverse=True)
+
+        self.wfile.write(json.dumps(fileInfo).encode()) 
         
     # Special HTTP Post (DELETE method) to delete a log file
     def deleteOneLogFile(self):
         logFilePath = SignalLogging.getInstance().getLogDir()
 
         filename = self.path[len('/delete_file/'):]
-        file_path = os.path.join(logFilePath, filename)
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        filePath = os.path.join(logFilePath, filename)
+        if os.path.exists(filePath):
+            os.remove(filePath)
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'File deleted')
@@ -190,12 +208,12 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
         logFilePath = SignalLogging.getInstance().getLogDir()
 
         for file in os.listdir(logFilePath):
-            file_path = os.path.join(logFilePath, file)
-            if os.path.exists(file_path):
+            filePath = os.path.join(logFilePath, file)
+            if os.path.exists(filePath):
                 try:
-                    os.remove(file_path)
+                    os.remove(filePath)
                 except PermissionError:
-                    print(f"Warning, log {file_path} in use, skipping...")
+                    print(f"Warning, log {filePath} in use, skipping...")
 
         self.send_response(200)
         self.end_headers()
@@ -217,7 +235,7 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
             return SimpleHTTPRequestHandler.do_GET(self)
    
     # Support a special DELETE method for managing log files
-    def do_DELETE(self):
+    def do_DELETE(self): # pylint: disable=invalid-name - We need this specific function name to get the right behavior.
         if self.path.startswith('/delete_file/'):
             self.deleteOneLogFile()
         elif self.path.startswith('/delete_all_files'):
