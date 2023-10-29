@@ -22,6 +22,39 @@
         </div>
 
         <script>
+
+            //Scales a filesize to a nice comprehensible integer
+            function fileSizeToString(size_in){
+                if(size_in < 1024){
+                    return `${size_in} bytes`
+                } else if(size_in < 1024*1024){
+                    var printInt = Math.ceil(size_in / 1024);
+                    return `${printInt} kB`
+                }else if(size_in < 1024*1024*1024){
+                    var printInt = Math.ceil(size_in / (1024*1024));
+                    return `${printInt} MB`
+                }else {
+                    var printInt = Math.ceil(size_in / (1024*1024*1024));
+                    return `${printInt} GB`
+                }
+            }
+
+            // Unix timestamp (what the RIO reports for mod time) to nice local time in the PC's
+            // current timezone
+            function timeConverter(UNIX_timestamp){
+                var a = new Date(UNIX_timestamp * 1000);
+                var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                var year = a.getFullYear();
+                var month = months[a.getMonth()];
+                var date = a.getDate();
+                var hour = a.getHours() > 12 ? a.getHours() - 12 : a.getHours();
+                var min = a.getMinutes();
+                var sec = a.getSeconds();
+                var ampm = a.getHours() > 12 ? "PM" : "AM";
+                var time = month + ' ' + date  + ' ' + year + ' - ' + hour + ':' + min + ':' + sec + ' ' + ampm;
+                return time;
+            }
+
             // Function to fetch and display the file list
             function displayFileList() {
                 fetch('/get_file_list')
@@ -38,13 +71,12 @@
                             li.appendChild(data1);
 
                             const data2 = document.createElement('td');
-                            data2.innerHTML = `${file.modTime}`
+                            data2.innerHTML = `${timeConverter(file.modTime)}`
                             data2.classList.add('outlined');
                             li.appendChild(data2);
 
-                            var sizeKb = Math.ceil(file.size / 1024);
                             const data3 = document.createElement('td');
-                            data3.innerHTML = `${sizeKb} kB`
+                            data3.innerHTML = `${fileSizeToString(file.size)}`
                             data3.classList.add('outlined');
                             li.appendChild(data3);
 

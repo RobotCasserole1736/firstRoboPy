@@ -5,7 +5,6 @@ import platform
 import sys
 import pathlib
 import json
-from datetime import datetime, timedelta, timezone
 
 import wpilib
 
@@ -174,12 +173,7 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
             filePath = os.path.join(logFilePath, file)
             if os.path.isfile(filePath):
                 fileStat = os.stat(filePath)
-                # Define a timedelta to represent the US Central Time zone (CST/CDT)
-                centralTimeZone = timezone(timedelta(hours=-6))
-                modTime = datetime.utcfromtimestamp(fileStat.st_mtime).replace(tzinfo=timezone.utc)
-                modTime = modTime.astimezone(centralTimeZone)
-                modTimeStr = modTime.strftime('%Y-%m-%d %I:%M:%S %p')
-                fileInfo.append({'name': file, 'size': fileStat.st_size, 'modTime': modTimeStr})
+                fileInfo.append({'name': file, 'size': fileStat.st_size, 'modTime': fileStat.st_mtime})
 
         # Sort the file list by modification time in descending order (newest first)
         fileInfo.sort(key=lambda x: x['modTime'], reverse=True)
