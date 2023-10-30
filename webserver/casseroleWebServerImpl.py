@@ -1,4 +1,3 @@
-
 from http.server import SimpleHTTPRequestHandler
 import os
 import platform
@@ -7,9 +6,7 @@ import pathlib
 import json
 
 import wpilib
-
-import utils.signalLogging as SignalLogging
-
+from utils.extDriveManager import ExtDriveManager
 
 # Global list of all widgets on the dashboard. 
 dashboardWidgetList = []
@@ -160,29 +157,33 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
 
     # Special HTTP Post helper to get a json list of log files
     def getLogFileList(self):
-        logFilePath = SignalLogging.getInstance().getLogDir()
 
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-
-        files = os.listdir(logFilePath)
+        
         fileInfo = []
 
-        for file in files:
-            filePath = os.path.join(logFilePath, file)
-            if os.path.isfile(filePath):
-                fileStat = os.stat(filePath)
-                fileInfo.append({'name': file, 'size': fileStat.st_size, 'modTime': fileStat.st_mtime})
+        if(ExtDriveManager().isConnected()):
 
-        # Sort the file list by modification time in descending order (newest first)
-        fileInfo.sort(key=lambda x: x['modTime'], reverse=True)
+            logFilePath = ExtDriveManager().getLogStoragePath()
+
+            files = os.listdir(logFilePath)
+
+            for file in files:
+                filePath = os.path.join(logFilePath, file)
+                if os.path.isfile(filePath):
+                    fileStat = os.stat(filePath)
+                    fileInfo.append({'name': file, 'size': fileStat.st_size, 'modTime': fileStat.st_mtime})
+
+            # Sort the file list by modification time in descending order (newest first)
+            fileInfo.sort(key=lambda x: x['modTime'], reverse=True)
 
         self.wfile.write(json.dumps(fileInfo).encode()) 
         
     # Special HTTP Post (DELETE method) to delete a log file
     def deleteOneLogFile(self):
-        logFilePath = SignalLogging.getInstance().getLogDir()
+        logFilePath = ExtDriveManager().getLogStoragePath()
 
         filename = self.path[len('/delete_file/'):]
         filePath = os.path.join(logFilePath, filename)
@@ -191,7 +192,6 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'File deleted')
-
         else:
             self.send_response(404)
             self.end_headers()
@@ -199,15 +199,17 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
             
     # Special HTTP Post (DELETE method) to delete all log files
     def deleteAllLogFiles(self):
-        logFilePath = SignalLogging.getInstance().getLogDir()
+        
+        if(ExtDriveManager().isConnected()):
+            logFilePath = ExtDriveManager().getLogStoragePath()
 
-        for file in os.listdir(logFilePath):
-            filePath = os.path.join(logFilePath, file)
-            if os.path.exists(filePath):
-                try:
-                    os.remove(filePath)
-                except PermissionError:
-                    print(f"Warning, log {filePath} in use, skipping...")
+            for file in os.listdir(logFilePath):
+                filePath = os.path.join(logFilePath, file)
+                if os.path.exists(filePath):
+                    try:
+                        os.remove(filePath)
+                    except PermissionError:
+                        print(f"Warning, log {filePath} in use, skipping...")
 
         self.send_response(200)
         self.end_headers()
@@ -239,7 +241,7 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
     def translate_path(self, path):
         prefix = "/download_file"
         if self.path.startswith(prefix):
-            logFilePath = SignalLogging.getInstance().getLogDir()
+            logFilePath = ExtDriveManager().getLogStoragePath()
             return logFilePath + path[len(prefix):]
         else:
             return SimpleHTTPRequestHandler.translate_path(self, path)

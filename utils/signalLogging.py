@@ -1,15 +1,13 @@
-import os
 import wpilib
 import ntcore as nt
 import wpiutil._wpiutil.log as wpilog # pylint: disable=import-error,no-name-in-module
-
-from utils.faults import Fault 
-
+from utils.extDriveManager import ExtDriveManager
+from utils.singleton import Singleton
 
 BASE_TABLE = "SmartDashboard"
 
 # Wrangler for coordinating the set of all signals
-class _SignalWrangler:
+class SignalWrangler(metaclass=Singleton):
 
     # Starts up logging to file, along with network tables infrastructure
     # Picks appropriate logging directory based on our current target
@@ -19,26 +17,9 @@ class _SignalWrangler:
         self.publishedSigDict = {}
         self.sigUnitsDict = {}
         self.sampleList = []
-        self.enableDiskLogging = True
-        self.driveAvailableFault = Fault("Logging USB Drive Not Available")
 
-
-        if wpilib.RobotBase.isSimulation():
-            self.logDir = "./simulationLogs"
-        else:
-            self.logDir = "/U/logs"
-
-        try:
-            if not os.path.isdir(self.logDir):
-                os.makedirs(self.logDir)
-        except PermissionError as err:
-            print("Logging disabled!")
-            print(err)
-            self.enableDiskLogging = False
-            self.driveAvailableFault.setFaulted()
-
-        if(self.enableDiskLogging):
-            wpilib.DataLogManager.start(dir=self.logDir)
+        if(ExtDriveManager().isConnected()):
+            wpilib.DataLogManager.start(dir=ExtDriveManager().getLogStoragePath())
             wpilib.DataLogManager.logNetworkTables(False) # We have a lot of things in NT that don't need to be logged
             self.log = wpilib.DataLogManager.getLog()
 
@@ -67,7 +48,7 @@ class _SignalWrangler:
                     sigTopic.setProperty("units", str(unitsStr))
 
                 # Set up log file publishing if enabled
-                if(self.enableDiskLogging):
+                if(ExtDriveManager().isConnected()):
                     sigLog = wpilog.DoubleLogEntry(log=self.log, name=name)
                 else:
                     sigLog = None
@@ -78,7 +59,7 @@ class _SignalWrangler:
             # Publish value to NT
             self.publishedSigDict[name][0].set(value, time)
             # Put value to log file
-            if(self.enableDiskLogging):
+            if(ExtDriveManager().isConnected()):
                 self.publishedSigDict[name][1].append(value, time)
 
         # Reset sample list back to empty for next loop
@@ -87,17 +68,6 @@ class _SignalWrangler:
     # Tack on a new floating point number sample
     def addSampleForThisLoop(self, name, value):
         self.sampleList.append((name, value))
-        
-    def getLogDir(self):
-        return self.logDir
-
-# Singleton-ish instance for main thread only.
-_inst = None
-def getInstance():
-    global _inst
-    if(_inst is None):
-        _inst = _SignalWrangler()
-    return _inst
 
 
 ###########################################
@@ -106,13 +76,9 @@ def getInstance():
 
 # Log a new named value
 def log(name, value, units=None):
-    getInstance().addSampleForThisLoop(name, value)
+    SignalWrangler().addSampleForThisLoop(name, value)
     if units is not None :
-        getInstance().sigUnitsDict[name] = units
-
-# Call once per robot periodic loop
-def update():
-    getInstance().publishPeriodic()
+        SignalWrangler().sigUnitsDict[name] = units
 
 def sigNameToNT4TopicName(name):
     return f"/{BASE_TABLE}/{name}"

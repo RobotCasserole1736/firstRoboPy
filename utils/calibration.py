@@ -1,7 +1,9 @@
 import wpilib
 import ntcore as nt
 
-class _CalibrationWrangler():
+from utils.singleton import Singleton
+
+class CalibrationWrangler(metaclass=Singleton):
     """
     Starts up logging to file, along with network tables infrastructure
     Picks approprate logging directory based on our current target
@@ -22,29 +24,9 @@ class _CalibrationWrangler():
         """
         for cal in self.calDict.values():
             cal.update()
-
-# Singleton infrastructure
-_inst = None
-
 ###########################################
 # Public API
 ###########################################
-
-def getInstance():
-    """Singleton infrastructure
-
-    Returns:
-        CalibrationWrangler: the instance of the calibration wrangler
-    """
-    global _inst
-    if(_inst is None):
-        _inst = _CalibrationWrangler()
-    return _inst
-
-def update():
-    """Update all calibrations. Should be called every 20ms
-    """
-    getInstance().update()
 
 class Calibration():
     """
@@ -82,7 +64,7 @@ class Calibration():
         desValueTopic = table.getDoubleTopic(name + "/desValue")
         self.desValueSubscriber = desValueTopic.subscribe(self._default)
         
-        getInstance().register(self)
+        CalibrationWrangler().register(self)
         
     # Resets the value of the calibration back to its default
     def reset(self):

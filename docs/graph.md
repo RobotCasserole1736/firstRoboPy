@@ -2,39 +2,39 @@
 
 ```mermaid
 flowchart TD
-    DrivetrainPoseEstimator-->Fault
-    SequentialCommandGroup-->WaitCommand
-    MyRobot-->Webserver
-    MyRobot-->DrivetrainControl
-    DriverInterface-->Fault
-    DrivePathCommand-->DrivetrainPoseTelemetry
-    SwerveModuleControl-->WrapperedSparkMax
-    SwerveModuleGainSet-->Calibration
-    SwerveModuleControl-->WrapperedSRXMagEncoder
-    MyRobot-->SegmentTimeTracker
-    DrivetrainTrajectoryControl-->Calibration
-    MyRobot-->Dashboard
-    DrivetrainControl-->DrivetrainTrajectoryControl
-    DrivePathTest1-->DrivePathCommand
-    ModeList-->DoNothingMode
-    ModeList-->DrivePathTest1
     SequentialCommandGroup-->DoNothingCommand
     MyRobot-->AutoSequencer
-    WrapperedSRXMagEncoder-->Fault
-    DrivetrainControl-->DrivetrainPoseEstimator
-    AutoSequencer-->ModeList
-    RIOMonitor-->Fault
-    MyRobot-->CrashLogger
+    DrivePathTest1-->DrivePathCommand
+    SwerveModuleGainSet-->Calibration
+    SequentialCommandGroup-->WaitCommand
     ModeList-->WaitMode
-    AutoSequencer-->SequentialCommandGroup
-    MyRobot-->FaultStatusLEDs
-    MyRobot-->DriverInterface
-    DrivetrainControl-->SwerveModuleControl
-    WrapperedSparkMax-->Fault
-    Webserver-->ThreadedTCPServer
-    MyRobot-->RIOMonitor
-    DrivetrainControl-->SwerveModuleGainSet
-    WrapperedSRXMagEncoder-->Calibration
     DrivetrainPoseEstimator-->DrivetrainPoseTelemetry
+    AutoSequencer-->SequentialCommandGroup
+    MyRobot-->SegmentTimeTracker
+    DrivetrainTrajectoryControl-->Calibration
+    MyRobot-->Webserver
+    DrivePathCommand-->DrivetrainPoseTelemetry
+    MyRobot-->RIOMonitor
+    MyRobot-->FaultStatusLEDs
+    DriverInterface-->Fault
+    ModeList-->DrivePathTest1
+    MyRobot-->Dashboard
+    DrivetrainControl-->SwerveModuleGainSet
+    DrivetrainControl-->DrivetrainPoseEstimator
+    WrapperedSparkMax-->Fault
+    ModeList-->DoNothingMode
+    RIOMonitor-->Fault
+    DrivetrainControl-->SwerveModuleControl
+    Webserver-->ThreadedTCPServer
+    WrapperedSRXMagEncoder-->Calibration
+    MyRobot-->CrashLogger
+    WrapperedSRXMagEncoder-->Fault
+    MyRobot-->DrivetrainControl
+    SwerveModuleControl-->WrapperedSRXMagEncoder
     DrivePathCommand-->DrivetrainControl
+    SwerveModuleControl-->WrapperedSparkMax
+    DrivetrainPoseEstimator-->Fault
+    AutoSequencer-->ModeList
+    DrivetrainControl-->DrivetrainTrajectoryControl
+    MyRobot-->DriverInterface
 ```

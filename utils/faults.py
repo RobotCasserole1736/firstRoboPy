@@ -1,10 +1,12 @@
 import math
 import wpilib
 
+from utils.singleton import Singleton
+
 FIX_ME_LED_PIN = 8
 HEARTBEAT_LED_PIN = 9
 
-class _FaultWrangler():
+class FaultWrangler(metaclass=Singleton):
     """
     The Fault Wrangler tracks all faults, and pulses two LED's to indicate current state.
     """
@@ -52,7 +54,7 @@ class FaultStatusLEDs():
 
     def update(self):
         # Update faults LED
-        if(getInstance().activeFaultCount > 0):
+        if(FaultWrangler().activeFaultCount > 0):
             self.fixMeLED.updateDutyCycle(self._blinkPattern(1.3))
         else:
             self.fixMeLED.updateDutyCycle(0.0)
@@ -65,16 +67,6 @@ class FaultStatusLEDs():
     def _blinkPattern(self, freq):
         return abs(math.sin(2 * math.pi * wpilib.Timer.getFPGATimestamp() * freq / 2.0))
 
-_inst = None
-def getInstance():
-    global _inst
-    if(_inst is None):
-        _inst = _FaultWrangler()
-    return _inst
-
-def destroyInstance():
-    global _inst
-    _inst = None
 
 ###########################################
 # Public API
@@ -88,7 +80,7 @@ class Fault():
     """
     def __init__(self, message):
         self.message = message
-        getInstance().register(self)
+        FaultWrangler().register(self)
         self.isActive = False
         
     def set(self, isActive):
@@ -99,7 +91,3 @@ class Fault():
         
     def setNoFault(self):
         self.isActive = False
-        
-# Call this in the main robot loop to keep led's blinking
-def update():
-    getInstance().update()

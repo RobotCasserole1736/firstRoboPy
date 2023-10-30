@@ -5,12 +5,13 @@ from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
 from drivetrain.drivetrainControl import DrivetrainControl
 from utils.segmentTimeTracker import SegmentTimeTracker
-import utils.signalLogging as SignalLogging
-import utils.calibration as Calibration
-import utils.faults as FaultWrangler
+from utils.signalLogging import SignalWrangler
+from utils.calibration import CalibrationWrangler
+from utils.faults import FaultWrangler
 from utils.faults import FaultStatusLEDs
 from utils.crashLogger import CrashLogger
 from utils.rioMonitor import RIOMonitor
+from utils.singleton import destroyAllSingletonInstances
 from webserver.webserver import Webserver
 from AutoSequencerV2.autoSequencer import AutoSequencer
 
@@ -58,9 +59,10 @@ class MyRobot(wpilib.TimedRobot):
             self.driveTrain.resetGyro()
         
         self.driveTrain.update()
-        SignalLogging.update()
-        Calibration.update()
-        FaultWrangler.update()
+        
+        SignalWrangler().publishPeriodic()
+        CalibrationWrangler().update()
+        FaultWrangler().update()
         self.faultLEDs.update()
         self.stt.end()
         
@@ -108,6 +110,7 @@ class MyRobot(wpilib.TimedRobot):
     ## Cleanup
     def endCompetition(self):
         self.rioMonitor.stopThreads()
+        destroyAllSingletonInstances()
         super().endCompetition()
 
 
