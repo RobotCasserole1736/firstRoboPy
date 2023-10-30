@@ -12,9 +12,9 @@ BASE_TABLE = "SmartDashboard"
 class _SignalWrangler:
 
     # Starts up logging to file, along with network tables infrastructure
-    # Picks approprate logging directory based on our current target
+    # Picks appropriate logging directory based on our current target
     def __init__(self):
-        # Default to publishing things under Shuffleboard, which makes things more avaialble
+        # Default to publishing things under Shuffleboard, which makes things more available
         self.table = nt.NetworkTableInstance.getDefault().getTable(BASE_TABLE)
         self.publishedSigDict = {}
         self.sigUnitsDict = {}

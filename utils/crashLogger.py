@@ -15,7 +15,7 @@ class CrashLogger():
     """
 
     def update(self):
-        if(not self.prefixWritten and wpilib.DriverStation.isFMSAttached()):
+        if(not self.prefixWritten and wpilib.DriverStation.isFMSAttached() and self.isRunning):
 
             self.logPrint(f"==========================================")
             self.logPrint(f"== FMS Data Received {datetime.now()}:")
@@ -36,12 +36,17 @@ class CrashLogger():
     def __init__(self):
 
         self.prefixWritten = False
+        self.isRunning = False
 
         # Log crashes to the same spot signals log to
         logDir = signalLogging.getInstance().getLogDir()
 
         if(not os.path.isdir(logDir)):
-            os.makedirs(logDir)
+            try:
+                os.makedirs(logDir)
+            except PermissionError:
+                wpilib.reportWarning("Could not access USB drive for logging crashes!")
+                return
 
         # Iterate till we got a unique log name
         idx=0
@@ -66,3 +71,5 @@ class CrashLogger():
         self.logPrint(f"\n==============================================")
         self.logPrint(f"Beginning of Log {logPath}")
         self.logPrint(f"Started {datetime.now()}")
+
+        self.isRunning = True
