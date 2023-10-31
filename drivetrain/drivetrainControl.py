@@ -34,9 +34,6 @@ class DrivetrainControl(metaclass=Singleton):
         
         self._updateAllCals()
 
-
-
-
     def setCmdFieldRelative(self, velX, velY, velT):
         """Send commands to the robot for motion relative to the field
 
@@ -45,10 +42,11 @@ class DrivetrainControl(metaclass=Singleton):
             velY (float): Desired speed in the field's Y axis, in th meters per second
             velT (float): Desired rotational speed in the field's reference frame, in radians per second
         """
-        self.desChSpd = ChassisSpeeds.fromFieldRelativeSpeeds(velX, 
-                                                              velY, 
-                                                              velT, 
-                                                              self.poseEst.getCurEstPose().rotation())
+        tmp = ChassisSpeeds.fromFieldRelativeSpeeds(velX, 
+                                                    velY, 
+                                                    velT, 
+                                                    self.poseEst.getCurEstPose().rotation())
+        self.desChSpd = _discretizeChSpd(tmp)
         self.poseEst.telemetry.setDesiredPose(self.poseEst.getCurEstPose()) 
 
     def setCmdRobotRelative(self, velX, velY, velT):
@@ -59,7 +57,7 @@ class DrivetrainControl(metaclass=Singleton):
             velY (float): Desired speed in the robot's Y axis, in th meters per second
             velT (float): Desired rotational speed in the robot's reference frame, in radians per second
         """
-        self.desChSpd = ChassisSpeeds(velX, velY, velT)
+        self.desChSpd = _discretizeChSpd(ChassisSpeeds(velX, velY, velT))
         self.poseEst.telemetry.setDesiredPose(self.poseEst.getCurEstPose())
         
     def setCmdTrajectory(self, cmd):
@@ -68,7 +66,8 @@ class DrivetrainControl(metaclass=Singleton):
         Args:
             cmd (PathPlannerState): PathPlanner trajectory sample for the current time
         """
-        self.desChSpd = self.trajCtrl.update(cmd, self.poseEst.getCurEstPose())
+        tmp = self.trajCtrl.update(cmd, self.poseEst.getCurEstPose())
+        self.desChSpd = _discretizeChSpd(tmp)
         self.poseEst.telemetry.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
 
 
@@ -116,3 +115,20 @@ class DrivetrainControl(metaclass=Singleton):
         newGyroRotation = Rotation2d(0.0)
         newPose = Pose2d(curTranslation, newGyroRotation)
         self.poseEst.setKnownPose(newPose)
+
+
+def _discretizeChSpd(chSpd):
+    """ See https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/30
+        Corrects for 2nd order kinematics
+        Should be included in wpilib 2024, but putting here for now
+
+    Args:
+        chSpd (ChassisSpeeds): ChassisSpeeds input
+
+    Returns:
+        ChassisSpeeds: Adjusted ch speed
+    """
+    dt = 0.02
+    poseVel = Pose2d(chSpd.vx * dt, chSpd.vy * dt, Rotation2d(chSpd.omega * dt))
+    twistVel = Pose2d().log(poseVel)
+    return ChassisSpeeds(twistVel.dx / dt, twistVel.dy / dt, twistVel.dtheta / dt)
