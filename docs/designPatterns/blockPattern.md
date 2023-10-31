@@ -168,13 +168,15 @@ So far, we've assumed objects for the blocks were created in the same class (`My
 
 Making one or more of the blocks singletons enables more flexibility on where the data is passed between blocks.
 
-### Singelton Sender
+### Singelton Sender Example
 
 When the sender is a singleton, the data should get passed in the update method of the reciever. A setter method is not needed.
 
 **`senderBlock.py`**
 ```py
-class _SenderBlock():
+from utils.singleton import Singleton
+
+class SenderBlock(metaclass=Singleton):
     def __init__(self):
         # Put all init code here
         self.someValue = 0  #pick a default value
@@ -185,19 +187,12 @@ class _SenderBlock():
     def getSomeValue(self):
         return self.someValue 
 
-_inst = None
-def getInstance():
-    global _inst
-    if(_inst is None):
-        _inst = _SenderBlock()
-    return _inst
-
 ```
 
 **`recieverBlock.py`**
 ```py
 
-import senderBlock as SenderBlock
+from senderBlock import SenderBlock
 
 class RecieverBlock():
     def __init__(self):
@@ -205,7 +200,7 @@ class RecieverBlock():
         self.someValue = 0 #pick a default value
 
     def update(self):
-        self.someValue = SenderBlock.getInstance().getSomeValue()
+        self.someValue = SenderBlock().getSomeValue()
         # Put additional calculation here
 ```
 
@@ -214,75 +209,15 @@ Finally, in `robot.py`, we now only need to do updates.
 **`robot.py`**
 ```py
 import wpilib
-import senderBlock as SenderBlock
+from senderBlock import SenderBlock
 from recieverBlock import RecieverBlock
 
 class MyRobot(wpilib.TimedRobot):
 
     def robotInit(self): 
-        self.s = SenderBlock.getInstance()
         self.r = RecieverBlock()
 
     def robotPeriodic(self):
-        self.s.update()
-        self.r.update()
-```
-
-### Singelton Reciever
-
-When the receiever is a singleton, the data should get passed in the update method of the sender. A getter method is not needed.
-
-
-**`senderBlock.py`**
-```py
-import recieverBlock as RecieverBlock
-
-class SenderBlock():
-    def __init__(self):
-        # Put all init code here
-        self.someValue = 0  #pick a default value
-
-    def update(self):
-        RecieverBlock.getInstance().setSomeValue(self.someValue)
-        # Put other periodic code here
-```
-
-**`recieverBlock.py`**
-```py
-class _RecieverBlock():
-    def __init__(self):
-        # Put all init code here
-        self.someValue = 0 #pick a default value
-
-    def update(self):
-        # Put all periodic code here
-
-    def setSomeValue(self, valIn):
-        self.someValue = valIn
-
-_inst = None
-def getInstance():
-    global _inst
-    if(_inst is None):
-        _inst = _RecieverBlock()
-    return _inst
-```
-
-Finally, in `robot.py`, we now only need to do updates.
-
-**`robot.py`**
-```py
-import wpilib
-from senderBlock import SenderBlock
-import recieverBlock as RecieverBlock
-
-class MyRobot(wpilib.TimedRobot):
-
-    def robotInit(self): 
-        self.s = SenderBlock()
-        self.r = RecieverBlock.getInstance()
-
-    def robotPeriodic(self):
-        self.s.update()
+        SenderBlock.update()
         self.r.update()
 ```

@@ -14,37 +14,51 @@ See [the AutoSequencerV2 requirements](..\requirements\AutoSequencerV2Requiremen
 
 ### Main Robot Integration
 
-First, import the webserver class.
+First, import the AutoSequencer class.
 
 ```py
-from AutoSequencerV2.autoSequencer import autoSequencerGetInstance
+from AutoSequencerV2.autoSequencer import AutoSequencer
+```
+
+Second, declare a new AutoSequencer, and add all autonomous modes.
+
+```py
+def robotInit(self):
+    # ...
+    # New AutoSequencer
+    self.autoSequencer = AutoSequencer()
+    # Add each Auto Mode
+    self.autoSequencer.addMode(MyNewAutoMode())
+    # ...
 ```
 
 Then, call the auto sequencer methods from the three Autonomous methods:
 
 ```py
 def autonomousInit(self):
-    autoSequencerGetInstance().initiaize()
-    
+    # Start up the autonomous sequencer
+    self.autoSequencer.initiaize()
+
 def autonomousPeriodic(self):
-    autoSequencerGetInstance().update()
+    self.autoSequencer.update()
 
 def autonomousExit(self):
-    autoSequencerGetInstance().end()
+    self.autoSequencer.end()
 ```
 
 These methods must always be called in the order of initialize -> update -> end
 
-To allow users to select the mode(s), add an approprate widget.
+To allow users to select the mode(s), add an approprate set of widgets to the dashboard.
 
 ```py
-self.webserver.addDashboardWidget(
-    AutoChooser(50, 10, autoSequencerGetInstance().getDelayModeNTTableName(), 
-                autoSequencerGetInstance().getDelayModeList()))
-
-self.webserver.addDashboardWidget(
-    AutoChooser(75, 10, autoSequencerGetInstance().getMainModeNTTableName(), 
-                autoSequencerGetInstance().getMainModeList()))
+    webserver.addDashboardWidget(
+        AutoChooser(50, 10, 
+            self.autoSequencer.getDelayModeNTTableName(), 
+            self.autoSequencer.getDelayModeList()))
+    webserver.addDashboardWidget(
+        AutoChooser(50, 20, 
+            self.autoSequencer.getMainModeNTTableName(), 
+            self.autoSequencer.getMainModeList()))
 ```
 
 [More information about adding widgets is found here.](dashboardWidgets.py)
@@ -81,11 +95,4 @@ class MyNewMode(Mode):
         # ex: return "leeeroooyy jeeeennnkkinnnsssss"
 ```
 
-Add the new mode into AutoSequencerV2's `mainModeList` in the constructor
-
-```py
-self.mainModeList = ModeList("Main")
-self.mainModeList.addMode(DoNothingMode())
-self.mainModeList.addMode(MyNewMode())
-# TODO - add more autonomous modes here
-```
+See above for registering the mode with the AutoSequencer.

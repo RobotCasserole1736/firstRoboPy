@@ -144,14 +144,9 @@ webserver.addDashboardWidget(
 
 The Auto-Chooser widget is hardcoded to work with AutoSequencerV2 to select two auto modes (one for delay, one for main mode).
 
-You will need to pass in the list of mode names, which can be gotten through the Auto Sequencer singleton `getInstance()` method.
-
-```py
-from AutoSequencerV2.autoSequencer import autoSequencerGetInstance
-```
-
 ```py
 webserver.addDashboardWidget(
-    AutoChooser(50, 10, autoSequencerGetInstance().getDelayModeNTTableName(), 
-                autoSequencerGetInstance().getDelayModeList()))
+    AutoChooser(50, 10, 
+        self.autoSequencer.getDelayModeNTTableName(), 
+        self.autoSequencer.getDelayModeList()))
 ```
