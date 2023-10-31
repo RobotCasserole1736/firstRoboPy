@@ -22,6 +22,8 @@ class ExtDriveManager(metaclass=Singleton):
             print(err)
             self.enableDiskLogging = False
             self.driveAvailableFault.setFaulted()
+            
+        self.conn = True
     
     def getLogStoragePath(self):
         return self.logDir

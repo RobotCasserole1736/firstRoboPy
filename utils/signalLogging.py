@@ -49,7 +49,7 @@ class SignalWrangler(metaclass=Singleton):
 
                 # Set up log file publishing if enabled
                 if(ExtDriveManager().isConnected()):
-                    sigLog = wpilog.DoubleLogEntry(log=self.log, name=name)
+                    sigLog = wpilog.DoubleLogEntry(log=self.log, name=sigNameToNT4TopicName(name))
                 else:
                     sigLog = None
 
