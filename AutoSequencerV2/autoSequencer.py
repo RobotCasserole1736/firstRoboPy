@@ -3,9 +3,9 @@ from AutoSequencerV2.modeList import ModeList
 from AutoSequencerV2.builtInModes.doNothingMode import DoNothingMode
 from AutoSequencerV2.builtInModes.waitMode import WaitMode
 from AutoSequencerV2.sequentialCommandGroup import SequentialCommandGroup
+from utils.singleton import Singleton
 
-
-class AutoSequencer():
+class AutoSequencer(metaclass=Singleton):
     """Top-level implementation of the AutoSequencer 
     """
     def __init__(self):

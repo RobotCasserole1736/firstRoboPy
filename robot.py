@@ -8,7 +8,6 @@ from utils.segmentTimeTracker import SegmentTimeTracker
 from utils.signalLogging import SignalWrangler
 from utils.calibration import CalibrationWrangler
 from utils.faults import FaultWrangler
-from utils.faults import FaultStatusLEDs
 from utils.crashLogger import CrashLogger
 from utils.rioMonitor import RIOMonitor
 from utils.singleton import destroyAllSingletonInstances
@@ -25,25 +24,23 @@ class MyRobot(wpilib.TimedRobot):
         # pylint: disable=attribute-defined-outside-init
 
         self.crashLogger = CrashLogger()
-
         wpilib.LiveWindow.disableAllTelemetry()
+        self.webserver = Webserver()
+
 
         self.driveTrain = DrivetrainControl()
-
-        self.webserver = Webserver()
                 
         self.stt = SegmentTimeTracker()
         
         self.dInt = DriverInterface()
         
         self.autoSequencer = AutoSequencer()
-        self.autoSequencer.addMode(DrivePathTest1(self.driveTrain))
+        self.autoSequencer.addMode(DrivePathTest1())
 
-        self.dashboard = Dashboard(self.webserver, self.autoSequencer)
+        self.dashboard = Dashboard()
 
         self.rioMonitor = RIOMonitor()
-
-        self.faultLEDs = FaultStatusLEDs()
+        
         
         # Uncomment this and simulate to update the code 
         # dependencies graph
@@ -63,7 +60,6 @@ class MyRobot(wpilib.TimedRobot):
         SignalWrangler().publishPeriodic()
         CalibrationWrangler().update()
         FaultWrangler().update()
-        self.faultLEDs.update()
         self.stt.end()
         
     #########################################################

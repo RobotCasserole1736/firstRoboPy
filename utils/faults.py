@@ -36,13 +36,15 @@ class FaultWrangler(metaclass=Singleton):
 
             wpilib.SmartDashboard.putBoolean("faultActive", self.activeFaultCount > 0)
             wpilib.SmartDashboard.putString("faultDescription", curFaultString)
+            
+        FaultStatusLEDs().update()
 
     
     def register(self, fault):
         self.faultList.append(fault)
 
 
-class FaultStatusLEDs():
+class FaultStatusLEDs(metaclass=Singleton):
     def __init__(self):
         self.fixMeLED = wpilib.DigitalOutput(FIX_ME_LED_PIN)
         self.fixMeLED.setPWMRate(500.0)

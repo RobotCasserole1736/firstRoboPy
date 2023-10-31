@@ -1,17 +1,19 @@
+from AutoSequencerV2.autoSequencer import AutoSequencer
 from dashboardWidgets.autoChooser import AutoChooser
 from dashboardWidgets.swerveState import SwerveState
 from dashboardWidgets.text import Text
+from webserver.webserver import Webserver
 
 
 class Dashboard():
-    def __init__(self, webserver, autosequencer):
-        webserver.addDashboardWidget(
+    def __init__(self):
+        Webserver().addDashboardWidget(
             Text(50, 75, "/SmartDashboard/faultDescription"))
-        webserver.addDashboardWidget(
+        Webserver().addDashboardWidget(
             SwerveState(85, 15))
-        webserver.addDashboardWidget(
-            AutoChooser(50, 10, autosequencer.getDelayModeNTTableName(), 
-                        autosequencer.getDelayModeList()))
-        webserver.addDashboardWidget(
-            AutoChooser(50, 20, autosequencer.getMainModeNTTableName(), 
-                        autosequencer.getMainModeList()))
+        Webserver().addDashboardWidget(
+            AutoChooser(50, 10, AutoSequencer().getDelayModeNTTableName(), 
+                        AutoSequencer().getDelayModeList()))
+        Webserver().addDashboardWidget(
+            AutoChooser(50, 20, AutoSequencer().getMainModeNTTableName(), 
+                        AutoSequencer().getMainModeList()))

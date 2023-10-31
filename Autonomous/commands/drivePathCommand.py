@@ -3,12 +3,13 @@ import wpilib
 from pathplannerlib import PathPlanner
 
 from AutoSequencerV2.command import Command
+from drivetrain.drivetrainControl import DrivetrainControl
 from drivetrain.drivetrainPhysical import MAX_DT_LINEAR_SPEED
 from drivetrain.drivetrainPhysical import MAX_TRANSLATE_ACCEL_MPS2
 
 class DrivePathCommand(Command):
     
-    def __init__(self, drivetrain, pathFile, speedScalar):
+    def __init__(self, pathFile, speedScalar):
     
         self.name = pathFile
 
@@ -29,8 +30,8 @@ class DrivePathCommand(Command):
         self.done = False
         self.startTime = -1 # we'll populate these for real later, just declare they'll exist
         self.duration = self.path.getTotalTime()
-        self.drivetrain = drivetrain
-        self.poseTelem = drivetrain.poseEst.telemetry
+        self.drivetrain = DrivetrainControl()
+        self.poseTelem = DrivetrainControl().poseEst.telemetry
 
     def initialize(self):
         self.startTime = wpilib.Timer.getFPGATimestamp()

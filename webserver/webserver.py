@@ -3,6 +3,7 @@ import socket
 import threading
 import functools
 from webserver.casseroleWebServerImpl import CasseroleWebServerImpl, dashboardWidgetList, WEB_ROOT
+from utils.singleton import Singleton
 
 # A threaded TCP server starts up new python threads for each client request, which allows
 # complex requests to be handled in the background and not bog down robot code
@@ -10,14 +11,16 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     pass
 
 # Main robot website server
-class Webserver():
+class Webserver(metaclass=Singleton):
     
-    def __init__(self, httpPort=5805):
+    def __init__(self):
+        
+        httpPort=5805
         
         # Serve all contents of the webserver/www folder, with special
         # logic to handle filling out template html files
         templatingHttpHandler = functools.partial(CasseroleWebServerImpl, 
-                                     directory=WEB_ROOT)
+                                     directory=str(WEB_ROOT))
 
         hostname=socket.gethostname()   
         ipAddr=socket.gethostbyname(hostname)   

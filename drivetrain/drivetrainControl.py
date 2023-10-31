@@ -1,5 +1,6 @@
 from wpimath.kinematics import ChassisSpeeds
 from wpimath.geometry import Pose2d, Rotation2d
+from utils.singleton import Singleton
 
 from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
 from drivetrain.swerveModuleControl import SwerveModuleControl
@@ -11,7 +12,7 @@ from drivetrain.drivetrainPhysical import BL_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import BR_ENCODER_MOUNT_OFFSET_RAD
 from drivetrain.drivetrainPhysical import kinematics
 
-class DrivetrainControl():
+class DrivetrainControl(metaclass=Singleton):
     """
     Top-level control class for controlling a swerve drivetrain
     """
