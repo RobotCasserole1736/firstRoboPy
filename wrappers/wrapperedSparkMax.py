@@ -53,7 +53,7 @@ class WrapperedSparkMax():
             self.pidCtrl.setI(kI)
             self.pidCtrl.setD(kD)
         
-    def setVelCmd(self, velCmd, arbFF=0):
+    def setVelCmd(self, velCmd, arbFF=0.0):
         """_summary_
 
         Args:

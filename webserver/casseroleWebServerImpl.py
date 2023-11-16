@@ -5,7 +5,10 @@ import sys
 import pathlib
 import json
 
+# These imports are mostly just to make sure we put versions on the webpage
 import wpilib
+import rev
+
 from utils.extDriveManager import ExtDriveManager
 
 # Global list of all widgets on the dashboard. 
@@ -74,8 +77,10 @@ class CasseroleWebServerImpl(SimpleHTTPRequestHandler):
             deployText += f"RIO Serial Number:{wpilib.RobotController.getSerialNumber()} \n"
             deployText += f"{wpilib.RobotController.getComments()} \n"
             
-        deployText += f"Python {platform.python_version()} - {sys.executable} \n"
-        deployText += f"Working Dir: {os.getcwd()}\n"
+        deployText += f"Python - {platform.python_version()} - {sys.executable} \n"
+        deployText += f"WPILib - {wpilib.version.version} \n"
+        deployText += f"REV - {rev.version.version} \n"
+        deployText += f"Working Dir - {os.getcwd()}\n"
 
 
         filledOut = INDEX_TMPLT_TXT.replace("${BUILD_INFO}", deployText)

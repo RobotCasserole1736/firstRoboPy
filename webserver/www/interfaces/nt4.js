@@ -518,7 +518,7 @@ export class NT4_Client {
 
         this.serverAddr = prefix + this.serverBaseAddr + ":" + port.toString() + "/nt/" + "JSClient_" + this.clientIdx.toString();
 
-        this.ws = new WebSocket(this.serverAddr, "networktables.first.wpi.edu");
+        this.ws = new WebSocket(this.serverAddr, "v4.1.networktables.first.wpi.edu");
         this.ws.binaryType = "arraybuffer";
         this.ws.onopen = this.ws_onOpen.bind(this);
         this.ws.onmessage = this.ws_onMessage.bind(this);
