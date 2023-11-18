@@ -1,10 +1,11 @@
 from wpilib import ADXRS450_Gyro 
 from wpimath.estimator import SwerveDrive4PoseEstimator
-from wpimath.geometry import Pose2d, Rotation2d
+from wpimath.geometry import Pose2d, Rotation2d, Transform3d
 from drivetrain.drivetrainPhysical import kinematics
-from drivetrain.drivetrainPoseTelemetry import DrivetrainPoseTelemetry
+from drivetrain.poseEstimation.drivetrainPoseTelemetry import DrivetrainPoseTelemetry
 from utils.faults import Fault
 from utils.signalLogging import log
+from wrappers.wrapperedPhotonCamera import WrapperedPhotonCamera
 
 
 class DrivetrainPoseEstimator():
@@ -15,6 +16,10 @@ class DrivetrainPoseEstimator():
         self.curDesPose = Pose2d()
         self.gyro = ADXRS450_Gyro()
         self.gyroDisconFault = Fault("Gyro Disconnected")
+
+        self.cam = WrapperedPhotonCamera("TEST_CAM", Transform3d())
+        self.camTargetsVisible = False
+
         self.poseEst = SwerveDrive4PoseEstimator(
             kinematics,
             self.gyro.getRotation2d(),
@@ -41,6 +46,14 @@ class DrivetrainPoseEstimator():
             curModulePositions (list[SwerveModuleState]): current module angle
             and wheel positions as read in from swerve module sensors
         """
+
+        # Add any vision observations to the pose estimate
+        self.cam.update(self.curEstPose)
+        self.camTargetsVisible = False
+        for observation in self.cam.getPoseEstimates():
+            self.poseEst.addVisionMeasurement(observation.estFieldPose, observation.time)
+            self.camTargetsVisible = True
+        log("PE Vision Targets Seen", self.camTargetsVisible, "bool")
 
         # Read the gyro angle
         self.gyroDisconFault.set(not self.gyro.isConnected())
