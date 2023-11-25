@@ -2,6 +2,8 @@ from wpimath.kinematics import ChassisSpeeds
 from wpimath.geometry import Pose2d, Rotation2d
 from utils.singleton import Singleton
 
+from pathplannerlib.trajectory import State
+
 from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
 from drivetrain.swerveModuleControl import SwerveModuleControl
 from drivetrain.swerveModuleGainSet import SwerveModuleGainSet
@@ -60,7 +62,7 @@ class DrivetrainControl(metaclass=Singleton):
         self.desChSpd = _discretizeChSpd(ChassisSpeeds(velX, velY, velT))
         self.poseEst.telemetry.setDesiredPose(self.poseEst.getCurEstPose())
         
-    def setCmdTrajectory(self, cmd):
+    def setCmdTrajectory(self, cmd:State):
         """Send commands to the robot for motion as a part of following a trajectory
 
         Args:
@@ -68,7 +70,7 @@ class DrivetrainControl(metaclass=Singleton):
         """
         tmp = self.trajCtrl.update(cmd, self.poseEst.getCurEstPose())
         self.desChSpd = _discretizeChSpd(tmp)
-        self.poseEst.telemetry.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
+        self.poseEst.telemetry.setDesiredPose(cmd.getTargetHolonomicPose())
 
 
     def update(self):

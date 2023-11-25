@@ -5,6 +5,7 @@ from drivetrain.drivetrainPhysical import MAX_FWD_REV_SPEED_MPS, MAX_ROTATE_SPEE
 from utils.calibration import Calibration
 from utils.signalLogging import log
 from utils.mathUtils import limit
+from pathplannerlib.trajectory import State
 
 class DrivetrainTrajectoryControl():
     """
@@ -66,7 +67,7 @@ class DrivetrainTrajectoryControl():
             self.rotD.get()
         )
         
-    def update(self, trajCmd,  curEstPose):
+    def update(self, trajCmd:State,  curEstPose):
         """Main periodic update, call this whenever you need new commands
 
         Args:
@@ -79,15 +80,15 @@ class DrivetrainTrajectoryControl():
         """
                 
         # Feed-Forward - calculate how fast we should be going at this point in the trajectory
-        xFF = trajCmd.velocity * trajCmd.pose.rotation().cos()
-        yFF = trajCmd.velocity * trajCmd.pose.rotation().sin()
-        tFF = trajCmd.holonomicAngularVelocity
+        xFF = trajCmd.velocityMps * trajCmd.getDifferentialPose().rotation().cos()
+        yFF = trajCmd.velocityMps * trajCmd.getDifferentialPose().rotation().sin()
+        tFF = trajCmd.headingAngularVelocityRps
         
         # Feed-Back - Apply additional correction if we're not quite yet at the spot on the field we
         #             want to be at.
-        xFB = self.xCtrl.calculate(curEstPose.X(), trajCmd.pose.X())
-        yFB = self.yCtrl.calculate(curEstPose.Y(), trajCmd.pose.Y())
-        tFB = self.tCtrl.calculate(curEstPose.rotation().radians(), trajCmd.holonomicRotation.radians())
+        xFB = self.xCtrl.calculate(curEstPose.X(), trajCmd.getTargetHolonomicPose().X())
+        yFB = self.yCtrl.calculate(curEstPose.Y(), trajCmd.getTargetHolonomicPose().Y())
+        tFB = self.tCtrl.calculate(curEstPose.rotation().radians(), trajCmd.getTargetHolonomicPose().rotation().radians())
         
         log("Drivetrain HDC xFF", xFF, "mps")
         log("Drivetrain HDC yFF", yFF, "mps")

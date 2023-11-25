@@ -1,6 +1,8 @@
 import os
 import wpilib
-from pathplannerlib import PathPlanner
+from pathplannerlib.path import PathPlannerPath
+from pathplannerlib.trajectory import PathPlannerTrajectory
+from wpimath.kinematics import ChassisSpeeds
 
 from AutoSequencerV2.command import Command
 from drivetrain.drivetrainControl import DrivetrainControl
@@ -21,25 +23,30 @@ class DrivePathCommand(Command):
                                                "..", 
                                                "..", 
                                                "deploy", 
-                                               "pathplanner", 
+                                               "pathplanner",
+                                               "paths", 
                                                pathFile))
 
-        self.path = PathPlanner.loadPath(absPath, 
-                                         MAX_DT_LINEAR_SPEED * speedScalar,
-                                         MAX_TRANSLATE_ACCEL_MPS2 * speedScalar)
+        self.path = PathPlannerPath.fromPathFile(absPath)
+        
+        self.traj = PathPlannerTrajectory(self.path, ChassisSpeeds())
+        # TODO we need to use speedScalar , 
+         #                                MAX_DT_LINEAR_SPEED * speedScalar,
+         #                                MAX_TRANSLATE_ACCEL_MPS2 * speedScalar
+        
         self.done = False
         self.startTime = -1 # we'll populate these for real later, just declare they'll exist
-        self.duration = self.path.getTotalTime()
+        self.duration = self.traj.getTotalTimeSeconds()
         self.drivetrain = DrivetrainControl()
         self.poseTelem = DrivetrainControl().poseEst.telemetry
 
     def initialize(self):
         self.startTime = wpilib.Timer.getFPGATimestamp()
-        self.poseTelem.setTrajectory(self.path)
+        self.poseTelem.setTrajectory(self.traj)
 
     def execute(self):
         curTime = wpilib.Timer.getFPGATimestamp() - self.startTime
-        curState = self.path.sample(curTime)
+        curState = self.traj.sample(curTime)
 
         self.drivetrain.setCmdTrajectory(curState)
 

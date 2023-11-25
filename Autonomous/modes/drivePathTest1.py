@@ -7,7 +7,7 @@ from AutoSequencerV2.mode import Mode
 class DrivePathTest1(Mode):
     def __init__(self):
         Mode.__init__(self, f"Drive Path Test 1")
-        self.pathCmd = DrivePathCommand("testPath1", 0.75)
+        self.pathCmd = DrivePathCommand("TestPath1", 0.75)
         
     def getCmdGroup(self):
         # Just return the path command
@@ -15,4 +15,4 @@ class DrivePathTest1(Mode):
     
     def getInitialDrivetrainPose(self):
         # Use the path command to specify the starting pose
-        return self.pathCmd.path.getInitialHolonomicPose()
+        return self.pathCmd.traj.getInitialTargetHolonomicPose()

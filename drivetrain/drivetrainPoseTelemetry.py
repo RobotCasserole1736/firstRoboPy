@@ -4,7 +4,7 @@ from wpimath.units import metersToFeet
 from wpimath.trajectory import Trajectory
 from wpimath.geometry import Pose2d
 from utils.signalLogging import log
-
+from pathplannerlib.trajectory import PathPlannerTrajectory
 
 
 class DrivetrainPoseTelemetry():
@@ -35,7 +35,7 @@ class DrivetrainPoseTelemetry():
         log("DT Pose Des Y", metersToFeet(self.desPose.Y()), "ft")
         log("DT Pose Des T", self.desPose.rotation().degrees(), "deg")
 
-    def setTrajectory(self, trajIn):
+    def setTrajectory(self, trajIn:PathPlannerTrajectory):
         """Display a specific trajectory on the robot Field2d
 
         Args:
@@ -46,7 +46,7 @@ class DrivetrainPoseTelemetry():
             stateList = []
             stateList.append(trajIn.getInitialState())
             for idx in range(1, 10):
-                stateList.append(trajIn.sample(trajIn.getTotalTime() * (idx/float(10))))
+                stateList.append(trajIn.sample(trajIn.getTotalTimeSeconds() * (idx/float(10))))
             stateList.append(trajIn.getEndState())
 
             stateList = [self._pathplannerToWPIState(x) for x in stateList]
@@ -54,17 +54,11 @@ class DrivetrainPoseTelemetry():
         else:
             self.curTraj = Trajectory()
 
-    # PathPlanner has a built in "to-wpilib" representation, but it doesn't
-    # account for holonomic heading. Fix that.
+    # Convert from PathPlanner's state to WPILib's state (for telemetry)
     def _pathplannerToWPIState(self, inVal):
-        trans = inVal.pose.translation()
-        # Critically - in the shown pose,
-        # display the holonomic rotation, not the path velocity vector
-        rot = inVal.holonomicRotation 
-        pose = Pose2d(trans, rot)
         return Trajectory.State(
-            acceleration=inVal.acceleration,
-            pose=pose,
-            t=inVal.time,
-            velocity=inVal.velocity
+            acceleration=inVal.accelerationMpsSq,
+            pose=inVal.getTargetHolonomicPose(),
+            t=inVal.timeSeconds,
+            velocity=inVal.velocityMps
             )
