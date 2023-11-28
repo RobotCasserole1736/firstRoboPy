@@ -33,14 +33,19 @@ class DrivetrainPoseEstimator():
             knownPose (Pose2d): The pose we know we're at
         """
         self.poseEst.resetPosition(self.gyro.getRotation2d(), self.lastModulePositions, knownPose)
+        self.update()
 
-    def update(self, curModulePositions):
+    def update(self, curModulePositions=None):
         """Periodic update, call this every 20ms.
 
         Args:
             curModulePositions (list[SwerveModuleState]): current module angle
             and wheel positions as read in from swerve module sensors
         """
+
+        # Reuse the last estimate if new module positions are not supplied
+        if(curModulePositions is None):
+            curModulePositions = self.lastModulePositions
 
         # Read the gyro angle
         self.gyroDisconFault.set(not self.gyro.isConnected())
@@ -49,6 +54,7 @@ class DrivetrainPoseEstimator():
         # Update the WPILib Pose Estimate
         self.poseEst.update(self.curRawGyroAngle, curModulePositions)
         self.curEstPose = self.poseEst.getEstimatedPosition()
+        
         
         # Record the estimate to telemetry/logging
         log("PE Gyro Angle", self.curRawGyroAngle.degrees(), "deg")

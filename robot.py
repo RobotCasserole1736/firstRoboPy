@@ -65,11 +65,12 @@ class MyRobot(wpilib.TimedRobot):
     #########################################################
     ## Autonomous-Specific init and update
     def autonomousInit(self):
+        # Use the autonomous rouines starting pose to init the pose estimator
+        self.driveTrain.poseEst.setKnownPose(self.autoSequencer.getStartingPose())
+        
         # Start up the autonomous sequencer
         self.autoSequencer.initiaize()
         
-        # Use the autonomous rouines starting pose to init the pose estimator
-        self.driveTrain.poseEst.setKnownPose(self.autoSequencer.getStartingPose())
         
     def autonomousPeriodic(self):
         self.autoSequencer.update()

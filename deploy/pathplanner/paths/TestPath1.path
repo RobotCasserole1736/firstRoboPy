@@ -80,5 +80,8 @@
   },
   "reversed": false,
   "folder": null,
-  "previewStartingState": null
+  "previewStartingState": {
+    "rotation": 45.0,
+    "velocity": 0
+  }
 }

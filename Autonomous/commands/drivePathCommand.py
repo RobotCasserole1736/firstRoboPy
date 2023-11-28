@@ -29,18 +29,28 @@ class DrivePathCommand(Command):
 
         self.path = PathPlannerPath.fromPathFile(absPath)
         
-        self.traj = PathPlannerTrajectory(self.path, ChassisSpeeds())
+        # These will be filled out by the initilization step
+        self.traj = None
+        self.duration = 0.0
+
         # TODO we need to use speedScalar , 
          #                                MAX_DT_LINEAR_SPEED * speedScalar,
          #                                MAX_TRANSLATE_ACCEL_MPS2 * speedScalar
         
         self.done = False
         self.startTime = -1 # we'll populate these for real later, just declare they'll exist
-        self.duration = self.traj.getTotalTimeSeconds()
         self.drivetrain = DrivetrainControl()
         self.poseTelem = DrivetrainControl().poseEst.telemetry
 
     def initialize(self):
+
+        # For pathplanner 2024+ - this replan step takes the real starting pose, and 
+        # sets up the trajectory to smoothly merge into where we want to be?
+        self.path = self.path.replan(self.drivetrain.poseEst.getCurEstPose(), ChassisSpeeds()) #TODO - populate with the real chassis speed
+        self.traj = PathPlannerTrajectory(self.path, ChassisSpeeds())
+        
+        self.duration = self.traj.getTotalTimeSeconds()
+        
         self.startTime = wpilib.Timer.getFPGATimestamp()
         self.poseTelem.setTrajectory(self.traj)
 
