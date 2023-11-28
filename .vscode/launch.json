@@ -31,7 +31,8 @@
             "justMyCode": true,
             "args": [
                 "sim"
-            ]
+            ],
+            "cwd": "${workspaceFolder}"
         },
         {
             "name": "Test",
@@ -42,7 +43,8 @@
             "justMyCode": true,
             "args": [
                 "test"
-            ]
+            ],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
