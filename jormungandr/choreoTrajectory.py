@@ -29,7 +29,6 @@ class ChoreoTrajectoryState:
         return [self.timestamp, self.x, self.y, self.heading, 
                 self.velocityX, self.velocityY, self.angularVelocity]
         
-        
     def interpolate(self, endValue:ChoreoTrajectoryState, t:float) -> ChoreoTrajectoryState:
         scale = (t - self.timestamp) / (endValue.timestamp - self.timestamp)
         
@@ -72,7 +71,7 @@ class ChoreoTrajectory:
         low = 0
         high = len(self.samples) - 1
         while( low != high ):
-            mid = math.floor(low + high / 2)
+            mid = math.floor( (low + high) / 2)
             if(self.samples[mid].timestamp < timestamp):
                 low = mid + 1
             else:
@@ -93,7 +92,7 @@ class ChoreoTrajectory:
         # Perform the actual interpolation
         return behindState.interpolate(aheadState, timestamp)
     
-    def sample(self, timestamp:float, mirrorForRedAlliance:bool) -> ChoreoTrajectoryState:
+    def sample(self, timestamp:float, mirrorForRedAlliance:bool=False) -> ChoreoTrajectoryState:
         
         tmp = self._sampleImpl(timestamp)
         

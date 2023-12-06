@@ -1,32 +1,25 @@
 import os
 import wpilib
-from pathplannerlib import PathPlanner
+import jormungandr.choreo as choreo
 
 from AutoSequencerV2.command import Command
 from drivetrain.drivetrainControl import DrivetrainControl
-from drivetrain.drivetrainPhysical import MAX_DT_LINEAR_SPEED
-from drivetrain.drivetrainPhysical import MAX_TRANSLATE_ACCEL_MPS2
 
 class DrivePathCommand(Command):
     
-    def __init__(self, pathFile, speedScalar):
+    def __init__(self, pathFile):
     
         self.name = pathFile
 
-        # Hack around the fact that loadPath doesn't account for 
-        # when the code is not running in the normal launch directory.
-        # Critically, we have this issue while running unit tests on our code.
-        # This shouldn't be necessary after PathPlanner is fixed internally
+        # Get the internal path file
         absPath = os.path.abspath(os.path.join(os.path.dirname(__file__), 
                                                "..", 
                                                "..", 
                                                "deploy", 
-                                               "pathplanner", 
-                                               pathFile))
+                                               "choreo", 
+                                               pathFile + ".traj"))
 
-        self.path = PathPlanner.loadPath(absPath, 
-                                         MAX_DT_LINEAR_SPEED * speedScalar,
-                                         MAX_TRANSLATE_ACCEL_MPS2 * speedScalar)
+        self.path = choreo.fromFile(absPath)
         self.done = False
         self.startTime = -1 # we'll populate these for real later, just declare they'll exist
         self.duration = self.path.getTotalTime()

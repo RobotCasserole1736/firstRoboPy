@@ -1,8 +1,11 @@
+import math
+
 import wpilib
 
 from wpimath.units import metersToFeet
 from wpimath.trajectory import Trajectory
 from wpimath.geometry import Pose2d
+from jormungandr.choreoTrajectory import ChoreoTrajectory, ChoreoTrajectoryState
 from utils.signalLogging import log
 
 
@@ -41,30 +44,31 @@ class DrivetrainPoseTelemetry():
         Args:
             trajIn (PathPlannerTrajectory): The trajectory to display
         """
-        # Transform pathplanner state into useful trajectory for telemetry
+        # Transform choreo state list into useful trajectory for telemetry
         if trajIn is not None:
             stateList = []
-            stateList.append(trajIn.getInitialState())
-            for idx in range(1, 10):
-                stateList.append(trajIn.sample(trajIn.getTotalTime() * (idx/float(10))))
-            stateList.append(trajIn.getEndState())
+            
+            # For visual appearance and avoiding sending too much over NT,
+            # make sure we only send a sampled subset of the positions
+            sampTime = 0
+            while(sampTime < trajIn.getTotalTime()):
+                stateList.append(self._choreoToWPIState(trajIn.sample(sampTime)))
+                sampTime += 0.5
+                
+            # Make sure final pose is in the list
+            stateList.append(self._choreoToWPIState(trajIn.samples[-1]))
 
-            stateList = [self._pathplannerToWPIState(x) for x in stateList]
+            
             self.curTraj = Trajectory(stateList)
         else:
             self.curTraj = Trajectory()
 
     # PathPlanner has a built in "to-wpilib" representation, but it doesn't
     # account for holonomic heading. Fix that.
-    def _pathplannerToWPIState(self, inVal):
-        trans = inVal.pose.translation()
-        # Critically - in the shown pose,
-        # display the holonomic rotation, not the path velocity vector
-        rot = inVal.holonomicRotation 
-        pose = Pose2d(trans, rot)
+    def _choreoToWPIState(self, inVal):
         return Trajectory.State(
-            acceleration=inVal.acceleration,
-            pose=pose,
-            t=inVal.time,
-            velocity=inVal.velocity
+            acceleration=0,
+            pose=inVal.getPose(),
+            t=inVal.timestamp,
+            velocity=math.hypot(inVal.velocityX, inVal.velocityY)
             )

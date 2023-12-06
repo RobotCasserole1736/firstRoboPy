@@ -1,5 +1,6 @@
 from wpimath.kinematics import ChassisSpeeds
 from wpimath.geometry import Pose2d, Rotation2d
+from jormungandr.choreoTrajectory import ChoreoTrajectoryState
 from utils.singleton import Singleton
 
 from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
@@ -68,7 +69,7 @@ class DrivetrainControl(metaclass=Singleton):
         """
         tmp = self.trajCtrl.update(cmd, self.poseEst.getCurEstPose())
         self.desChSpd = _discretizeChSpd(tmp)
-        self.poseEst.telemetry.setDesiredPose(Pose2d(cmd.pose.translation(), cmd.holonomicRotation))
+        self.poseEst.telemetry.setDesiredPose(cmd.getPose())
 
 
     def update(self):

@@ -2,6 +2,7 @@ import math
 from wpimath.controller import PIDController
 from wpimath.kinematics import ChassisSpeeds
 from drivetrain.drivetrainPhysical import MAX_FWD_REV_SPEED_MPS, MAX_ROTATE_SPEED_RAD_PER_SEC
+from jormungandr.choreoTrajectory import ChoreoTrajectoryState
 from utils.calibration import Calibration
 from utils.signalLogging import log
 from utils.mathUtils import limit
@@ -79,15 +80,15 @@ class DrivetrainTrajectoryControl():
         """
                 
         # Feed-Forward - calculate how fast we should be going at this point in the trajectory
-        xFF = trajCmd.velocity * trajCmd.pose.rotation().cos()
-        yFF = trajCmd.velocity * trajCmd.pose.rotation().sin()
-        tFF = trajCmd.holonomicAngularVelocity
+        xFF = trajCmd.velocityX
+        yFF = trajCmd.velocityY
+        tFF = trajCmd.angularVelocity
         
         # Feed-Back - Apply additional correction if we're not quite yet at the spot on the field we
         #             want to be at.
-        xFB = self.xCtrl.calculate(curEstPose.X(), trajCmd.pose.X())
-        yFB = self.yCtrl.calculate(curEstPose.Y(), trajCmd.pose.Y())
-        tFB = self.tCtrl.calculate(curEstPose.rotation().radians(), trajCmd.holonomicRotation.radians())
+        xFB = self.xCtrl.calculate(curEstPose.X(), trajCmd.getPose().X())
+        yFB = self.yCtrl.calculate(curEstPose.Y(), trajCmd.getPose().Y())
+        tFB = self.tCtrl.calculate(curEstPose.rotation().radians(), trajCmd.getPose().rotation().radians())
         
         log("Drivetrain HDC xFF", xFF, "mps")
         log("Drivetrain HDC yFF", yFF, "mps")
