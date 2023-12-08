@@ -5,7 +5,6 @@ import wpilib
 from wpimath.units import metersToFeet
 from wpimath.trajectory import Trajectory
 from wpimath.geometry import Pose2d
-from jormungandr.choreoTrajectory import ChoreoTrajectory, ChoreoTrajectoryState
 from utils.signalLogging import log
 
 
