@@ -1,6 +1,6 @@
 import wpilib
 from wpimath.units import feetToMeters
-import photonvision
+from photonlibpy.photonCamera import PhotonCamera
 from utils.fieldTagLayout import FieldTagLayout
 from utils.faults import Fault
 
@@ -13,8 +13,7 @@ class CameraPoseObservation():
 class WrapperedPhotonCamera():
     def __init__(self, camName, robotToCam):
         
-        self.cam = photonvision.PhotonCamera(camName)
-        self.cam.setVersionCheckEnabled(False)
+        self.cam = PhotonCamera(camName)
 
         self.disconFault = Fault(f"Camera {camName} not sending data")
         self.TIMEOUT_SEC = 1.0
