@@ -1,17 +1,26 @@
 from wpimath.geometry import Transform3d
 from enum import Enum
-from dataclasses import dataclass
 import ntcore
 from wpilib import Timer
+from photonlib.packet import Packet
 
-
-@dataclass
 class TargetCorner:
-    x = 0
-    y = 0
+    def __init__(self, x:float, y:float):
+        self.x = x
+        self.y = y
+
 
 class PhotonTrackedTarget:
-    def __init__(self, yaw: float, pitch:float, area:float, skew:float, id:int, pose:Transform3d, altPose: Transform3d, ambiguity:float, minAreaRectCorners: list[TargetCorner], detectedCorners: list[TargetCorner]):
+
+    _MAX_CORNERS = 8
+    _NUM_BYTES_IN_FLOAT = 8
+    _PACK_SIZE_BYTES = _NUM_BYTES_IN_FLOAT * (5 + 7 + 2 * 4 + 1 + 7 + 2 * _MAX_CORNERS)
+
+    def __init__(self, yaw:float=0, pitch:float=0, area:float=0, skew:float=0, 
+                 id:int=0, pose:Transform3d=Transform3d(), altPose: Transform3d=Transform3d(), 
+                 ambiguity:float=0, 
+                 minAreaRectCorners: list[TargetCorner]|None = None, 
+                 detectedCorners: list[TargetCorner]|None = None):
         self.yaw = yaw
         self.pitch = pitch
         self.area = area
@@ -23,15 +32,76 @@ class PhotonTrackedTarget:
         self.detectedCorners = detectedCorners
         self.poseAmbiguity = ambiguity
 
+    def getYaw(self) -> float:
+        return self.yaw
+    
+    def getPitch(self) -> float:
+        return self.pitch
+    
+    def getArea(self) -> float:
+        return self.area
+    
+    def getSkew(self) -> float:
+        return self.skew
+    
+    def getFiducialID(self) -> int:
+        return self.fiducialId
+    
+    def getPoseAmbiguity(self) -> float:
+        return self.poseAmbiguity
+    
+    def getMinAreaRectCorners(self) -> list[TargetCorner]|None:
+        return self.minAreaRectCorners
+    
+    def getDetectedCorners(self) -> list[TargetCorner]|None:
+        return self.detectedCorners
+    
+    def _decodeTargetList(self, packet:Packet, numTargets:int) -> list[TargetCorner]:
+        retList = []
+        for _ in range(numTargets):
+            cx = packet.decodeDouble()
+            cy = packet.decodeDouble()
+            retList.append(TargetCorner(cx, cy))
+        return retList
+
+    def createFromPacket(self, packet:Packet) -> Packet:
+        self.yaw = packet.decodeDouble()
+        self.pitch = packet.decodeDouble()
+        self.area = packet.decodeDouble()
+        self.skew = packet.decodeDouble()
+        self.fiducialId = packet.decode16()
+
+        self.bestCameraToTarget = packet.decodeTransform()
+        self.altCameraToTarget  = packet.decodeTransform()
+        self.poseAmbiguity = packet.decodeBoolean()
+
+        self.minAreaRectCorners = self._decodeTargetList(packet, 4) # always four
+        numCorners = packet.decode8()
+        self.detectedCorners = self._decodeTargetList(packet, numCorners)
+        return packet
+    
+    def __str__(self) -> str:
+        return f"PhotonTrackedTarget{{yaw={self.yaw},pitch={self.pitch},area={self.area},skew={self.skew},fiducialId={self.fiducialId},bestCameraToTarget={self.bestCameraToTarget}}}"
+
 
 class PhotonPipelineResult:
-    def __init__(self, latencyMillis:float = -1, targets:list[PhotonTrackedTarget] = []):
+    def __init__(self, latencyMillis:float = -1, targets:list[PhotonTrackedTarget]|None = None):
         self.latencyMillis = latencyMillis
         self.timestampSec = Timer.getFPGATimestamp() - self.latencyMillis / 1e-3
         self.targets = targets
+        self.multiTagResult = None
         
-    def populateFromPacket(self, packet:list[int]) -> None:
-        pass #TODO
+    def populateFromPacket(self, packet:Packet) -> Packet:
+        self.targets = []
+        self.latencyMillis = packet.decodeDouble()
+        self.multiTagResult = None # TODO Decode from packet
+        targetCount = packet.decode8()
+        for _ in range(targetCount):
+            target = PhotonTrackedTarget()
+            target.createFromPacket(packet)
+            self.targets.append(target)
+
+        return packet
     
     def setTimestampSeconds(self, timestampSec:float) -> None:
         self.timestampSec = timestampSec
@@ -79,13 +149,13 @@ class PhotonCamera:
     def getLatestResult(self) -> PhotonPipelineResult:
         retVal = PhotonPipelineResult()
         packetWithTimestamp = self.rawBytesEntry.getAtomic()
-        packet = packetWithTimestamp.value
+        byteList = packetWithTimestamp.value
         timestamp = packetWithTimestamp.time
         
-        if(len(packet) < 1):
+        if(len(byteList) < 1):
             return retVal
         else:
-            retVal.populateFromPacket(packet)
+            retVal.populateFromPacket(Packet(byteList))
             # NT4 allows us to correct the timestamp based on when the message was sent
             retVal.setTimestampSeconds(timestamp / 1e-6 - retVal.getLatenyMillis() / 1e-3)
             return retVal
