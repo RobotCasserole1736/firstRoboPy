@@ -4,6 +4,7 @@ import wpilib
 from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
 from drivetrain.drivetrainControl import DrivetrainControl
+from humanInterface.operatorInterface import OperatorInterface
 from utils.segmentTimeTracker import SegmentTimeTracker
 from utils.signalLogging import SignalWrangler
 from utils.calibration import CalibrationWrangler
@@ -33,6 +34,7 @@ class MyRobot(wpilib.TimedRobot):
         self.stt = SegmentTimeTracker()
         
         self.dInt = DriverInterface()
+        self.oInt = OperatorInterface()
         
         self.autoSequencer = AutoSequencer()
         #self.autoSequencer.addMode(DrivePathTest1())
@@ -51,6 +53,9 @@ class MyRobot(wpilib.TimedRobot):
     def robotPeriodic(self):
         self.stt.start()
         self.crashLogger.update()
+
+        self.dInt.update()
+        self.oInt.update()
         
         if(self.dInt.getGyroResetCmd()):
             self.driveTrain.resetGyro()
@@ -83,7 +88,7 @@ class MyRobot(wpilib.TimedRobot):
         pass
         
     def teleopPeriodic(self):
-        self.dInt.update()
+
         self.driveTrain.setCmdFieldRelative(
             self.dInt.getVxCmd(),
             self.dInt.getVyCmd(),
