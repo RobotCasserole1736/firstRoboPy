@@ -41,9 +41,9 @@ class DriverInterface():
             vTJoyRaw = -1.0*self.ctrl.getRightX()
             
             # Apply deadband to make sure letting go of the joystick actually stops the bot
-            vXJoy = applyDeadband(vXJoyRaw,0.1)
-            vYJoy = applyDeadband(vYJoyRaw,0.1)
-            vTJoy = applyDeadband(vTJoyRaw,0.1)
+            vXJoy = applyDeadband(vXJoyRaw,0.15)
+            vYJoy = applyDeadband(vYJoyRaw,0.15)
+            vTJoy = applyDeadband(vTJoyRaw,0.15)
             
             # Normally robot goes half speed - unlock full speed on 
             # sprint command being active
