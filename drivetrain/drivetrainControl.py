@@ -3,7 +3,7 @@ from wpimath.geometry import Pose2d, Rotation2d
 from jormungandr.choreoTrajectory import ChoreoTrajectoryState
 from utils.singleton import Singleton
 
-from drivetrain.drivetrainPoseEstimator import DrivetrainPoseEstimator
+from drivetrain.poseEstimation.drivetrainPoseEstimator import DrivetrainPoseEstimator
 from drivetrain.swerveModuleControl import SwerveModuleControl
 from drivetrain.swerveModuleGainSet import SwerveModuleGainSet
 from drivetrain.drivetrainTrajectoryControl import DrivetrainTrajectoryControl
