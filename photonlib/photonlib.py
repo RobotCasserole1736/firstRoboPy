@@ -2,6 +2,7 @@ from wpimath.geometry import Transform3d
 from enum import Enum
 import ntcore
 from wpilib import Timer
+from photonlib.multiTargetPNPResult import MultiTargetPNPResult
 from photonlib.packet import Packet
 
 class TargetCorner:
@@ -94,7 +95,8 @@ class PhotonPipelineResult:
     def populateFromPacket(self, packet:Packet) -> Packet:
         self.targets = []
         self.latencyMillis = packet.decodeDouble()
-        self.multiTagResult = None # TODO Decode from packet
+        self.multiTagResult = MultiTargetPNPResult()
+        self.multiTagResult.createFromPacket(packet)
         targetCount = packet.decode8()
         for _ in range(targetCount):
             target = PhotonTrackedTarget()
