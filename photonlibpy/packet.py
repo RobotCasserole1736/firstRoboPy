@@ -1,5 +1,6 @@
 import struct
 from wpimath.geometry import Transform3d, Translation3d, Rotation3d, Quaternion
+import wpilib
 
 class Packet:
 
@@ -12,22 +13,40 @@ class Packet:
         self.packetData = data
         self.size = len(data)
         self.readPos = 0
-        self.writePos = 0
+        self.outOfBytes = False
     
 
     """ Clears the packet and resets the read and write positions."""
     def clear(self): 
         self.packetData = [0]*self.size
         self.readPos = 0
-        self.writePos = 0
+        self.outOfBytes = False
     
 
     def getSize(self): 
         return self.size
     
+    _NO_MORE_BYTES_MESSAGE = """
+    Photonlib - Ran out of bytes while decoding. 
+    Make sure the version of photonvision on the coprocessor 
+    matches the version of photonlib running in the robot code.
+    """    
+
+    def _getNextByte(self) -> int:
+        retVal = 0x00
+        
+        if(not self.outOfBytes):
+            try:
+                retVal = 0x00ff & self.packetData[self.readPos]
+                self.readPos += 1
+            except IndexError:
+                wpilib.reportError(Packet._NO_MORE_BYTES_MESSAGE, True)
+                self.outOfBytes = True
+
+        return retVal
 
     """
-     * Returns the packet data.
+     * Returns the packet data. 
      *
      * @return The packet data.
     """
@@ -41,9 +60,22 @@ class Packet:
      * @param data The packet data.
     """
     def setData(self, data:list[int]):
+        self.clear()
         self.packetData = data
         self.size = len(self.packetData)
     
+    def _decodeGeneric(self, unpackFormat, numBytes):
+
+        # Read ints in from the data buffer
+        intList = []
+        for _ in range(numBytes):
+            intList.append(self._getNextByte())
+       
+        # Interpret the bytes as a floating point number
+        value = struct.unpack(unpackFormat, bytes(intList))[0]
+
+        return value
+
 
     """
      * Returns a single decoded byte from the packet.
@@ -51,88 +83,7 @@ class Packet:
      * @return A decoded byte from the packet.
     """
     def decode8(self) -> int: 
-        if (len(self.packetData) < self.readPos):
-            return 0x00
-        
-        ret = self.packetData[self.readPos]
-        self.readPos += 1
-        return ret
-    
-
-    """
-     * Returns a decoded int (32 bytes) from the packet.
-     *
-     * @return A decoded int from the packet.
-    """
-    def decode32(self) -> int: 
-        if (len(self.packetData) < self.readPos + 3):
-            return 0x00
-        
-        retVal = 0x00
-        retVal |= (0xff & self.packetData[self.readPos]) << 24
-        self.readPos+=1
-        retVal |= (0xff & self.packetData[self.readPos]) << 16
-        self.readPos+=1
-        retVal |= (0xff & self.packetData[self.readPos]) << 8
-        self.readPos+=1
-        retVal |= (0xff & self.packetData[self.readPos])
-        self.readPos+=1
-        return retVal
-    
-
-    """
-     * Returns a decoded double from the packet.
-     *
-     * @return A decoded double from the packet.
-    """
-    def decodeDouble(self) -> float: 
-        if (len(self.packetData) < (self.readPos + 7)):
-            return 0
-
-        # Read 8 ints in from the data buffer
-        intList = []
-        intList.append(0xff & self.packetData[self.readPos])
-        self.readPos += 1
-        intList.append(0xff & self.packetData[self.readPos])
-        self.readPos += 1
-        intList.append(0xff & self.packetData[self.readPos])
-        self.readPos += 1
-        intList.append(0xff & self.packetData[self.readPos])
-        self.readPos += 1
-        intList.append(0xff & self.packetData[self.readPos])
-        self.readPos += 1
-        intList.append(0xff & self.packetData[self.readPos])
-        self.readPos += 1
-        intList.append(0xff & self.packetData[self.readPos])
-        self.readPos += 1
-        intList.append(0xff & self.packetData[self.readPos])
-        self.readPos += 1
-       
-        # Interpret the bytes as a floating point number
-        value = struct.unpack('d', bytes(intList))[0]
-
-        return value
-    
-
-    """
-     * Returns a decoded boolean from the packet.
-     *
-     * @return A decoded boolean from the packet.
-    """
-    def decodeBoolean(self) -> bool:
-        if (len(self.packetData) < self.readPos):
-            return False
-        
-        retVal = self.packetData[self.readPos] == 1
-        self.readPos += 1
-        return retVal
-
-
-    def decodeDoubleArray(self, length:int) -> list[float]:
-        ret = []
-        for _ in range(length):
-            ret.append(self.decodeDouble())
-        return ret
+        return self._decodeGeneric(">b", 1)
     
     """
      * Returns a single decoded byte from the packet.
@@ -140,14 +91,37 @@ class Packet:
      * @return A decoded byte from the packet.
     """
     def decode16(self) -> int: 
-        if (len(self.packetData) < self.readPos):
-            return 0x00
-        
-        ret = 0x00
-        ret |= (self.packetData[self.readPos]) << 8
-        self.readPos += 1
-        ret |= self.packetData[self.readPos]
-        self.readPos += 1
+        return self._decodeGeneric(">h", 2)
+
+
+    """
+     * Returns a decoded int (32 bytes) from the packet.
+     *
+     * @return A decoded int from the packet.
+    """
+    def decode32(self) -> int: 
+        return self._decodeGeneric(">l", 4)
+
+    """
+     * Returns a decoded double from the packet.
+     *
+     * @return A decoded double from the packet.
+    """
+    def decodeDouble(self) -> float: 
+        return self._decodeGeneric(">d", 8)
+    
+    """
+     * Returns a decoded boolean from the packet.
+     *
+     * @return A decoded boolean from the packet.
+    """
+    def decodeBoolean(self) -> bool:
+        return (self.decode8() == 1)
+
+    def decodeDoubleArray(self, length:int) -> list[float]:
+        ret = []
+        for _ in range(length):
+            ret.append(self.decodeDouble())
         return ret
     
     def decodeTransform(self) -> Transform3d:

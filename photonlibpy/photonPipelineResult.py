@@ -25,7 +25,7 @@ class PhotonPipelineResult:
     def setTimestampSeconds(self, timestampSec:float) -> None:
         self.timestampSec = timestampSec
         
-    def getLatenyMillis(self) -> float:
+    def getLatencyMillis(self) -> float:
         return self.latencyMillis
     
     def getTimestamp(self) -> float:

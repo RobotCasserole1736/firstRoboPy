@@ -72,11 +72,12 @@ class PhotonTrackedTarget:
         self.pitch = packet.decodeDouble()
         self.area = packet.decodeDouble()
         self.skew = packet.decodeDouble()
-        self.fiducialId = packet.decode16()
+        self.fiducialId = packet.decode32()
 
         self.bestCameraToTarget = packet.decodeTransform()
         self.altCameraToTarget  = packet.decodeTransform()
-        self.poseAmbiguity = packet.decodeBoolean()
+
+        self.poseAmbiguity = packet.decodeDouble()
 
         self.minAreaRectCorners = self._decodeTargetList(packet, 4) # always four
         numCorners = packet.decode8()

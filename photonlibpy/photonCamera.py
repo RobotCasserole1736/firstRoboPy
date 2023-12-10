@@ -54,7 +54,7 @@ class PhotonCamera:
         else:
             retVal.populateFromPacket(Packet(byteList))
             # NT4 allows us to correct the timestamp based on when the message was sent
-            retVal.setTimestampSeconds(timestamp / 1e-6 - retVal.getLatenyMillis() / 1e-3)
+            retVal.setTimestampSeconds(timestamp / 1e-6 - retVal.getLatencyMillis() / 1e-3)
             return retVal
     
     def getDriverMode(self) -> bool:

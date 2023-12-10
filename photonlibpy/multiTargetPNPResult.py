@@ -42,7 +42,7 @@ class MultiTargetPNPResult:
         self.estimatedPose.createFromPacket(packet)
         self.fiducialIDsUsed = []
         for _ in range(MultiTargetPNPResult.MAX_IDS):
-            fidId = packet.decode8()
+            fidId = packet.decode16()
             if(fidId >= 0):
                 self.fiducialIDsUsed.append(fidId)
         return packet

@@ -32,10 +32,10 @@
             "label": "PyFRC: _Activate Debug",
             "type": "shell",
             "windows": {
-                "command": "ssh lvuser@roboRIO-1736-FRC.local -t 'touch /home/lvuser/py/enableDebug; ./robotCommand || true; echo Waiting for robot program to start...; sleep 5' "
+                "command": "ssh lvuser@roboRIO-1736-FRC.local -t 'chmod +x ./robotCommand; touch /home/lvuser/py/enableDebug; ./robotCommand || true; echo Waiting for robot program to start...; sleep 5' "
             },
             "linux": {
-                "command": "ssh lvuser@roboRIO-1736-FRC.local -t 'touch /home/lvuser/py/enableDebug; ./robotCommand || true; echo Waiting for robot program to start...; sleep 5' "
+                "command": "ssh lvuser@roboRIO-1736-FRC.local -t 'chmod +x ./robotCommand; touch /home/lvuser/py/enableDebug; ./robotCommand || true; echo Waiting for robot program to start...; sleep 5' "
             },
             "group": {
                 "kind": "build",
