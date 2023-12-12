@@ -1,6 +1,6 @@
 import wpilib
 from wpimath.units import feetToMeters
-from photonlibpy.photonCamera import PhotonCamera
+from photonlibpy.photonCamera import PhotonCamera, VisionLEDMode
 from utils.fieldTagLayout import FieldTagLayout
 from utils.faults import Fault
 
@@ -22,6 +22,19 @@ class WrapperedPhotonCamera():
 
         
     def update(self, prevEstPose):
+
+        # Test Only
+        if(wpilib.DriverStation.isTest()):
+            self.cam.setLEDMode(VisionLEDMode.kBlink)
+        elif(wpilib.DriverStation.isAutonomous()):
+            self.cam.setLEDMode(VisionLEDMode.kOn)
+        else:
+            self.cam.setLEDMode(VisionLEDMode.kOff)
+
+        if(wpilib.DriverStation.isAutonomous()):
+            self.cam.takeInputSnapshot()
+            self.cam.takeOutputSnapshot()
+
         # Grab whatever the camera last reported for observations in a camera frame
         # Note: Results simply report "I processed a frame". There may be 0 or more targets seen in a frame
         res = self.cam.getLatestResult()
