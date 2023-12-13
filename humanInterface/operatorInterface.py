@@ -33,9 +33,9 @@ class OperatorInterface():
             outval = int(Timer.getFPGATimestamp()) % 2 == 0
             self.ctrl.setOutput( 1 , outval)
             self.ctrl.setOutput( 2 , not outval)
-            # self.ctrl.setRumble(GenericHID.RumbleType.kLeftRumble, 0.25)
-            # self.ctrl.setRumble(GenericHID.RumbleType.kRightRumble, 0.75)
-            
+            self.ctrl.setOutput( 3 , self.ctrl.getRawButton(1))
+            self.ctrl.setOutput( 4 , self.ctrl.getRawButton(2))
+
             self.connectedFault.setNoFault()
         else:
             vXJoyRaw = 0
