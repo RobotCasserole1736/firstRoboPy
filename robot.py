@@ -59,6 +59,9 @@ class MyRobot(wpilib.TimedRobot):
         
         if(self.dInt.getGyroResetCmd()):
             self.driveTrain.resetGyro()
+
+        if(self.oInt.getGyroResetCmd()):
+            self.driveTrain.resetGyro()
         
         self.driveTrain.update()
         
@@ -90,9 +93,9 @@ class MyRobot(wpilib.TimedRobot):
     def teleopPeriodic(self):
 
         self.driveTrain.setCmdFieldRelative(
-            self.dInt.getVxCmd(),
-            self.dInt.getVyCmd(),
-            self.dInt.getVtCmd())
+            self.oInt.getVxCmd(),
+            self.oInt.getVyCmd(),
+            self.oInt.getVtCmd())
     
     
     #########################################################
