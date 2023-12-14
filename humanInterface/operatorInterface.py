@@ -20,9 +20,9 @@ class OperatorInterface():
         self.gyroResetCmd = False
         self.connectedFault = Fault(f"Operator HID Controller ({ctrlIdx}) Unplugged")
 
-        self.velXSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_TRANSLATE_ACCEL_MPS2)
-        self.velYSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_TRANSLATE_ACCEL_MPS2)
-        self.velTSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_ROTATE_ACCEL_RAD_PER_SEC_2)
+        self.velXSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_TRANSLATE_ACCEL_MPS2*1000)
+        self.velYSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_TRANSLATE_ACCEL_MPS2*1000)
+        self.velTSlewRateLimiter = SlewRateLimiter(rateLimit=MAX_ROTATE_ACCEL_RAD_PER_SEC_2*1000)
 
 
     def update(self):
@@ -33,18 +33,18 @@ class OperatorInterface():
             # Only attempt to read from the joystick if it's plugged in
             
             # Convert from joystic sign/axis conventions to robot velocity conventions
-            vXJoyRaw = -1.0*self.ctrl.getRawAxis(0)
-            vYJoyRaw = 1.0*self.ctrl.getRawAxis(1)
-            vTJoyRaw = 1.0*self.ctrl.getRawAxis(2)
+            vXJoyRaw = -1.0*self.ctrl.getRawAxis(1)
+            vYJoyRaw = -1.0*self.ctrl.getRawAxis(0)
+            vTJoyRaw = -1.0*self.ctrl.getRawAxis(3)
 
             # Apply deadband to make sure letting go of the joystick actually stops the bot
-            vXJoy = applyDeadband(vXJoyRaw,0.1)
-            vYJoy = applyDeadband(vYJoyRaw,0.1)
-            vTJoy = applyDeadband(vTJoyRaw,0.1)
+            vXJoy = applyDeadband(vXJoyRaw,0.0)
+            vYJoy = applyDeadband(vYJoyRaw,0.0)
+            vTJoy = applyDeadband(vTJoyRaw,0.0)
             
             # Normally robot goes half speed - unlock full speed on 
             # sprint command being active
-            sprintMult = 1.0 if(self.ctrl.getRawButton(1)) else 0.5
+            sprintMult = 1.0
 
             #Gyro reset Command
             self.gyroResetCmd = self.ctrl.getRawButton(2)
