@@ -4,6 +4,7 @@ from wpimath.kinematics import SwerveModuleState
 from wpimath.kinematics import SwerveModulePosition
 from wpimath.geometry import Rotation2d
 import wpilib
+import random
 
 from wrappers.wrapperedSparkMax import WrapperedSparkMax
 from wrappers.wrapperedSRXMagEncoder import WrapperedSRXMagEncoder
@@ -42,11 +43,13 @@ class SwerveModuleControl():
         self.desiredState = SwerveModuleState()
         self.optimizedDesiredState = SwerveModuleState()
         self.actualState = SwerveModuleState()
+        self.actualPosition = SwerveModulePosition()
 
         self.azmthCtrl = PIDController(0,0,0)
         self.azmthCtrl.enableContinuousInput(-180.0, 180.0)
 
         self._prevMotorDesSpeed = 0
+        
 
         self.moduleName = moduleName
 
@@ -57,19 +60,18 @@ class SwerveModuleControl():
         log(getAzmthDesTopicName(self.moduleName), 
             self.optimizedDesiredState.angle.degrees(), "deg")
         log(getAzmthActTopicName(self.moduleName), 
-            rad2Deg(self.azmthEnc.getAngleRad()), "deg")
+            self.actualState.angle.degrees(), "deg")
         log(getSpeedDesTopicName(self.moduleName), 
             self.optimizedDesiredState.speed/MAX_FWD_REV_SPEED_MPS, "frac")
         log(getSpeedActTopicName(self.moduleName), 
-            dtMotorRotToLinear(self.wheelMotor.getMotorVelocityRadPerSec())/MAX_FWD_REV_SPEED_MPS, "frac")
+            (self.actualState.speed)/MAX_FWD_REV_SPEED_MPS, "frac")
 
     def getActualPosition(self):
         """
         Returns:
             SwerveModulePosition: The position of the module (azmth and wheel) as measured by sensors
         """
-        wheelPosMeters = dtMotorRotToLinear(self.wheelMotor.getMotorPositionRad())
-        return SwerveModulePosition(wheelPosMeters, Rotation2d(self.azmthEnc.getAngleRad()))
+        return self.actualPosition
 
     def getActualState(self):
         """
@@ -136,12 +138,17 @@ class SwerveModuleControl():
         self._prevMotorDesSpeed = motorDesSpd # save for next loop
 
         if(wpilib.TimedRobot.isSimulation()):
-            # Simulation - assume module is perfect and goes to where we want it to
-            self.actualState = self.optimizedDesiredState
+            # Simulation - assume module is almost perfect but with some noise
+            self.actualState.angle = self.optimizedDesiredState.angle * random.uniform(0.95, 1.05)
+            self.actualState.speed = self.optimizedDesiredState.speed * random.uniform(0.95, 1.05)
+            self.actualPosition.distance += self.actualState.speed * 0.02 
+            self.actualPosition.angle = self.actualState.angle 
         else:
             # Real Robot
             # Update this module's actual state with measurements from the sensors
             self.actualState.angle = Rotation2d(self.azmthEnc.getAngleRad())
             self.actualState.speed = dtMotorRotToLinear(self.wheelMotor.getMotorVelocityRadPerSec())
+            self.actualPosition.distance = dtMotorRotToLinear(self.wheelMotor.getMotorPositionRad())
+            self.actualPosition.angle = self.actualState.angle
 
         self._updateTelemetry()

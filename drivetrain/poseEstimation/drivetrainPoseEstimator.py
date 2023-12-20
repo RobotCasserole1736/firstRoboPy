@@ -1,6 +1,9 @@
-from wpilib import ADXRS450_Gyro 
+from wpilib import ADXRS450_Gyro
+import wpilib 
+import random
 from wpimath.estimator import SwerveDrive4PoseEstimator
-from wpimath.geometry import Pose2d, Rotation2d, Transform3d
+from wpimath.kinematics import SwerveDrive4Odometry
+from wpimath.geometry import Pose2d, Rotation2d, Transform3d, Twist2d
 from drivetrain.drivetrainPhysical import kinematics
 from drivetrain.poseEstimation.drivetrainPoseTelemetry import DrivetrainPoseTelemetry
 from utils.faults import Fault
@@ -29,6 +32,8 @@ class DrivetrainPoseEstimator():
         self.lastModulePositions = initialModuleStates
         self.curRawGyroAngle = Rotation2d()
         self.telemetry = DrivetrainPoseTelemetry()
+        
+        self._simPose = Pose2d()
 
     def setKnownPose(self, knownPose):
         """Reset the robot's estimated pose to some specific position. This is useful if we know with certanty
@@ -37,9 +42,12 @@ class DrivetrainPoseEstimator():
         Args:
             knownPose (Pose2d): The pose we know we're at
         """
-        self.poseEst.resetPosition(self.gyro.getRotation2d(), self.lastModulePositions, knownPose)
+        self.poseEst.resetPosition(self.curRawGyroAngle, self.lastModulePositions, knownPose)
+        if(wpilib.TimedRobot.isSimulation()):
+            self._simPose = knownPose
+        
 
-    def update(self, curModulePositions):
+    def update(self, curModulePositions, curModuleSpeeds):
         """Periodic update, call this every 20ms.
 
         Args:
@@ -57,7 +65,14 @@ class DrivetrainPoseEstimator():
 
         # Read the gyro angle
         self.gyroDisconFault.set(not self.gyro.isConnected())
-        self.curRawGyroAngle = self.gyro.getRotation2d()
+        if(wpilib.TimedRobot.isSimulation()):
+            # Simulate an angel based on (simulated) motor speeds with some noise
+            chSpds = kinematics.toChassisSpeeds(curModuleSpeeds[0],curModuleSpeeds[1],curModuleSpeeds[2],curModuleSpeeds[3])
+            self._simPose = self._simPose.exp(Twist2d(chSpds.vx * 0.02, chSpds.vy * 0.02, chSpds.omega * 0.02))
+            self.curRawGyroAngle = self._simPose.rotation() * random.uniform(0.95, 1.05)
+        else:
+            # Use real hardware
+            self.curRawGyroAngle = self.gyro.getRotation2d()
         
         # Update the WPILib Pose Estimate
         self.poseEst.update(self.curRawGyroAngle, curModulePositions)

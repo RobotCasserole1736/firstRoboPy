@@ -89,7 +89,7 @@ class DrivetrainControl(metaclass=Singleton):
             module.update()
             
         # Update the estimate of our pose
-        self.poseEst.update(self.getModulePositions())
+        self.poseEst.update(self.getModulePositions(), self.getModuleSpeeds())
         
         # Update calibration values if they've changed
         if(self.gains.hasChanged()):
@@ -108,6 +108,13 @@ class DrivetrainControl(metaclass=Singleton):
             Tuple of the actual module positions (as read from sensors)
         """
         return tuple(mod.getActualPosition() for mod in self.modules)
+    
+    def getModuleSpeeds(self):
+        """
+        Returns:
+            Tuple of the actual module speeds (as read from sensors)
+        """
+        return tuple(mod.getActualState() for mod in self.modules)
     
     def resetGyro(self):
         # Update pose estimator to think we're at the same translation,
