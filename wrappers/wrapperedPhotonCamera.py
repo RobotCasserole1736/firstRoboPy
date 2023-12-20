@@ -1,6 +1,6 @@
 import wpilib
 from wpimath.units import feetToMeters
-from photonlibpy.photonCamera import PhotonCamera, VisionLEDMode
+from photonlibpy.photonCamera import PhotonCamera, VisionLEDMode, setVersionCheckEnabled
 from utils.fieldTagLayout import FieldTagLayout
 from utils.faults import Fault
 
@@ -12,6 +12,8 @@ class CameraPoseObservation():
 
 class WrapperedPhotonCamera():
     def __init__(self, camName, robotToCam):
+        
+        setVersionCheckEnabled(False)
         
         self.cam = PhotonCamera(camName)
 

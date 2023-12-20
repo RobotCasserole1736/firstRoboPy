@@ -1,0 +1,4 @@
+# Third-party python libraries
+photonlibpy
+debugpy==1.6.7
+

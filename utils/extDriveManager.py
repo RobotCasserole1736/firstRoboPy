@@ -10,7 +10,7 @@ class ExtDriveManager(metaclass=Singleton):
         self.driveAvailableFault = Fault("Logging USB Drive Not Available")
         
         if wpilib.RobotBase.isSimulation():
-            self.logDir = "./simulationLogs"
+            self.logDir = "./.simulationLogs" #.prefix makes sure it doesn't get deployed
         else:
             self.logDir = "/U/logs"
             
