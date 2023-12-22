@@ -4,13 +4,13 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "PyFRC: _Deploy",
+            "label": "PyFRC: Deploy",
             "type": "shell",
             "windows": {
-                "command": "python ${workspaceFolder}\\robot.py deploy --skip-tests "
+                "command": "python ${workspaceFolder}\\robot.py deploy --skip-tests"
             },
             "linux": {
-                "command": "python ${workspaceFolder}/robot.py deploy --skip-tests "
+                "command": "python ${workspaceFolder}/robot.py deploy --skip-tests"
             },
             "group": {
                 "kind": "build",
@@ -29,16 +29,38 @@
             }
         },
         {
-            "label": "PyFRC: _Activate Debug",
+            "label": "PyFRC: RIO Debug PreSteps",
+            "dependsOn": [
+                "PyFRC: Deploy Debug",
+                "delay"
+            ],
+            "dependsOrder": "sequence",
+            "group": "none",
+            "hide": true
+        },
+        {
+            "label": "delay",
+            "type": "shell",
+            "command": "sleep 3",
+            "presentation": {
+                "reveal": "silent",
+                "panel": "dedicated",
+                "clear": true,
+                "focus": false,
+                "showReuseMessage": false
+            },
+            "problemMatcher": [],
+            "group": "none",
+            "hide": true
+        },
+        {
+            "label": "PyFRC: Deploy Debug",
             "type": "shell",
             "windows": {
-                "command": "ssh lvuser@roboRIO-1736-FRC.local -t 'chmod +x ./robotCommand; touch /home/lvuser/py/enableDebug; ./robotCommand || true; echo Waiting for robot program to start...; sleep 5' "
+                "command": "python ${workspaceFolder}\\robot.py deploy --skip-tests --debug"
             },
             "linux": {
-                "command": "ssh lvuser@roboRIO-1736-FRC.local -t 'chmod +x ./robotCommand; touch /home/lvuser/py/enableDebug; ./robotCommand || true; echo Waiting for robot program to start...; sleep 5' "
-            },
-            "group": {
-                "kind": "build",
+                "command": "python ${workspaceFolder}/robot.py deploy --skip-tests --debug"
             },
             "presentation": {
                 "reveal": "always",
@@ -53,7 +75,7 @@
             }
         },
         {
-            "label": "PyFRC: _Run Lint Check",
+            "label": "PyFRC: Run Lint Check",
             "type": "shell",
             "windows": {
                 "command": "pylint --rcfile=${workspaceFolder}\\.pylintrc ${workspaceFolder}\\**\\*.py"
@@ -74,7 +96,7 @@
             }
         },
         {
-            "label": "PyFRC: _Run Test Suite",
+            "label": "PyFRC: Run Test Suite",
             "type": "shell",
             "windows": {
                 "command": "python ${workspaceFolder}\\robot.py test"
@@ -99,7 +121,7 @@
             }
         },
         {
-            "label": "PyFRC: _Run Simulation",
+            "label": "PyFRC: Run Simulation",
             "type": "shell",
             "windows": {
                 "command": "python ${workspaceFolder}\\robot.py sim"
@@ -108,7 +130,7 @@
                 "command": "python ${workspaceFolder}/robot.py sim"
             },
             "group": {
-                "kind": "test",
+                "kind": "test"
             },
             "presentation": {
                 "reveal": "always",
@@ -123,7 +145,7 @@
             }
         },
         {
-            "label": "PyFRC: _View Netconsole",
+            "label": "PyFRC: View Netconsole",
             "type": "shell",
             "windows": {
                 "command": "py -3 -m netconsole roboRIO-1736-frc.local"
@@ -132,7 +154,7 @@
                 "command": "netconsole roboRIO-1736-frc.local"
             },
             "group": {
-                "kind": "build",
+                "kind": "build"
             },
             "presentation": {
                 "reveal": "always",

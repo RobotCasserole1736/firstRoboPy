@@ -20,7 +20,7 @@
                 }
             ],
             "justMyCode": false,
-            "preLaunchTask": "PyFRC: _Activate Debug"
+            "preLaunchTask": "PyFRC: RIO Debug PreSteps",
         },
         {
             "name": "Simulate",

@@ -1,4 +1,4 @@
-import os
+import sys
 import wpilib
 from Autonomous.modes.drivePathCircle import DrivePathCircle
 from Autonomous.modes.drivePathTest1 import DrivePathTest1
@@ -113,12 +113,15 @@ class MyRobot(wpilib.TimedRobot):
 
 
 if __name__ == '__main__':
-
-    enableDebug = os.path.isfile("/home/lvuser/py/enableDebug")
-    if(enableDebug):
+    
+    if __debug__ and "run" in sys.argv:
         print("Starting Debug Support....")
-        import debugpy 
-        debugpy.listen(('0.0.0.0', 5678))
-        debugpy.wait_for_client()
+        try:
+            import debugpy
+        except ModuleNotFoundError:
+            pass
+        else:
+            debugpy.listen(('0.0.0.0', 5678))
+            debugpy.wait_for_client()
 
     wpilib.run(MyRobot)
