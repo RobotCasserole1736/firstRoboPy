@@ -11,6 +11,7 @@ from dashboardWidgets.swerveState import getAzmthDesTopicName, getAzmthActTopicN
 from dashboardWidgets.swerveState import getSpeedDesTopicName, getSpeedActTopicName
 from utils.signalLogging import log
 from utils.units import rad2Deg
+from utils.segmentTimeTracker import SegmentTimeTracker
 from drivetrain.drivetrainPhysical import dtMotorRotToLinear
 from drivetrain.drivetrainPhysical import dtLinearToMotorRot
 from drivetrain.drivetrainPhysical import MAX_FWD_REV_SPEED_MPS
@@ -49,6 +50,15 @@ class SwerveModuleControl():
         self._prevMotorDesSpeed = 0
 
         self.moduleName = moduleName
+        self.stt = SegmentTimeTracker()
+        #                                                                         1         2         3
+        #                                                                12345678901234567890123456789012345
+        self.markAzmthEncUpdateName       = self.stt.makePaddedMarkName("azmthEnc.update." + self.moduleName)
+        self.markOptimizedDesiredName     = self.stt.makePaddedMarkName("optimizedDesiredState." + self.moduleName)
+        self.markAzmthMotorSetVoltageName = self.stt.makePaddedMarkName("azmthMotor.setVoltage." + self.moduleName)
+        self.markWheelMotorSetVelCmdName  = self.stt.makePaddedMarkName("wheelMotor.setVelCmd." + self.moduleName)
+        self.markUpdateActualStateName    = self.stt.makePaddedMarkName("markUpdateActualStateName." + self.moduleName)
+        self.markUpdateTelemetryName      = self.stt.makePaddedMarkName("updateTelemetry()." + self.moduleName)
 
     def _updateTelemetry(self):
         """
@@ -116,15 +126,18 @@ class SwerveModuleControl():
 
         # Read from the azimuth angle sensor (encoder)
         self.azmthEnc.update()
+        self.stt.perhapsMark(self.markAzmthEncUpdateName)
 
         # Optimize our incoming swerve command to minimize motion
         self.optimizedDesiredState = SwerveModuleState.optimize(self.desiredState, 
                                                                 Rotation2d(self.azmthEnc.getAngleRad()))
+        self.stt.perhapsMark(self.markOptimizedDesiredName)
 
         # Use a PID controller to calculate the voltage for the azimuth motor
         self.azmthCtrl.setSetpoint(self.optimizedDesiredState.angle.degrees()) # type: ignore
         azmthVoltage = self.azmthCtrl.calculate(rad2Deg(self.azmthEnc.getAngleRad()))
         self.azmthMotor.setVoltage(azmthVoltage)
+        self.stt.perhapsMark(self.markAzmthMotorSetVoltageName)
 
         # Send voltage and speed commands to the wheel motor
         
@@ -132,6 +145,7 @@ class SwerveModuleControl():
         motorDesAccel = (motorDesSpd - self._prevMotorDesSpeed)/ 0.02
         motorVoltageFF = self.wheelMotorFF.calculate(motorDesSpd, motorDesAccel)
         self.wheelMotor.setVelCmd(motorDesSpd, motorVoltageFF)
+        self.stt.perhapsMark(self.markWheelMotorSetVelCmdName)
         
         self._prevMotorDesSpeed = motorDesSpd # save for next loop
 
@@ -143,5 +157,7 @@ class SwerveModuleControl():
             # Update this module's actual state with measurements from the sensors
             self.actualState.angle = Rotation2d(self.azmthEnc.getAngleRad())
             self.actualState.speed = dtMotorRotToLinear(self.wheelMotor.getMotorVelocityRadPerSec())
+        self.stt.perhapsMark(self.markUpdateActualStateName)
 
         self._updateTelemetry()
+        self.stt.perhapsMark(self.markUpdateTelemetryName)
