@@ -22,8 +22,17 @@ class Webserver(metaclass=Singleton):
         templatingHttpHandler = functools.partial(CasseroleWebServerImpl, 
                                      directory=str(WEB_ROOT))
 
-        hostname=socket.gethostname()   
-        ipAddr=socket.gethostbyname(hostname)   
+        hostname=socket.gethostname()
+        ipAddr="unknown"
+        try:
+            ipAddr=socket.gethostbyname(hostname)
+        except socket.gaierror:
+            # socket.gaierror is thrown when there is no dns server.
+            # This can happen when there is no FRC Radio and the roborio
+            # is connected directly to a dhcp server on a non-robot 
+            # private network during development. Allow this
+            # development mode to work.
+            pass
 
         self.httpServer = ThreadedTCPServer(("", httpPort), templatingHttpHandler)
 
