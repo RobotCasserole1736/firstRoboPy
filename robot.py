@@ -25,13 +25,25 @@ class MyRobot(wpilib.TimedRobot):
 
         self.crashLogger = CrashLogger()
         wpilib.LiveWindow.disableAllTelemetry()
+        
+        self.stt = SegmentTimeTracker()
+        # self.stt.doOptionalPerhapsMarks = True # Uncomment this line to turn on optional stt perhapsMark methods
+        # self.stt.longLoopThresh = 0.020 # Uncomment this line adjust the stt logging time threshold in seconds
+        #                                                                        1         2         3
+        #                                                               12345678901234567890123456789012345
+        self.markStartCrashName          = self.stt.makePaddedMarkName("start-crashLogger")
+        self.markCrashName               = self.stt.makePaddedMarkName("crashLogger")
+        self.markResetGyroName           = self.stt.makePaddedMarkName("driveTrain.resetGyro")
+        self.markDriveTrainName          = self.stt.makePaddedMarkName("driveTrain.update")
+        self.markSignalWranglerName      = self.stt.makePaddedMarkName("SignalWrangler().publishPeriodic")
+        self.markCalibrationWranglerName = self.stt.makePaddedMarkName("CalibrationWrangler().update")
+        self.markFautWranglerName        = self.stt.makePaddedMarkName("FaultWrangler().update()")
+
         self.webserver = Webserver()
 
 
         self.driveTrain = DrivetrainControl()
                 
-        self.stt = SegmentTimeTracker()
-        
         self.dInt = DriverInterface()
         
         self.autoSequencer = AutoSequencer()
@@ -50,16 +62,27 @@ class MyRobot(wpilib.TimedRobot):
 
     def robotPeriodic(self):
         self.stt.start()
+
+        self.stt.perhapsMark(self.markStartCrashName)
         self.crashLogger.update()
-        
+        self.stt.perhapsMark(self.markCrashName)
+
         if(self.dInt.getGyroResetCmd()):
             self.driveTrain.resetGyro()
-        
+        self.stt.perhapsMark(self.markResetGyroName)
+
         self.driveTrain.update()
-        
+        self.stt.perhapsMark(self.markDriveTrainName)
+
         SignalWrangler().publishPeriodic()
+        self.stt.perhapsMark(self.markSignalWranglerName)
+
         CalibrationWrangler().update()
+        self.stt.perhapsMark(self.markCalibrationWranglerName)
+
         FaultWrangler().update()
+        self.stt.perhapsMark(self.markFautWranglerName)
+
         self.stt.end()
         
     #########################################################
