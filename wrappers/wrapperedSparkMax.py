@@ -1,4 +1,4 @@
-from rev import CANSparkMax, CANSparkMaxLowLevel, SparkMaxPIDController, REVLibError
+from rev import CANSparkMax, SparkMaxPIDController, REVLibError, CANSparkLowLevel
 from utils.signalLogging import log
 from utils.units import rev2Rad, radPerSec2RPM, RPM2RadPerSec
 from utils.faults import Fault
@@ -12,7 +12,7 @@ from utils.faults import Fault
 # Fault annunication logic to trigger warnings if a motor couldn't be configured
 class WrapperedSparkMax():
     def __init__(self, canID, name, brakeMode = False):
-        self.ctrl = CANSparkMax(canID, CANSparkMaxLowLevel.MotorType.kBrushless)
+        self.ctrl = CANSparkMax(canID, CANSparkLowLevel.MotorType.kBrushless)
         self.pidCtrl = self.ctrl.getPIDController()
         self.encoder = self.ctrl.getEncoder()
         self.name = name
