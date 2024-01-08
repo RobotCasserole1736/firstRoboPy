@@ -14,7 +14,9 @@ from utils.rioMonitor import RIOMonitor
 from utils.singleton import destroyAllSingletonInstances
 from webserver.webserver import Webserver
 from AutoSequencerV2.autoSequencer import AutoSequencer
+from robotpy.main import main
 
+    
 class MyRobot(wpilib.TimedRobot):
 
     #########################################################
@@ -23,6 +25,7 @@ class MyRobot(wpilib.TimedRobot):
         # Since we're defining a bunch of new things here, tell pylint 
         # to ignore these instantiations in a method.
         # pylint: disable=attribute-defined-outside-init
+        debugSupport()
 
         self.crashLogger = CrashLogger()
         wpilib.LiveWindow.disableAllTelemetry()
@@ -112,8 +115,7 @@ class MyRobot(wpilib.TimedRobot):
         super().endCompetition()
 
 
-if __name__ == '__main__':
-    
+def debugSupport():
     if __debug__ and "run" in sys.argv:
         print("Starting Debug Support....")
         try:
@@ -123,5 +125,9 @@ if __name__ == '__main__':
         else:
             debugpy.listen(('0.0.0.0', 5678))
             debugpy.wait_for_client()
-
-    wpilib.run(MyRobot)
+        
+if __name__ == '__main__':
+    sys.argv[0] = __file__
+    debugSupport()
+    sys.exit(main())
+    
