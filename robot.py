@@ -1,7 +1,6 @@
 import sys
 import wpilib
-from Autonomous.modes.drivePathCircle import DrivePathCircle
-from Autonomous.modes.drivePathTest1 import DrivePathTest1
+from Autonomous.modes.driveOut import DriveOut
 from dashboard import Dashboard
 from humanInterface.driverInterface import DriverInterface
 from drivetrain.drivetrainControl import DrivetrainControl
@@ -36,8 +35,7 @@ class MyRobot(wpilib.TimedRobot):
         self.dInt = DriverInterface()
 
         self.autoSequencer = AutoSequencer()
-        self.autoSequencer.addMode(DrivePathTest1())
-        self.autoSequencer.addMode(DrivePathCircle())
+        self.autoSequencer.addMode(DriveOut())
 
         self.dashboard = Dashboard()
 
@@ -45,8 +43,8 @@ class MyRobot(wpilib.TimedRobot):
 
         # Uncomment this and simulate to update the code
         # dependencies graph
-        # from codeStructureReportGen import reportGen
-        # reportGen.generate(self)
+        #from codeStructureReportGen import reportGen
+        #reportGen.generate(self)
 
     def robotPeriodic(self):
         self.stt.start()
