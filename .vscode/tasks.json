@@ -7,10 +7,10 @@
             "label": "PyFRC: Deploy",
             "type": "shell",
             "windows": {
-                "command": "python ${workspaceFolder}\\robot.py deploy --skip-tests"
+                "command": "robotpy deploy --skip-tests --no-verify"
             },
             "linux": {
-                "command": "python ${workspaceFolder}/robot.py deploy --skip-tests"
+                "command": "robotpy deploy --skip-tests --no-verify"
             },
             "group": {
                 "kind": "build",
@@ -57,10 +57,10 @@
             "label": "PyFRC: Deploy Debug",
             "type": "shell",
             "windows": {
-                "command": "python ${workspaceFolder}\\robot.py deploy --skip-tests --debug"
+                "command": "robotpy deploy --skip-tests --debug --no-verify"
             },
             "linux": {
-                "command": "python ${workspaceFolder}/robot.py deploy --skip-tests --debug"
+                "command": "robotpy deploy --skip-tests --debug --no-verify"
             },
             "presentation": {
                 "reveal": "always",
@@ -99,10 +99,10 @@
             "label": "PyFRC: Run Test Suite",
             "type": "shell",
             "windows": {
-                "command": "python ${workspaceFolder}\\robot.py test"
+                "command": "robotpy test"
             },
             "linux": {
-                "command": "python ${workspaceFolder}/robot.py test"
+                "command": "robotpy test"
             },
             "group": {
                 "kind": "test",
@@ -124,10 +124,10 @@
             "label": "PyFRC: Run Simulation",
             "type": "shell",
             "windows": {
-                "command": "python ${workspaceFolder}\\robot.py sim"
+                "command": "robotpy sim"
             },
             "linux": {
-                "command": "python ${workspaceFolder}/robot.py sim"
+                "command": "robotpy sim"
             },
             "group": {
                 "kind": "test"
