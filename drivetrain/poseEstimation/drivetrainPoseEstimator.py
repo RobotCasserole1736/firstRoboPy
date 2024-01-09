@@ -1,8 +1,8 @@
+import random
+
 from wpilib import ADXRS450_Gyro
 import wpilib
-import random
 from wpimath.estimator import SwerveDrive4PoseEstimator
-from wpimath.kinematics import SwerveDrive4Odometry
 from wpimath.geometry import Pose2d, Rotation2d, Transform3d, Twist2d
 from drivetrain.drivetrainPhysical import kinematics
 from drivetrain.poseEstimation.drivetrainPoseTelemetry import DrivetrainPoseTelemetry

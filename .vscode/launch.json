@@ -26,7 +26,7 @@
             "name": "Simulate",
             "type": "python",
             "request": "launch",
-            "program": "robot.py",
+            "module": "robotpy",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
@@ -37,7 +37,7 @@
             "name": "Test",
             "type": "python",
             "request": "launch",
-            "program": "robot.py",
+            "module": "robotpy",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [

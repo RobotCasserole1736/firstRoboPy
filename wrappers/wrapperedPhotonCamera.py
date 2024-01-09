@@ -19,7 +19,7 @@ class WrapperedPhotonCamera:
         self.cam = PhotonCamera(camName)
 
         self.disconFault = Fault(f"Camera {camName} not sending data")
-        self.TIMEOUT_SEC = 1.0
+        self.timeoutSec = 1.0
         self.poseEstimates = []
         self.robotToCam = robotToCam
 
@@ -43,13 +43,15 @@ class WrapperedPhotonCamera:
 
         # Update our disconnected fault if we haven't seen anything from the camera
         self.disconFault.set(
-            (wpilib.Timer.getFPGATimestamp() - obsTime) > self.TIMEOUT_SEC
+            (wpilib.Timer.getFPGATimestamp() - obsTime) > self.timeoutSec
         )
         self.poseEstimates = []
 
         # Process each target.
         # Each target has multiple solutions for where you could have been at on the field
-        # when you observed it (https://docs.wpilib.org/en/stable/docs/software/vision-processing/apriltag/apriltag-intro.html#d-to-3d-ambiguity)
+        # when you observed it 
+        # (https://docs.wpilib.org/en/stable/docs/software/vision-processing/
+        # apriltag/apriltag-intro.html#d-to-3d-ambiguity)
         # We want to select the best possible pose per target
         # We should also filter out targets that are too far away, and poses which
         # don't make sense.
@@ -107,6 +109,6 @@ class WrapperedPhotonCamera:
         trans = pose.getTranslation()
         x = trans.getX()
         y = trans.getY()
-        inY = y >= 0.0 and y <= feetToMeters(27.0)
-        inX = x >= 0.0 and y <= feetToMeters(54.0)
+        inY = 0.0 <= y <= feetToMeters(27.0)
+        inX = 0.0 <= x <= feetToMeters(54.0)
         return inX and inY

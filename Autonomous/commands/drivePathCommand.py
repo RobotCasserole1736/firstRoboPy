@@ -1,7 +1,6 @@
 import os
 import wpilib
-import jormungandr.choreo as choreo
-
+from jormungandr import choreo
 from AutoSequencerV2.command import Command
 from drivetrain.drivetrainControl import DrivetrainControl
 

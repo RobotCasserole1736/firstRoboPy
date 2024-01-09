@@ -21,12 +21,12 @@ class FieldTagLayout(metaclass=Singleton):
 
         try:
             self.fieldTags = AprilTagFieldLayout(path=expPath)
-        except Exception:
+        except Exception: # pylint: disable=broad-exception-caught
             self.fieldTags = None
             self.notLoadedFault.setFaulted()
 
-    def lookup(self, id):
+    def lookup(self, tagId):
         if self.fieldTags is not None:
-            return self.fieldTags.getTagPose(id)
+            return self.fieldTags.getTagPose(tagId)
         else:
             return None

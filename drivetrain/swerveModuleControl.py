@@ -1,10 +1,12 @@
+import random
+
 from wpimath.controller import SimpleMotorFeedforwardMeters
 from wpimath.controller import PIDController
 from wpimath.kinematics import SwerveModuleState
 from wpimath.kinematics import SwerveModulePosition
 from wpimath.geometry import Rotation2d
 import wpilib
-import random
+
 
 from wrappers.wrapperedSparkMax import WrapperedSparkMax
 from wrappers.wrapperedSRXMagEncoder import WrapperedSRXMagEncoder

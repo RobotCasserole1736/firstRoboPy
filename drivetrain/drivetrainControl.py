@@ -1,6 +1,5 @@
 from wpimath.kinematics import ChassisSpeeds
 from wpimath.geometry import Pose2d, Rotation2d
-from jormungandr.choreoTrajectory import ChoreoTrajectoryState
 from utils.singleton import Singleton
 
 from drivetrain.poseEstimation.drivetrainPoseEstimator import DrivetrainPoseEstimator
