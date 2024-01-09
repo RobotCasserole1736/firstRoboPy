@@ -13,9 +13,9 @@ Before developing code on a new computer, perform the following:
 
 ```cmd
     python -m pip install --upgrade pip
-    python -m pip install robotpy[all]
     python -m pip install -r requirements_dev.txt
-    python -m pip install -r requirements_run.txt
+    python -m pip install robotpy
+    robotpy sync
 ```
 
 ## Docs
@@ -24,7 +24,7 @@ Before developing code on a new computer, perform the following:
 
 ## Deploying to the Robot
 
-`deploy.bat` will deploy all code to the robot. Be sure to be on the same network as the robot.
+`robotpy deploy` will deploy all code to the robot. Be sure to be on the same network as the robot.
 
 `.deploy_cfg` contains specific configuration about the deploy process.
 
@@ -34,7 +34,7 @@ Note any folder or file prefixed with a `.` will be skipped in the deploy.
 
 "Linting" is the process of checking our code format and style to keep it looking nice
 
-`lint.bat` will execute the linter.
+In vsCode, run the lint check via the tasks
 
 `.pylintrc` contains configuration about what checks the linter runs, and what formatting it enforces
 
@@ -55,35 +55,16 @@ Github runs our code on its servers on every commit to ensure our code stays hig
 To minimize frustration and rework, before committing, be sure to:
 
 1. Run the test suite
-2. Run `lint.bat` and fix any formatting errors
+2. Run linter and fix any formatting errors.
 
-## RIO First-time Installation
-
-Follow [the robotpy instructions for setting up the RIO](https://robotpy.readthedocs.io/en/stable/install/robot.html)
-
-Then, install all packages specific to our repo, from `requirements.txt`, following the [two step process for roboRIO package installer](https://robotpy.readthedocs.io/en/stable/install/packages.html)
-
-While on the internet:
-
-`python -m robotpy_installer download -r requirements_run.txt`
-
-Then, while connected to the robot's network:
-
-`python -m robotpy_installer install -r requirements_run.txt`
+CI will check python 3.11 and 3.12.
 
 ## Dependency Management
 
-In python, `requirements.txt` lists out all the non-standard packages that need to be installed.
+`pyproject.toml` lists the python packages needed to run the robot code.
 
-However, a few hangups:
+`robotpy sync` will ensure the RIO and your development PC have the proper versions of everyhing in `pyproject.toml` installed
 
-* The list of dependencies for the RIO and for our PC's to do software development is different
-* The RIO has limited disk storage space, so we don't want extra packages if we can avoid it.
+`requirements_dev.txt` lists everything needed just for software development. The things in here are not needed to run the code, and therefor should _not_ get installed on a roborio.
 
-For now, we're resolving that by having two requirements files - `requirements_dev.txt` lists everything needed just for software development. `requirements_run.txt` lists everything needed to run the code.
-
-Development PC's should pip-install both.
-
-The RoboRIO should only install _run.txt
-
-When recording a new dependency, run `pip freeze > tmp.txt`, then open up `tmp.txt`. It will have a lot of things inside it. Find your new dependency in the list, and add it to the appropriate requirements file. Then delete `tmp.txt`
+Install the development dependencies with `pip install -r requirements_dev.txt`.
