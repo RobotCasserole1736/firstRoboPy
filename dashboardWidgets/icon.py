@@ -1,18 +1,17 @@
-
-
 from dashboardWidgets.widgetConfig import WidgetConfig
 
+
 class Icon(WidgetConfig):
-    # This code-generation class has some long lines 
+    # This code-generation class has some long lines
     # that I don't know of a good way to get rid of.
     # pylint: disable=line-too-long
-    
+
     # Mirror the state definitions from JS
     kOFF = 0
     kON = 1
     kBLINK_FAST = 2
     kBLINK_SLOW = 3
-    
+
     def __init__(self, xPos, yPos, nt4Topic_in, colorOn, symbolPath):
         WidgetConfig.__init__(self, nt4Topic_in, xPos, yPos)
         self.nominalHeight = 5
@@ -22,11 +21,11 @@ class Icon(WidgetConfig):
         self.isVisible = True
 
     def getJSDeclaration(self):
-        return f"var widget{self.idx} = new Icon('widget{self.idx}', '{self.name}',{self.colorOn},{self.symbolPath})\n"    
+        return f"var widget{self.idx} = new Icon('widget{self.idx}', '{self.name}',{self.colorOn},{self.symbolPath})\n"
 
     def getJSSetData(self):
         retStr = ""
-        retStr += "if(name == \"" + self.ntTopicCurVal + "\"){ \n"
+        retStr += 'if(name == "' + self.ntTopicCurVal + '"){ \n'
         retStr += "    if(value == 1){ \n"
         retStr += f"        widget{self.idx}.setVal(Icon.kON);\n"
         retStr += "    } else if(value == 2) {\n"
@@ -38,9 +37,9 @@ class Icon(WidgetConfig):
         retStr += "    }"
         retStr += "}"
         return retStr
-    
-    def getJSUpdate(self) :
+
+    def getJSUpdate(self):
         return f"    widget{self.idx}.render()"
-    
+
     def getJSSetNoData(self):
         return f"    widget{self.idx}.reportNoData()"

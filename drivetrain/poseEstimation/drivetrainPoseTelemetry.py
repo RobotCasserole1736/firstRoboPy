@@ -8,15 +8,13 @@ from wpimath.geometry import Pose2d
 from utils.signalLogging import log
 
 
-
-class DrivetrainPoseTelemetry():
+class DrivetrainPoseTelemetry:
     """
-    Helper class to wrapper sending all drivetrain Pose related information 
+    Helper class to wrapper sending all drivetrain Pose related information
     to dashboards
     """
-    
+
     def __init__(self):
-        
         self.field = wpilib.Field2d()
         wpilib.SmartDashboard.putData("DT Pose 2D", self.field)
         self.curTraj = Trajectory()
@@ -24,7 +22,7 @@ class DrivetrainPoseTelemetry():
 
     def setDesiredPose(self, desPose):
         self.desPose = desPose
-        
+
     def update(self, estPose):
         self.field.getRobotObject().setPose(estPose)
         self.field.getObject("desPose").setPose(self.desPose)
@@ -46,18 +44,17 @@ class DrivetrainPoseTelemetry():
         # Transform choreo state list into useful trajectory for telemetry
         if trajIn is not None:
             stateList = []
-            
+
             # For visual appearance and avoiding sending too much over NT,
             # make sure we only send a sampled subset of the positions
             sampTime = 0
-            while(sampTime < trajIn.getTotalTime()):
+            while sampTime < trajIn.getTotalTime():
                 stateList.append(self._choreoToWPIState(trajIn.sample(sampTime)))
                 sampTime += 0.5
-                
+
             # Make sure final pose is in the list
             stateList.append(self._choreoToWPIState(trajIn.samples[-1]))
 
-            
             self.curTraj = Trajectory(stateList)
         else:
             self.curTraj = Trajectory()
@@ -69,5 +66,5 @@ class DrivetrainPoseTelemetry():
             acceleration=0,
             pose=inVal.getPose(),
             t=inVal.timestamp,
-            velocity=math.hypot(inVal.velocityX, inVal.velocityY)
-            )
+            velocity=math.hypot(inVal.velocityX, inVal.velocityY),
+        )

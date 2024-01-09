@@ -3,22 +3,21 @@ from AutoSequencerV2.runnable import Runnable
 
 
 class RaceCommandGroup(Runnable, Composer):
-
     def __init__(self, cmdList=None):
         self.cmdList = cmdList if cmdList else []
-        self._finishedFirstIdx = None # Set to the index of the command which finished first, or None if all are running
+        self._finishedFirstIdx = None  # Set to the index of the command which finished first, or None if all are running
 
     def execute(self):
-        if(not self.isDone()):
+        if not self.isDone():
             for idx, cmd in enumerate(self.cmdList):
                 # Run each command in this group, checking for finish as we go.
                 cmd.execute()
-                if(cmd.isDone()):
+                if cmd.isDone():
                     # If we're finished, stop updating
                     print(f"[Auto] {cmd.getName()} finished first")
                     self._finishedFirstIdx = idx
                     break
-            
+
     # Default group init - just init each command
     def initialize(self):
         self._finishedFirstIdx = None
@@ -27,18 +26,20 @@ class RaceCommandGroup(Runnable, Composer):
         for cmd in self.cmdList:
             print(f"[Auto] Starting {cmd.getName()}")
             cmd.initialize()
-            
+
     # Default group end - end everything with same interrupted status
     def end(self, interrupted):
         # Finish each child command
         for idx, cmd in enumerate(self.cmdList):
-            isInterrupted = False if idx == self._finishedFirstIdx else True or interrupted
+            isInterrupted = (
+                False if idx == self._finishedFirstIdx else True or interrupted
+            )
             print(f"[Auto] Ending {cmd.getName()}")
             cmd.end(isInterrupted)
-        
+
     def isDone(self):
-        #We're done when one command has finished
-        return (self._finishedFirstIdx is not None)
+        # We're done when one command has finished
+        return self._finishedFirstIdx is not None
 
     ##################################################
     ## composition handlers

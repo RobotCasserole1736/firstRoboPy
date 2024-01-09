@@ -1,6 +1,5 @@
-
-
 from dashboardWidgets.widgetConfig import WidgetConfig
+
 
 class Text(WidgetConfig):
     def __init__(self, xPos, yPos, nt4Topic_in):
@@ -10,4 +9,4 @@ class Text(WidgetConfig):
         self.isVisible = True
 
     def getJSDeclaration(self):
-        return f"var widget{self.idx} = new Text('widget{self.idx}', '{self.name}')\n"    
+        return f"var widget{self.idx} = new Text('widget{self.idx}', '{self.name}')\n"
